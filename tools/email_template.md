@@ -1,6 +1,6 @@
 # BringsUp cold email templates
 
-Follow `brand.md` voice rules. Plain text, short, no images in the body. Every first email carries the prospect's concept: a Drive link to the concept PDF when the BringsUp Drive is connected, otherwise the concept PDF as an attachment (named "<Business> — new homepage concept.pdf", under 1 MB). Personalize every bracketed field from the prospect's tracker row; if a field is missing, rewrite the sentence so it reads naturally rather than leaving a gap.
+Follow `brand.md` voice rules. Plain text, short, no images in the body. Every first email carries the prospect's concept: a Drive link to the concept PDF when the BringsUp Drive is connected, otherwise the concept PDF as an attachment (named "<Business> — new homepage concept.pdf", about 2 MB). Personalize every bracketed field from the prospect's tracker row; if a field is missing, rewrite the sentence so it reads naturally rather than leaving a gap.
 
 ## Email 1 (day 0)
 
