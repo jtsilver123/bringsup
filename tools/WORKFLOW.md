@@ -59,7 +59,7 @@ Each is prepared so it takes minutes, and each reaches him as a push (OPERATOR.m
 - **Backend (Supabase `rgeeynodxvusivfbaxfu`):** functions `projects` (state machine, webhooks, worker API) and `redesign` (/try/ and outreach previews). Deploy with tools/bundle_function.sh, then switch JWT verification off again.
 - **Payments:** Stripe Payment Links on the InstateMe account (Jake's other company, for now): $1,000 `plink_1UTR1oB5nImYYaicDgVP1GNc`, $150 `plink_1UTR1oB5nImYYaicoE1lqGy6`. Pages, terms and receipts say so.
 - **Hosting:** Cloudflare Pages, account `10b43838f31b9959c8eb61aafdd200f3`, with one project per customer.
-- **Watchdog:** `.github/workflows/watchdog.yml` runs `tools/watchdog.sh` every 2 hours: bringsup.com pages, the projects function, the four Tally forms, both Stripe links, and the operator's heartbeat (`?pulse=1`, from `projects-worker heartbeat` at the end of every run; 5 hours without one fails). A failed run makes GitHub email Jake. It also re-enables itself each run, since GitHub turns off scheduled workflows in repos without commits for 60 days.
+- **Watchdog:** `.github/workflows/watchdog.yml` runs `tools/watchdog.sh` every 2 hours: bringsup.com pages, the projects function, the four Tally forms, both Stripe links, and the operator's heartbeat (`?pulse=1`, from `projects-worker heartbeat` at the end of every run; 5 hours without one fails). A failed run makes GitHub email Jake. GitHub turns off scheduled workflows in repos without commits for 60 days, so it re-enables itself each run, and the operator checks once a day (public API, step 6) that it's still on and tells Jake if not.
 - **Tests:** `node tools/simulate-flow.ts` (signed fake submissions against production; it cleans up after itself).
 
 ## Keeping it in sync

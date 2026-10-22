@@ -139,7 +139,7 @@ Point **www** at the site, and forward the bare domain to www. Never touch MX, T
 Follow `tools/QUEUE_WORKER.md`.
 
 ## 5. Outreach
-**Warm leads (every run, cheap).** Rows with `warm: true` are people Jake knows. Never cold email or follow up with them automatically. When a warm row has a `conceptUrl` and no `draftedAt`, save a Gmail draft in jake@bringsup.com (`GMAIL_CREATE_EMAIL_DRAFT`, never send it) to their address: a short, personal note from Jake with the link, per "Yes" in `tools/email_template.md` but warmer, since he knows them. Set `draftedAt` and add it to step 7. If a warm lead replies or starts the form, handle them like any interested prospect.
+**Warm leads (every run, cheap).** Rows with `warm: true` are people Jake knows. Never cold email or follow up with them automatically. When a warm row has no `conceptUrl`, build and publish their homepage first, exactly as for a yes ("Building their homepage" in `tools/email_template.md`), and set `conceptUrl` to the link. When a warm row has a `conceptUrl` and no `draftedAt`, save a Gmail draft in jake@bringsup.com (`GMAIL_CREATE_EMAIL_DRAFT`, never send it) to their address: a short, personal note from Jake with the link, per "Yes" in `tools/email_template.md` but warmer, since he knows them. Set `draftedAt` and add it to step 7. If a warm lead replies or starts the form, handle them like any interested prospect.
 **5a. Send a slice (every run, weekdays 8:00 AM–7:00 PM ET).** Run `tools/RUNBOOK.md` steps 1, 3 and 5 for this run's slice only: `ceil((capToday − sentToday) / send runs left today)`, at most 6, and only to prospects whose local time is in the RUNBOOK window. Spreading the day's sends across the hours is what keeps a new mailbox out of spam.
 **5b. Refill the queue (once per weekday).** On the first run at or after 3:00 PM ET, if `meta/pipeline.lastOutreachDate` isn't today: RUNBOOK steps 4, 6, 8 and 7. Then set `lastOutreachDate` to today. Start it only if at least 45 minutes remain.
 
@@ -148,6 +148,8 @@ Follow `tools/QUEUE_WORKER.md`.
 - **`alerts`:** each one is a problem the system couldn't fix itself. Try to fix it (resubmitted data, a project to recreate from `webhook_receipts`, a failed deploy). Then resolve it with an `update` event that explains what you did. Leave it open if you can't.
 - **`failing_jobs`:** read `last_error` and fix the cause if you can (bad site.json, missing env var). Then re-queue it with `update <ref>` and `set: {todo: "<the same todo>"}`: setting `todo` resets the attempts and the lease. A `last_error` about creating a Pages project or a Cloudflare authentication error means the Cloudflare token lacks permission: that's a step-7 blocker (report it once). Re-queue those jobs on the first run after it works again.
 - **`stuck_on_us`:** any job older than a day means something isn't working. Look at why.
+
+Also check the watchdog itself (once a day): `curl -s https://api.github.com/repos/jtsilver123/bringsup/actions/workflows/watchdog.yml` (public, no token) must show `"state": "active"`. If it's `disabled_inactivity` or anything else, push Jake (a broken system): "The watchdog is off. Turn it back on: https://github.com/jtsilver123/bringsup/actions/workflows/watchdog.yml → Enable workflow."
 
 Also check: the redesign queue isn't backing up (anything `queued` more than 2 hours old), there's no bounce spike, and the Composio Gmail connection works.
 
