@@ -22,6 +22,9 @@ export interface SiteContent {
   theme: Theme;
   /** Overrides the look picked from `theme` (see Style). Leave it out unless the theme's default is wrong for them. */
   style?: Style;
+  /** Button corners, matched to the business: "round" for playful shops (ice cream, bakery, kids), "soft" for most family
+   *  businesses, "crisp" for formal or upscale ones. Leave it out to use the look's default. */
+  buttons?: "round" | "soft" | "crisp";
   tagline: string;
   /** e.g. "Westbrook, CT" */
   city_state: string;
@@ -86,32 +89,35 @@ export function styleFor(theme: Theme, hint = ""): Style {
   return base;
 }
 
-interface Look { fonts: string; fd: string; fb: string; fl: string; bg: string; alt: string; ink: string; accent: string; r: string; vars: string }
+interface Look { fonts: string; fd: string; fb: string; fl: string; bg: string; alt: string; ink: string; accent: string; r: string; buttons: "round" | "soft" | "crisp"; vars: string }
+/** Button corner radius for each SiteContent.buttons choice. */
+const BUTTON_RADIUS = { round: "999px", soft: "10px", crisp: "2px" } as const;
+
 const LOOKS: Record<Style, Look> = {
   editorial: {
     fonts: "family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..600&family=Familjen+Grotesk:wght@400..700",
     fd: '"Newsreader",Georgia,serif', fb: '"Newsreader",Georgia,serif', fl: '"Familjen Grotesk",system-ui,sans-serif',
-    bg: "#F6F0E6", alt: "#ECE2D2", ink: "#231A13", accent: "#B4541A", r: "2px", vars: "--dw:500;--dls:-.025em;--dlh:1.02",
+    bg: "#F6F0E6", alt: "#ECE2D2", ink: "#231A13", accent: "#B4541A", r: "2px", buttons: "soft", vars: "--dw:500;--dls:-.025em;--dlh:1.02",
   },
   workshop: {
     fonts: "family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500",
     fd: '"Archivo",system-ui,sans-serif', fb: '"Archivo",system-ui,sans-serif', fl: '"IBM Plex Mono",ui-monospace,monospace',
-    bg: "#F2F2EF", alt: "#E6E6E1", ink: "#131518", accent: "#D23C26", r: "3px", vars: "--dw:800;--dls:-.03em;--dlh:.98;--dst:112%",
+    bg: "#F2F2EF", alt: "#E6E6E1", ink: "#131518", accent: "#D23C26", r: "3px", buttons: "soft", vars: "--dw:800;--dls:-.03em;--dlh:.98;--dst:112%",
   },
   craft: {
     fonts: "family=Schibsted+Grotesk:wght@400..800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..600;1,8..60,400..500",
     fd: '"Schibsted Grotesk",system-ui,sans-serif', fb: '"Source Serif 4",Georgia,serif', fl: '"Schibsted Grotesk",system-ui,sans-serif',
-    bg: "#F3EFE8", alt: "#E8E1D5", ink: "#1E1C19", accent: "#7A4A2A", r: "2px", vars: "--dw:700;--dls:-.04em;--dlh:.98",
+    bg: "#F3EFE8", alt: "#E8E1D5", ink: "#1E1C19", accent: "#7A4A2A", r: "2px", buttons: "soft", vars: "--dw:700;--dls:-.04em;--dlh:.98",
   },
   atelier: {
     fonts: "family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@400;500",
     fd: '"Cormorant Garamond",Georgia,serif', fb: '"Jost",system-ui,sans-serif', fl: '"Jost",system-ui,sans-serif',
-    bg: "#FAF8F4", alt: "#F1ECE3", ink: "#1A1918", accent: "#8C6A3F", r: "0", vars: "--dw:400;--dls:-.005em;--dlh:1.06",
+    bg: "#FAF8F4", alt: "#F1ECE3", ink: "#1A1918", accent: "#8C6A3F", r: "0", buttons: "crisp", vars: "--dw:400;--dls:-.005em;--dlh:1.06",
   },
   landscape: {
     fonts: "family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400..700",
     fd: '"Instrument Serif",Georgia,serif', fb: '"Instrument Sans",system-ui,sans-serif', fl: '"Instrument Sans",system-ui,sans-serif',
-    bg: "#F4F3EE", alt: "#E7E7DE", ink: "#1B241C", accent: "#3E6B48", r: "4px", vars: "--dw:400;--dls:-.02em;--dlh:1",
+    bg: "#F4F3EE", alt: "#E7E7DE", ink: "#1B241C", accent: "#3E6B48", r: "4px", buttons: "round", vars: "--dw:400;--dls:-.02em;--dlh:1",
   },
 };
 
@@ -197,7 +203,7 @@ export function render(c: SiteContent, opts: RenderOptions = {}): Record<string,
   const approach = c.approach && c.approach.paragraphs.filter(Boolean).length ? c.approach : null;
 
   const css = baseCss() + STYLE_CSS[style] + lastCss();
-  const tokens = `:root{--bg:${bg};--alt:${L.alt};--ink:${ink};--muted:${muted};--line:${line};--acc:${fill};--acc-ink:${fillInk};--acc-t:${accT};--dark:${dark};--on-dark:${onDark};--muted-d:${mutedD};--acc-d:${accD};--fd:${L.fd};--fb:${L.fb};--fl:${L.fl};--r:${L.r};${L.vars}}\n`;
+  const tokens = `:root{--bg:${bg};--alt:${L.alt};--ink:${ink};--muted:${muted};--line:${line};--acc:${fill};--acc-ink:${fillInk};--acc-t:${accT};--dark:${dark};--on-dark:${onDark};--muted-d:${mutedD};--acc-d:${accD};--fd:${L.fd};--fb:${L.fb};--fl:${L.fl};--r:${L.r};--rb:${BUTTON_RADIUS[c.buttons && c.buttons in BUTTON_RADIUS ? c.buttons : L.buttons]};${L.vars}}\n`;
 
   const ldjson = JSON.stringify({
     "@context": "https://schema.org", "@type": c.theme === "bakery" ? "Bakery" : c.theme === "restaurant" ? "Restaurant" : c.theme === "auto" ? "AutoRepair" : "LocalBusiness",
@@ -547,7 +553,7 @@ main img[data-fade]{opacity:0}
 .skip{position:absolute;left:-9999px;top:8px;background:var(--bg);color:var(--ink);padding:10px 16px;z-index:99}.skip:focus{left:8px}
 .d{font-family:var(--fd);font-weight:var(--dw);letter-spacing:var(--dls);line-height:var(--dlh);font-stretch:var(--dst,100%);text-wrap:balance}
 .lbl,.vh{font-family:var(--fl);font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;line-height:1.4}
-.btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 26px;border-radius:var(--r);background:var(--acc);color:var(--acc-ink);font-family:var(--fl);font-weight:600;font-size:16px;line-height:1.2;text-decoration:none;text-align:center;white-space:nowrap;transition:background-color .15s,color .15s,box-shadow .15s,transform .12s cubic-bezier(.16,1,.3,1)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 26px;border-radius:var(--rb);background:var(--acc);color:var(--acc-ink);font-family:var(--fl);font-weight:600;font-size:16px;line-height:1.2;text-decoration:none;text-align:center;white-space:nowrap;transition:background-color .15s,color .15s,box-shadow .15s,transform .12s cubic-bezier(.16,1,.3,1)}
 .btn:active{transform:translateY(1px) scale(.985);transition-duration:.06s}
 .btn:focus-visible{outline-offset:4px}
 .btn:hover{background:var(--ink);color:var(--bg)}
@@ -734,7 +740,7 @@ body{font-size:18px}
 .hero-row{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:48px;align-items:end;margin-top:40px}
 .hero .dek{font-size:20px;line-height:1.55;color:var(--muted-d);max-width:40em}
 .hero .ctas{margin-top:0;justify-content:flex-end}
-.tel.alt{display:inline-flex;align-items:center;min-height:52px;padding:0 22px;border-radius:var(--r);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.45);color:var(--on-dark);text-decoration:none;font-weight:700;font-family:var(--fd)}
+.tel.alt{display:inline-flex;align-items:center;min-height:52px;padding:0 22px;border-radius:var(--rb);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.45);color:var(--on-dark);text-decoration:none;font-weight:700;font-family:var(--fd)}
 .tel.alt:hover{box-shadow:inset 0 0 0 1.5px var(--on-dark)}
 .hero-fig{margin-top:64px}.hero-fig img{aspect-ratio:21/9}
 .makes-s{padding:44px 0 40px;border-bottom:1px solid var(--line)}

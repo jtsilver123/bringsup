@@ -7,9 +7,18 @@
   "email": "hello@marigoldbakery.example",
   "address": "12 Main Street, Westbrook, CT 06498",
   "hours": [
-    { "days": "Tuesday to Friday", "time": "6am to 3pm" },
-    { "days": "Saturday and Sunday", "time": "7am to 2pm" },
-    { "days": "Monday", "time": "Closed" }
+    {
+      "days": "Tuesday to Friday",
+      "time": "6am to 3pm"
+    },
+    {
+      "days": "Saturday and Sunday",
+      "time": "7am to 2pm"
+    },
+    {
+      "days": "Monday",
+      "time": "Closed"
+    }
   ],
   "year_founded": "1984",
   "rating": "4.9",
@@ -19,7 +28,10 @@
   "brand_accent": "#C8661E",
   "logo": "",
   "hero_image": "https://images.unsplash.com/photo-1586444248902-2f64eddc13df?fm=jpg&fit=crop&w=1800&q=72",
-  "primary_cta": { "label": "Order for pickup", "href": "contact/" },
+  "primary_cta": {
+    "label": "Order for pickup",
+    "href": "contact/"
+  },
   "home": {
     "headline": "Bread worth getting up early for.",
     "subheadline": "Sourdough, croissants and celebration cakes, made by hand every morning on Main Street. Order by noon and it's boxed and waiting for you tomorrow.",
@@ -29,20 +41,69 @@
     "title": "Menu",
     "intro": "Baked in small batches before we open. When it's gone, it's gone.",
     "groups": [
-      { "name": "Bread", "items": [
-        { "name": "Country sourdough", "description": "Made with the starter Rosa brought from Naples. Blistered crust, open crumb.", "price": "$9", "image": "" },
-        { "name": "Seeded rye", "description": "Dense and nutty, with sunflower and flax. Slices thin for sandwiches.", "price": "$8", "image": "https://images.unsplash.com/photo-1549931319-a545dcf3bc73?fm=jpg&fit=crop&w=1200&q=72" },
-        { "name": "Baguette", "description": "Out of the oven at 7 and again at 11.", "price": "$4", "image": "https://images.unsplash.com/photo-1568471173242-461f0a730452?fm=jpg&fit=crop&w=1200&q=72" }
-      ]},
-      { "name": "Pastry", "items": [
-        { "name": "Butter croissant", "description": "Three days from dough to case, laminated with cultured butter.", "price": "$4.25", "image": "https://images.unsplash.com/photo-1530610476181-d83430b64dcd?fm=jpg&fit=crop&w=1400&q=72" },
-        { "name": "Morning bun", "description": "Cinnamon, orange zest and a crackle of sugar.", "price": "$4.50", "image": "" },
-        { "name": "Pain au chocolat", "description": "Two batons of dark chocolate in every one.", "price": "$4.75", "image": "" }
-      ]},
-      { "name": "Cakes, to order", "items": [
-        { "name": "Celebration cakes", "description": "Birthdays, showers and anniversaries. Serves 8 to 40; give us three days.", "price": "from $48", "image": "" },
-        { "name": "Fruit tarts", "description": "Whatever is good at the farm stand that week, on almond cream.", "price": "$34", "image": "" }
-      ]}
+      {
+        "name": "Bread",
+        "items": [
+          {
+            "name": "Country sourdough",
+            "description": "Made with the starter Rosa brought from Naples. Blistered crust, open crumb.",
+            "price": "$9",
+            "image": ""
+          },
+          {
+            "name": "Seeded rye",
+            "description": "Dense and nutty, with sunflower and flax. Slices thin for sandwiches.",
+            "price": "$8",
+            "image": "https://images.unsplash.com/photo-1549931319-a545dcf3bc73?fm=jpg&fit=crop&w=1200&q=72"
+          },
+          {
+            "name": "Baguette",
+            "description": "Out of the oven at 7 and again at 11.",
+            "price": "$4",
+            "image": "https://images.unsplash.com/photo-1568471173242-461f0a730452?fm=jpg&fit=crop&w=1200&q=72"
+          }
+        ]
+      },
+      {
+        "name": "Pastry",
+        "items": [
+          {
+            "name": "Butter croissant",
+            "description": "Three days from dough to case, laminated with cultured butter.",
+            "price": "$4.25",
+            "image": "https://images.unsplash.com/photo-1530610476181-d83430b64dcd?fm=jpg&fit=crop&w=1400&q=72"
+          },
+          {
+            "name": "Morning bun",
+            "description": "Cinnamon, orange zest and a crackle of sugar.",
+            "price": "$4.50",
+            "image": ""
+          },
+          {
+            "name": "Pain au chocolat",
+            "description": "Two batons of dark chocolate in every one.",
+            "price": "$4.75",
+            "image": ""
+          }
+        ]
+      },
+      {
+        "name": "Cakes, to order",
+        "items": [
+          {
+            "name": "Celebration cakes",
+            "description": "Birthdays, showers and anniversaries. Serves 8 to 40; give us three days.",
+            "price": "from $48",
+            "image": ""
+          },
+          {
+            "name": "Fruit tarts",
+            "description": "Whatever is good at the farm stand that week, on almond cream.",
+            "price": "$34",
+            "image": ""
+          }
+        ]
+      }
     ]
   },
   "about": {
@@ -51,13 +112,30 @@
       "Sal and Rosa Russo opened Marigold in 1984 with one deck oven, a borrowed mixer and a sourdough starter Rosa brought from her mother's kitchen in Naples.",
       "Their granddaughter Gia runs the ovens now. The starter is the same, the bread is still shaped by hand, and the first loaves come out at 5:30, before most of Westbrook is awake."
     ],
-    "images": ["https://images.unsplash.com/photo-1517686469429-8bdb88b9f907?fm=jpg&fit=crop&w=1200&q=72"]
+    "images": [
+      "https://images.unsplash.com/photo-1517686469429-8bdb88b9f907?fm=jpg&fit=crop&w=1200&q=72"
+    ]
   },
   "testimonials": [
-    { "quote": "The sourdough is the real thing: a proper crust, a tangy open crumb, and it keeps for days. We drive in from Old Saybrook every Saturday for it.", "author": "Kate M." },
-    { "quote": "They made our daughter's birthday cake on two days' notice and it was the best thing on the table.", "author": "Luis A." },
-    { "quote": "Get there before 9 for the morning buns. Worth setting an alarm.", "author": "Priya D." }
+    {
+      "quote": "The sourdough is the real thing: a proper crust, a tangy open crumb, and it keeps for days. We drive in from Old Saybrook every Saturday for it.",
+      "author": "Kate M."
+    },
+    {
+      "quote": "They made our daughter's birthday cake on two days' notice and it was the best thing on the table.",
+      "author": "Luis A."
+    },
+    {
+      "quote": "Get there before 9 for the morning buns. Worth setting an alarm.",
+      "author": "Priya D."
+    }
   ],
   "domain": "marigoldbakery.example",
-  "social": [{ "label": "Instagram", "url": "https://instagram.com/" }]
+  "social": [
+    {
+      "label": "Instagram",
+      "url": "https://instagram.com/"
+    }
+  ],
+  "buttons": "round"
 }

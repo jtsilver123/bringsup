@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent, type ReactNode, type Ref, type RefObject } from "react";
 import { SubFooter, SubHeader } from "../../components/Chrome.tsx";
 import { Arrow } from "../../components/icons.tsx";
+import { BrandCard, type BrandPreview } from "./BrandCard.tsx";
 
 export type View = "ask" | "working" | "result" | "queued" | "failed";
 
@@ -53,7 +54,7 @@ export function AskView({ hidden, soon, fields, onField, error, fixed, onSubmit,
     <section className="wrap ask" id="ask" hidden={hidden}>
       <div>
         <h1 className="t1">See your website, redone.</h1>
-        <p className="lead">Paste your website. The same day, usually within the hour, I'll email you your homepage, rebuilt from your own photos, services and story, so you can see exactly what you'd get.</p>
+        <p className="lead">Type in your web address. The same day, usually within the hour, I'll email you your homepage, rebuilt from your own photos, services and story, so you can see exactly what you'd get.</p>
         <p className="ask-more">It's free, there's no call and nothing to install. If you love it, I build the whole site for a flat $1,000, paid only when you approve it.</p>
       </div>
       <div className="card">
@@ -131,6 +132,8 @@ export interface ResultData {
   ref?: string;
   /** Hand-built by Jake for this business: it may run its own scripts (still sandboxed, with no access to this page). */
   handmade?: boolean;
+  /** Only when we made a logo refresh: their logo now and refreshed, and the colors (concept.brand). */
+  brand?: BrandPreview;
 }
 
 interface ResultProps {
@@ -339,12 +342,14 @@ export function ResultView({ hidden, data, onCopy, onFullScreen, onAgain }: Resu
 
       <div className="wrap"><Better items={data?.improvements} where="narrow" /></div>
 
+      <BrandCard name={data?.name || "your business"} brand={data?.brand} />
+
       <div className="wrap r-next" id="r-next">
         <h2 className="t2">Love it? I'll build the whole site.</h2>
         <ol className="r-steps">
           <li><b>One 10-minute form</b><span>Your hours, a few photos and your logo if you have one. Skip anything you don't have. No calls.</span></li>
-          <li><b>Your finished site in about two weeks</b><span>Every page, as a private preview. Two rounds of changes are included.</span></li>
-          <li><b>Pay only when you approve it</b><span>A flat $1,000, then it goes live on your own web address. Hosting included, no monthly fee.</span></li>
+          <li><b>Your finished site in about two weeks</b><span>Every page, at a private link for you to look over. Two rounds of changes are included. A round is one list of changes you send at once.</span></li>
+          <li><b>Pay only when you approve it</b><span>A flat $1,000, then it goes live on your own web address. Keeping it online is included, with no monthly fee.</span></li>
         </ol>
         <div className="r-acts">
           <a className="btn btn-primary" id="start" href={startHref}>Start my website <Arrow /></a>
@@ -374,7 +379,7 @@ export function QueuedView({ hidden, data, onCopy }: { hidden: boolean; data: Qu
         <div className="q-draft" aria-hidden="true"><iframe id="q-frame" tabIndex={-1} title="" sandbox="" srcDoc={draft || undefined}></iframe></div>
         <div className="q-card">
           <h1 className="t2">I'm redesigning <span id="q-host">{data?.host || "your website"}</span>.</h1>
-          <p className="lead">A careful homepage takes a little longer than a minute. I'll email it to <span id="q-email">{data?.email ? <b>{data.email}</b> : "you"}</span> the same day, usually within the hour. This page updates on its own if you keep it open.</p>
+          <p className="lead">A careful homepage takes a little longer than a minute. I'll email it to <span id="q-email">{data?.email ? <b>{data.email}</b> : "you"}</span> the same day, usually within the hour. This page updates on its own if you keep it open, or you can close it and watch your inbox.</p>
           <div className="acts">
             <CopyButton className="btn btn-line" id="q-copy" label="Copy this page's link" onCopy={onCopy} />
             <a className="btn btn-primary" href="/try/?demo">See a sample while you wait</a>

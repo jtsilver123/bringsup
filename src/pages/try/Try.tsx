@@ -97,6 +97,7 @@ export function Try() {
       improvements: concept.improvements || [],
       ref: (concept as { ref?: string }).ref,
       handmade: Boolean(custom),
+      brand: (concept as { brand?: ResultData["brand"] }).brand,
     });
     if (data.id && data.id !== "demo") setAddress("/try/?id=" + encodeURIComponent(data.id));
     go("result");

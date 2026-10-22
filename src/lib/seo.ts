@@ -28,7 +28,7 @@ export const META: Record<string, PageMeta> = {
   try: {
     path: "/try/",
     title: "See your website, redone · BringsUp",
-    description: "Paste your website. We rebuild your homepage from your own photos, services and story and email it to you the same day, usually within the hour. Free, no call.",
+    description: "Type in your web address. We rebuild your homepage from your own photos, services and story and email it to you the same day, usually within the hour. Free, no call.",
     share: "Paste your website and get your new homepage by email, free. No call.",
     ...TRY_IMAGE,
   },
@@ -56,7 +56,7 @@ export const META: Record<string, PageMeta> = {
   managed: {
     path: "/managed/",
     title: "Managed website plan · BringsUp",
-    description: "$49 a month: we run your website for you. Hosting, your domain and email settings watched, renewal reminders, and updates by email.",
+    description: "$49 a month: we run your website for you. Hosting, your web address and email settings watched, renewal reminders, and updates by email.",
     ...HOME_IMAGE,
   },
   extra: {

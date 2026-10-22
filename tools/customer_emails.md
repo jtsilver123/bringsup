@@ -26,9 +26,11 @@ Send within the hour of a new project (`build` job, before building).
 
 Hi {first name},
 
-Thanks, your form came through and we've started. Your private preview will arrive by email by {date 14 days out, e.g. "Thursday, November 5"}.
+Thanks, your form came through and we've started. There's nothing you need to do or pay right now.
 
-There's nothing to pay and nothing else to do until then. If you skipped the photos or the logo, or think of anything to add, just reply to this email and we'll work it in. Changed your mind? Reply and we'll stop, and you owe nothing.
+By {date 14 days out, e.g. "Thursday, November 5"}, we'll email you a private link to see your new site.
+
+If you skipped the photos or the logo, or think of anything to add, just reply to this email and we'll work it in. Changed your mind? Reply and we'll stop, and you owe nothing.
 
 Jake
 
@@ -39,9 +41,11 @@ Instead of email 1 when the project has `starts_on` after today (the month's cap
 
 Hi {first name},
 
-Thanks, your form came through. We take on a set number of new sites each month so each one gets real attention, and {this month} is full, so yours is first in line for {next month}. We start on {starts_on, e.g. "Monday, November 2"}, and your private preview will arrive by email by {starts_on + 14 days}.
+Thanks, your form came through. There's nothing you need to do or pay right now.
 
-There's nothing to pay and nothing else to do until then. If you think of anything to add, just reply to this email. Changed your mind? Reply and we'll stop, and you owe nothing.
+We take on a set number of new sites each month so each one gets real attention. {this month} is full, so yours is first in line for {next month}. We start on {starts_on, e.g. "Monday, November 2"}, and by {starts_on + 14 days} we'll email you a private link to see your new site.
+
+If you think of anything to add, just reply to this email. Changed your mind? Reply and we'll stop, and you owe nothing.
 
 Jake
 
@@ -54,13 +58,13 @@ Hi {first name},
 
 Here's the new {business} website: {preview_url}
 
+Open it on your phone first, since that's where most of your customers will see it. It's private, so only people with this link can see it. The address ends in pages.dev for now. That's normal: it moves to {domain} when it goes live.
+
 {If we refreshed their logo and colors:} Your refreshed logo and a one-page brand guide are here too, with your colors and fonts, so signs, menus and posts can match: {preview_url}/brand/
 
-Look at it on your phone first, since that's where most of your customers will see it. It's private, so only people with this link can see it. The address ends in pages.dev for now; that's just where the preview lives until it moves to {domain}.
-
-When you're ready, you have two options:
-- Want something different? List it here, or just reply: {changes link}. Two rounds of changes are included, and we keep count for you. A typo or a wrong number is a fix, not a round, so just tell us.
-- Love it? Approve it here and pay the flat $1,000: {approve link}. After that there's one 10-minute step at {provider} (we send the exact clicks, or send them to whoever manages your domain), and it's live on {domain}.
+When you're ready, pick one:
+- Want something different? List everything here, or just reply to this email: {changes link}. Two rounds of changes are included. A round is one list of changes you send at once, and we keep count for you. A typo or a wrong number is a fix, not a round, so just tell us.
+- Love it? Approve it here and pay the flat $1,000: {approve link}. After that there's one 10-minute step at {provider}, the company where you got your web address. We send you the exact clicks, or send them to whoever set it up for you. Then it's live on {domain}.
 
 No rush.
 
@@ -73,14 +77,16 @@ Sent when a round of changes comes in, before you apply it.
 
 Hi {first name},
 
-We have your changes and are working on them. Your updated preview arrives within 3 days. Anything else you think of before the updated preview arrives, and for two days after it, goes into this same round, so send it along.
+We have your changes and are working on them. Your updated preview arrives within 3 days, and there's nothing you need to do until then.
+
+Thought of something else? Send it before the update arrives, or up to two days after, and it's part of this same round.
 
 Jake
 
 ## 4. Updated preview
 Sent once a round of changes is deployed.
 
-**Subject:** Your updated preview ({rounds_used} of {rounds_total} rounds used)
+**Subject:** Your updated preview ({rounds_used} of {rounds_total} rounds of changes used)
 
 Hi {first name},
 
@@ -92,7 +98,7 @@ What we changed:
 {If rounds are left:} You have {rounds_left} round{s} of changes left. Anything you send before {weekday and time 48 hours from now, e.g. "Thursday at 2pm"} is still part of this round, so don't hold back: {changes link}
 {If none are left:} That was your last included round, but anything you send before {weekday and time 48 hours from now} is still part of it: {changes link}. After that, you can approve it as it is, or ask for one more round for $150.
 
-Happy with it? Approve it here, and it goes live: {approve link}
+Happy with it? Approve it and pay the flat $1,000 here, and it goes live: {approve link}
 
 Jake
 
@@ -116,21 +122,21 @@ Jake
 ## 6. Approved and paid
 Sent when the site is approved (`launch` job). Send it to the owner. If someone else has the domain login, send the domain steps to that person too (CC the owner), with the steps in the body.
 
-**Subject:** Receipt, and the last step for {domain}
+**Subject:** Your receipt, and one last step for {domain}
 
 Hi {first name},
 
-Thank you. Your site is approved and paid, and Stripe has emailed your receipt (it says InstateMe, my other company, which handles our payments). If you spot anything we got wrong, reply and we'll fix it before it goes live, at no charge.
-
-The last step is pointing {domain} at your new site. It takes about 10 minutes at {provider}. {If someone else has the login: "We've sent the steps to {helper email}, so there's nothing for you to do."}
+Thank you. Your site is approved and paid. One last step: connect your web address, {domain}, to the new site. It takes about 10 minutes on the {provider} website, where your web address is registered. {If someone else has the login: "We've sent the steps to {helper email}, so there's nothing for you to do."}
 
 {Provider-specific steps, written like the GoDaddy example in tools/OPERATOR.md, "Domain steps".}
 
 Your email won't be affected. The steps only touch the two settings that point your web address at the new site. Nothing about your email is changed, and we check it still works before we say it's live.
 
-Once this is done, your old site stops showing and the new one takes its place. You can cancel the old website plan whenever you like, but keep the domain registration and your email service, since those are often on the same bill. If you're not sure which is which, forward us the invoice and we'll tell you.
+Once this is done, your old site stops showing and the new one takes its place. You can cancel the old website plan whenever you like. But keep paying for your web address and your email, since those are often on the same bill. If you're not sure which is which, forward us the bill and we'll tell you.
 
-Once it's connected, we'll check everything and let you know it's live. If you get stuck, reply with a screenshot and we'll tell you exactly what to click.
+Once it's connected, we'll check everything and let you know it's live. Stuck? Reply with a photo of your screen and we'll tell you exactly what to tap. Or forward this email to whoever set up your website.
+
+Stripe has emailed your receipt. It says InstateMe, my other company, which handles our payments. If you spot anything on the site we got wrong, reply and we'll fix it before it goes live, at no charge.
 
 Jake
 
@@ -141,7 +147,7 @@ Sent on day 2 and day 5 if DNS isn't pointed yet. If a helper email is set, send
 
 Hi {first name},
 
-Your new site is ready and waiting. The only thing left is pointing {domain} at it, which takes about 10 minutes. The steps are in the email above. If it's easier, forward that email to whoever set up your domain, or reply with their email and we'll send it to them directly.
+Your new site is ready and waiting. The only thing left is connecting your web address, {domain}, to it, which takes about 10 minutes. The steps are in the email above. If it's easier, forward that email to whoever set up your web address, or reply with their email and we'll send it to them directly. Stuck? Reply with a photo of your screen and we'll tell you exactly what to tap.
 
 Jake
 
@@ -154,11 +160,13 @@ Hi {first name},
 
 It's live: https://www.{domain}
 
+{Unless the www note below applies:} There's nothing else you need to do.
+
 {If the bare domain isn't forwarding yet:} One small thing: typing {domain} without "www" still shows the old site, because the forwarding step at {provider} isn't done yet. It's step 2 in the email above; reply if you'd like us to walk you through it.
 
-We checked it on phones and computers, and your email still works the way it did. Hosting is included, so there's no monthly bill. If you were paying for your old site, you can cancel that plan now. Keep your domain and email with whoever provides them.
+We checked it on phones and computers, and your email still works the way it did. Keeping your site online (hosting) is included, so there's no monthly bill for it. If you were paying for your old site, you can cancel that plan now. Keep paying for your web address and your email wherever you pay for them now.
 
-If anything on the site is wrong, reply and we'll fix it free. For other updates later on, like new hours, specials or photos, just reply anytime: a round of changes is $150. {Only if the project has a `domain`:} Or, if you'd rather never think about it, the managed plan is $49 a month: updates by email are included, and we keep watch on your web address, email settings and renewal. Details: https://bringsup.com/managed/?ref={ref}. Your own web person can also edit the files, since they're yours.
+If anything on the site is wrong, reply and we'll fix it free. For other updates later on, like new hours, specials or photos, just reply anytime: a round of changes is $150. {Only if the project has a `domain`:} Or, if you'd rather never think about it, the managed plan is $49 a month: updates by email are included, and we keep watch on your web address, your email settings and when your web address is due for renewal. Details: https://bringsup.com/managed/?ref={ref}. Your own web person can also edit the files, since they're yours.
 
 Thanks for trusting us with it. If a customer says something nice about the new site, we'd love to hear it.
 
@@ -212,7 +220,7 @@ Sent when a managed-plan subscription is first recorded (OPERATOR.md "Managed pl
 
 Hi {first name},
 
-Thanks for joining. From now on, when something changes at {business}, like hours, prices, the menu, photos or a holiday notice, just reply to any of my emails and I'll update the site, usually within a day. I also check every day that {domain} leads to your site and your email settings are intact, and I'll remind you before your domain's renewal date.
+Thanks for joining. From now on, when something changes at {business}, like hours, prices, the menu, photos or a holiday notice, just reply to any of my emails and I'll update the site, usually within a day. I also check every day that {domain} leads to your site and your email settings are intact, and I'll remind you before your web address is due for renewal.
 
 Bigger work, like a new page, is still $150 a round, and I'll always ask first. You can update your card or cancel anytime here, with the email you signed up with: {portal link}
 
