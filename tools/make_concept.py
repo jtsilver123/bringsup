@@ -69,10 +69,20 @@ THEMES = {
         final_heading="Need it fixed? We'll be there.",
         photos=dict(hero=u("1607472586893-edb57bdc0e39"), cards=[u("1585704032915-c3400ca199e7", 900), u("1621905251189-08b45d6a269e", 900), u("1504148455328-c376907d081c", 900)], story=u("1581244277943-fe4a9c777189", 1200), cta=u("1607472586893-edb57bdc0e39"))),
 }
+THEMES["education"] = dict(BASE, radius="12px", radius_lg="18px", bg="#F6F7FB", ink="#15203A", muted="#4B5675", hero="#15203A", hero_ink="#F3F5FB", accent="#F5B546", accent_ink="#15203A", card="#FFFFFF", line="#DFE3EE", star="#E09B1A", eyebrow="#B4560C",
+        display_font="Fraunces", display_font_q="Fraunces:opsz,wght@9..144,600;9..144,700", body_font="Inter", body_font_q="Inter:wght@400;500;600;700;800",
+        tagline="Residency consulting", nav=["How it works", "Pricing", "Results", "FAQ"], primary_cta="Book a free call", list_eyebrow="What we do", list_heading="In-state tuition, without the guesswork",
+        list_sub="A clear plan, the paperwork handled, and a fee you only pay when it works.", item_link="Learn more",
+        blurbs=["Know your odds in 30 minutes, free.", "Every document and deadline, mapped out.", "We only get paid after you're reclassified."],
+        steps_eyebrow="How it works", steps_heading="From out-of-state to in-state in three steps",
+        steps=[["Free consultation", "A 30-minute call on your odds, school and timeline."], ["Your roadmap", "A step-by-step plan built on your state's actual rules."], ["Reclassification", "We guide every step. You pay only when it's granted."]],
+        final_heading="Stop paying out-of-state tuition.",
+        photos=dict(hero=u("1541339907198-e08756dedf3f"), cards=[u("1554224155-6726b3ff858f", 900), u("1450101499163-c8848c66ca85", 900), u("1531545514256-b1400bc00f31", 900)], story=u("1562774053-701939374585", 1200), cta=u("1517486808906-6ca8b3f04846")))
 THEMES["default"] = THEMES["trades"]
 
 def theme_for(industry: str) -> dict:
     s = (industry or "").lower()
+    if any(k in s for k in ("tuition", "residency", "education", "consult", "college")): return THEMES["education"]
     if any(k in s for k in ("deli", "sandwich", "sub", "pizza", "diner", "restaurant")): return THEMES["deli"]
     if any(k in s for k in ("bak", "cafe", "donut", "pastry", "dessert")): return THEMES["bakery"]
     if any(k in s for k in ("auto", "car", "mechanic", "tire", "transmission")): return THEMES["auto"]
@@ -92,17 +102,20 @@ def build_copy(p, t):
     yr = yr[:4] if yr[:4].isdigit() else ""
     key = t["tagline"]
     with_year = {"Family bakery": f"Baked fresh in {city} since {yr}.", "Family deli": f"{city}'s favorite subs since {yr}.", "Auto repair": f"Trusted car care since {yr}.",
-                 "Greenhouse & garden": f"Growing in {city} since {yr}.", "Licensed & insured": f"{city}'s neighborhood pros since {yr}."}
+                 "Greenhouse & garden": f"Growing in {city} since {yr}.", "Licensed & insured": f"{city}'s neighborhood pros since {yr}.", "Residency consulting": "Pay in-state tuition. Legally, and for good."}
     no_year = {"Family bakery": "Baked fresh every morning, the way it should be.", "Family deli": "Piled-high subs, made the old-fashioned way.", "Auto repair": "Honest car care from people who know your name.",
-               "Greenhouse & garden": "Healthy plants, grown right here.", "Licensed & insured": "Done right the first time, by your neighbors."}
+               "Greenhouse & garden": "Healthy plants, grown right here.", "Licensed & insured": "Done right the first time, by your neighbors.", "Residency consulting": "Pay in-state tuition. Legally, and for good."}
     headline = (with_year if yr and city else no_year)[key]
     subs = {"Family bakery": "Order ahead online, browse the full menu, or stop by and say hi.", "Family deli": "Order ahead online and skip the line, or let us cater your next event.",
             "Auto repair": "Book online in a minute, get a clear quote, and get back on the road.", "Greenhouse & garden": "See what's in stock this week and reserve plants for pickup.",
-            "Licensed & insured": "Request a free quote online and we'll call you back fast."}
-    sub = f"{p['name']} is a family-owned favorite in {p.get('city_state') or 'town'}. " + subs[key]
+            "Licensed & insured": "Request a free quote online and we'll call you back fast.",
+            "Residency consulting": "We guide out-of-state students and parents through residency, step by step, and only get paid when it's granted."}
+    sub = p.get("sub") or (f"{p['name']} is a family-owned favorite in {p.get('city_state') or 'town'}. " + subs[key])
     owner = (p.get("owner_name_if_known") or "").split("(")[0].strip()
     story_heading = f"Family owned since {yr}." if yr else "Family owned and proud of it."
     story_lead = (f"Serving {city or 'our neighbors'} since {yr}. " if yr else f"A {city} favorite. ") + (f"Run today by {owner}, with the same care and standards. " if owner else "Same care, same standards. ") + "Now a little easier to find online."
+    story_heading = p.get('story_heading') or story_heading
+    story_lead = p.get('story_lead') or story_lead
     return city, headline, sub, story_heading, story_lead
 
 def rating_site(url):
@@ -112,6 +125,7 @@ def rating_site(url):
     return ""
 
 def stats_for(p):
+    if p.get("stats"): return p["stats"][:4]
     out = []
     yr = str(p.get("year_founded_if_known") or "")[:4]
     if yr.isdigit(): out.append({"n": yr, "l": "Family owned since"})

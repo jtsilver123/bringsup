@@ -113,7 +113,7 @@ footer b{color:var(--ink);font-family:var(--display);font-size:20px}
 </style>
 </head>
 <body>
-<div class="util"><div class="wrap"><span>{{ p.city_state }} · Family owned{% if p.year_founded_if_known %} since {{ p.year_founded_if_known }}{% endif %}</span>{% if p.phone %}<span>Call us <b>{{ p.phone }}</b></span>{% endif %}</div></div>
+<div class="util"><div class="wrap"><span>{{ p.city_state }} · {{ p.util_label or 'Family owned' }}{% if p.year_founded_if_known %} since {{ p.year_founded_if_known }}{% endif %}</span>{% if p.phone %}<span>Call us <b>{{ p.phone }}</b></span>{% endif %}</div></div>
 <header class="nav">
   <div class="wrap">
     <div class="logo"><span class="mono">{{ initials }}</span><div><b>{{ p.name }}</b><small>{{ t.tagline }}</small></div></div>
@@ -158,14 +158,14 @@ footer b{color:var(--ink);font-family:var(--display);font-size:20px}
 <section class="story">
   <div class="wrap split">
     <div class="photo" style="background-image:url('{{ photos.story }}')">
-      {% if p.year_founded_if_known %}<div class="badge"><b>{{ p.year_founded_if_known }}</b><span>Family owned since</span></div>{% endif %}
+      {% if p.year_founded_if_known %}<div class="badge"><b>{{ p.year_founded_if_known }}</b><span>{{ p.since_label or 'Family owned since' }}</span></div>{% endif %}
     </div>
     <div>
       <p class="eyebrow">Our story</p>
       <h2 class="h2">{{ story_heading }}</h2>
       <p class="lead">{{ story_lead }}</p>
       {% if p.what_customers_praise %}
-      <div class="quote"><div class="stars">★★★★★</div><p>{{ p.what_customers_praise }}</p><small>What our {% if p.review_count %}{{ p.review_count }} {% endif %}reviewers keep mentioning</small></div>
+      <div class="quote"><div class="stars">★★★★★</div><p>{{ p.what_customers_praise }}</p><small>{{ p.praise_label or ('What our ' ~ (p.review_count ~ ' ' if p.review_count else '') ~ 'reviewers keep mentioning') }}</small></div>
       {% endif %}
     </div>
   </div>
