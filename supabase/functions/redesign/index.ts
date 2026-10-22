@@ -2,7 +2,13 @@
 //                                                for a better homepage, stores it, returns it.
 // GET  /redesign?id=<uuid>                     -> a stored redesign, for share links.
 //
-// Secrets (Supabase dashboard -> Edge Functions -> Secrets): ANTHROPIC_API_KEY, IP_SALT.
+// Two modes:
+// - Instant (ANTHROPIC_API_KEY set): Claude designs the homepage during the request.
+// - Queue (no key): the request saves what we read from the site and returns 202. A scheduled
+//   Claude Code task pulls the queue (GET ?queue=1), designs each homepage, posts it back
+//   ({action: "complete"}) and emails the visitor their link. Worker calls need x-worker-token.
+//
+// Secrets (Supabase dashboard -> Edge Functions -> Secrets): IP_SALT, WORKER_TOKEN, and ANTHROPIC_API_KEY for instant mode.
 // Optional: ALLOWED_ORIGINS (comma-separated), DAILY_CAP (default 150), PER_VISITOR_DAILY (default 3).
 // SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are provided by Supabase automatically.
 import Anthropic from "npm:@anthropic-ai/sdk@0.133.0";
@@ -14,6 +20,9 @@ const MODEL = "claude-opus-5-5";
 const ORIGINS = (Deno.env.get("ALLOWED_ORIGINS") || "https://bringsup.com,https://www.bringsup.com").split(",").map((s) => s.trim());
 const DAILY_CAP = Number(Deno.env.get("DAILY_CAP") || 150);
 const PER_VISITOR_DAILY = Number(Deno.env.get("PER_VISITOR_DAILY") || 3);
+const WORKER_TOKEN = Deno.env.get("WORKER_TOKEN") || "";
+const instant = () => !!Deno.env.get("ANTHROPIC_API_KEY");
+const link = (id: string) => `https://bringsup.com/try/?id=${id}`;
 
 let anthropic: Anthropic | null = null; // created on first use so share links work before the key is set
 const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
@@ -64,26 +73,90 @@ async function generate(site: Awaited<ReturnType<typeof readSite>>) {
   return { concept: JSON.parse(text), usage: response.usage };
 }
 
+function isWorker(req: Request): boolean {
+  return WORKER_TOKEN.length >= 24 && req.headers.get("x-worker-token") === WORKER_TOKEN;
+}
+
+type SavedSite = Awaited<ReturnType<typeof readSite>>;
+
+/** Just enough of the site to draw a blurred "in progress" draft while a request waits in the queue. */
+function preview(site: SavedSite | null) {
+  if (!site) return null;
+  const name = (site.title || site.host).split(/\s[|\-–—:]\s/)[0].trim().slice(0, 60);
+  return { name, phone: site.phones[0] || "", colors: site.colors.slice(0, 3), images: site.images.filter((i) => !i.logo).slice(0, 4).map((i) => i.url) };
+}
+
+/** Queued requests with everything a designer needs: the same system prompt, schema and site summary instant mode uses. */
+async function queue(req: Request): Promise<Response> {
+  const { data, error } = await db.from("redesigns").select("id, email, url, site, created_at")
+    .eq("status", "queued").order("created_at").limit(10);
+  if (error) return json(req, 500, { error: error.message });
+  return json(req, 200, {
+    system: SYSTEM,
+    schema: SCHEMA,
+    items: (data || []).map((r) => ({
+      id: r.id, email: r.email, url: r.url, created_at: r.created_at, link: link(r.id),
+      prompt: userMessage(r.site as SavedSite),
+    })),
+  });
+}
+
+// deno-lint-ignore no-explicit-any
+async function work(req: Request, body: any): Promise<Response> {
+  const id = String(body.id || "");
+  const { data: row } = await db.from("redesigns").select("id, site, status").eq("id", id).maybeSingle();
+  if (!row) return json(req, 404, { error: "No such redesign." });
+  if (body.action === "fail") {
+    await db.from("redesigns").update({ status: "error", error: String(body.error || "worker failed").slice(0, 500) }).eq("id", id);
+    return json(req, 200, { ok: true });
+  }
+  if (body.action === "emailed") {
+    await db.from("redesigns").update({ emailed_at: new Date().toISOString() }).eq("id", id);
+    return json(req, 200, { ok: true });
+  }
+  if (body.action !== "complete") return json(req, 400, { error: "Unknown action." });
+  const concept = body.concept;
+  if (!concept || typeof concept !== "object") return json(req, 400, { error: "Missing concept." });
+  if (concept.not_a_business) {
+    await db.from("redesigns").update({ status: "skipped", content: concept }).eq("id", id);
+    return json(req, 200, { ok: true, status: "skipped" });
+  }
+  for (const k of ["business_name", "headline", "theme", "services", "improvements"]) {
+    if (!(k in concept)) return json(req, 400, { error: `Concept is missing ${k}; follow the schema from the queue.` });
+  }
+  const images = ((row.site as SavedSite | null)?.images || []).map((i) => i.url);
+  await db.from("redesigns").update({ status: "done", business_name: concept.business_name, content: concept, images }).eq("id", id);
+  return json(req, 200, { ok: true, status: "done", link: link(id) });
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors(req) });
 
   if (req.method === "GET") {
-    const id = new URL(req.url).searchParams.get("id") || "";
+    const params = new URL(req.url).searchParams;
+    if (params.has("queue")) return isWorker(req) ? queue(req) : json(req, 401, { error: "Not allowed." });
+    const id = params.get("id") || "";
     if (!/^[0-9a-f-]{36}$/i.test(id)) return json(req, 400, { error: "Missing id." });
-    const { data, error } = await db.from("redesigns").select("id, url, content, images").eq("id", id).eq("status", "done").maybeSingle();
+    const { data, error } = await db.from("redesigns").select("id, url, status, content, images, site").eq("id", id).maybeSingle();
     if (error) return json(req, 500, { error: "Something went wrong." });
-    if (!data) return json(req, 404, { error: "We couldn't find that redesign." });
-    return json(req, 200, { id: data.id, url: data.url, concept: data.content, images: data.images });
+    if (data?.status === "done") return json(req, 200, { id: data.id, status: "done", url: data.url, concept: data.content, images: data.images });
+    if (data?.status === "queued") return json(req, 202, { id: data.id, status: "queued", url: data.url, preview: preview(data.site as SavedSite) });
+    if (data?.status === "skipped") {
+      return json(req, 422, { error: data.content?.not_a_business_reason || "That doesn't look like a local business website.", code: "not_a_business" });
+    }
+    return json(req, 404, { error: "We couldn't find that redesign." });
   }
 
   if (req.method !== "POST") return json(req, 405, { error: "Method not allowed." });
 
-  let body: { url?: string; email?: string; company_site?: string };
+  // deno-lint-ignore no-explicit-any
+  let body: any;
   try {
     body = await req.json();
   } catch {
     return json(req, 400, { error: "Bad request." });
   }
+  if (body.action) return isWorker(req) ? work(req, body) : json(req, 401, { error: "Not allowed." });
   // Honeypot: real visitors never see or fill this field.
   if (body.company_site) return json(req, 400, { error: "Bad request." });
   const email = (body.email || "").trim().toLowerCase();
@@ -109,6 +182,10 @@ Deno.serve(async (req) => {
 
   try {
     const site = await readSite(body.url || "");
+    if (!instant()) {
+      await db.from("redesigns").update({ status: "queued", url: site.url, site }).eq("id", row.id);
+      return json(req, 202, { id: row.id, status: "queued", url: site.url, preview: preview(site) });
+    }
     const { concept, usage } = await generate(site);
     if (concept.not_a_business) {
       await db.from("redesigns").update({ status: "skipped", url: site.url, content: concept }).eq("id", row.id);
@@ -119,7 +196,7 @@ Deno.serve(async (req) => {
       status: "done", url: site.url, business_name: concept.business_name, content: concept, images,
       input_tokens: usage.input_tokens, output_tokens: usage.output_tokens,
     }).eq("id", row.id);
-    return json(req, 200, { id: row.id, url: site.url, concept, images });
+    return json(req, 200, { id: row.id, status: "done", url: site.url, concept, images });
   } catch (err) {
     const known = err instanceof SiteError;
     const message = known ? err.message : "We couldn't redesign that site automatically.";
