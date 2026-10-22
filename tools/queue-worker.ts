@@ -109,7 +109,9 @@ async function previewImages(file: string, name: string, currentUrl?: string): P
         ? { viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true }
         : { viewport: { width: 1280, height: 800 }, deviceScaleFactor: 1.3 });
       try {
-        await page.goto(url, { waitUntil: "networkidle", timeout: 30_000 }).catch(() => {});
+        // A page that didn't load (bad address, site down, error status) must never be shown as "Your site today".
+        const res = await page.goto(url, { waitUntil: "networkidle", timeout: 30_000 }).catch(() => null);
+        if (!url.startsWith("file:") && (!res || !res.ok())) return undefined;
         await page.waitForTimeout(1200);
         return await page.screenshot({ type: "jpeg", quality: 76 });
       } catch { return undefined; } finally { await page.close().catch(() => {}); }

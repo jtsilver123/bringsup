@@ -2,7 +2,7 @@
 .ba{margin-top:64px}
 @media (max-width:700px){.ba{margin-top:44px}}
 .ba-labels{display:flex;justify-content:space-between;font-size:16px;font-weight:700;color:var(--subtle);margin-bottom:10px}
-.ba-stage{position:relative;aspect-ratio:16/9;overflow:hidden;--pos:50%;user-select:none;-webkit-user-select:none;touch-action:pan-y;cursor:grab;background:var(--sand);border:1px solid var(--rule);border-radius:var(--r);-webkit-tap-highlight-color:transparent}
+.ba-stage{position:relative;aspect-ratio:var(--ba-ratio,16/9);overflow:hidden;--pos:50%;user-select:none;-webkit-user-select:none;touch-action:pan-y;cursor:grab;background:var(--sand);border:1px solid var(--rule);border-radius:var(--r);-webkit-tap-highlight-color:transparent}
 .ba-stage.dragging{cursor:grabbing}
 .ba-stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:left top;pointer-events:none}
 .ba-after{clip-path:inset(0 calc(100% - var(--pos)) 0 0)}

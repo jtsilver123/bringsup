@@ -66,7 +66,7 @@ html{scroll-padding-top:84px}
 
 /* before / after */
 /* a click or an arrow key glides the handle to its spot; dragging follows the finger exactly */
-@media (max-width:700px){.ba-stage{aspect-ratio:4/3}}
+@media (max-width:700px){.ba-stage{aspect-ratio:var(--ba-ratio,4/3)}}
 
 /* images fade in once they've loaded, in space already reserved for them (FadeImg; nothing is hidden without JavaScript) */
 img.pending{opacity:0}

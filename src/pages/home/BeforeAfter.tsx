@@ -108,7 +108,8 @@ export function BeforeAfter(props: Props = {}) {
       <div
         ref={stage}
         className={["ba-stage", dragging && "dragging", glide && "glide"].filter(Boolean).join(" ")}
-        style={{ "--pos": `${pos}%`, aspectRatio: `${after.width} / ${after.height}` } as CSSProperties}
+        // Custom shots set their own shape through --ba-ratio; the homepage keeps its CSS ratios (16:9, 4:3 on phones).
+        style={{ "--pos": `${pos}%`, ...(props.after ? { "--ba-ratio": `${after.width} / ${after.height}` } : {}) } as CSSProperties}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={stop}

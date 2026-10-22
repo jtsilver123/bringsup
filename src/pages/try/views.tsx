@@ -346,6 +346,12 @@ export function ResultView({ hidden, data, onCopy, onFullScreen, onAgain }: Resu
     }, ms);
     return () => clearTimeout(t);
   }, [phase]); // eslint-disable-line react-hooks/exhaustive-deps -- the key is fixed for the preview
+  // Covered (blank) while their site today loads; if that takes over 6s, skip the reveal rather than keep them waiting.
+  useEffect(() => {
+    if (phase !== "wait") return;
+    const t = setTimeout(() => setPhase("done"), 6000);
+    return () => clearTimeout(t);
+  }, [phase]);
   const frameReady = (k: string) => { readyFrames.current.add(k); setReadyTick((n) => n + 1); };
   const stopReveal = () => setPhase("done");
   // Switching between Desktop and Phone mid-reveal just ends it.
