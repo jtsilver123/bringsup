@@ -76,7 +76,7 @@ export const COMPARE: CompareRow[] = [
 ];
 
 export const PROMISES: IconItem[] = [
-  { icon: "mail", title: "Two emails, then we stop", text: "Reply \"no thanks\" anytime and you'll never hear from us again." },
+  { icon: "mail", title: "Three short emails, then we stop", text: "Reply \"no thanks\" anytime and you'll never hear from us again." },
   { icon: "dollar", title: "Pay only when you love it", text: "Flat $1,000, after you approve your finished site. No calls, no upsell, no surprise invoices." },
   { icon: "lock", title: "You keep the keys", text: "Your domain, your files, your site. Leave the Care Plan anytime and take it all with you." },
   { icon: "star", title: "We lead with what's great", text: "Your reviews and your history. That's what the new site is built around." },
