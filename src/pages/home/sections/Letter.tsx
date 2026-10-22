@@ -9,10 +9,11 @@ export function Letter() {
     <section id="hello" className="sec" aria-labelledby="hello-h">
       <div className="wrap split">
         <div className="letter">
-          <h2 className="t2" id="hello-h">Got an email from me?</h2>
+          <h2 className="t2" id="hello-h">Got an email from <span className="key">me</span>?</h2>
           <p>Then it really was me. BringsUp is one person, Jake Silver. I look for family businesses whose customers rave about them and whose website hasn't caught up yet, and I write to the address the business lists itself. I never buy lists.</p>
           <p>The email has no links and no attachments. If you write back yes, I make your homepage and send you a private link, usually the same day. If it's not for you, say so and I won't write again. Either way, I send three short emails at most, then I stop.</p>
           <p>I keep everything on email, which is part of how I keep the price flat. Ask me anything at <a href={`mailto:${EMAIL}`}>{EMAIL}</a> and you'll get an answer the same day.</p>
+          <p className="ps">P.S. There's no sales team or call center behind this. When you reply, you're writing to me.</p>
         </div>
         <figure className="mail">
           <div className="mail-card">
@@ -24,7 +25,7 @@ export function Letter() {
               <p>Hi Rosa,</p>
               <p>I was reading through your reviews and kept seeing the sourdough, and that your family remembers people's names. Forty years of that is something.</p>
               <p>Your website doesn't really show it yet. I'd like to make you a new homepage, built from your actual menu and hours, with the bakery front and center and ordering one tap away on a phone.</p>
-              <p>It's free to look at, and if you like it I can build the whole site, and you'd only pay once it's finished and you're happy with it. Want me to put one together?</p>
+              <p>It's free to look at, and if you like it I can build the whole site, and you'd only pay once it's finished and you're happy with it. Want me to make it? Just reply yes. It doesn't commit you to anything.</p>
               <p>Jake<br />bringsup.com</p>
               <p className="mail-foot">If this isn't for you, just say so and I won't email again.</p>
             </div>

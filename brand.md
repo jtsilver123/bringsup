@@ -78,6 +78,7 @@ Almost none. Motion explains something or confirms an action; it is never decora
 - On /try/, Desktop and Phone morph into each other instead of swapping, and the phone overlapping the browser lifts a little on hover.
 - Images fade in once loaded, in space that was already reserved. Nothing shifts.
 - No reveals on scroll, no parallax, no hand-drawn underlines, no lighting-up stars, no glow.
+- Headline emphasis: a straight Ember underline (`.key`) under at most two short phrases in a headline, like "the best in town". It never draws in or animates.
 - Everything respects `prefers-reduced-motion`, and everything that works without JavaScript today still does.
 
 ## Color in UI states

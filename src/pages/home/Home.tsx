@@ -4,6 +4,7 @@ import { REDESIGN_API } from "../../lib/config.ts";
 import { hasIO, useSearch } from "./hooks.ts";
 import { Concept } from "./sections/Concept.tsx";
 import { Faq } from "./sections/Faq.tsx";
+import { Fixes } from "./sections/Fixes.tsx";
 import { Footer } from "./sections/Footer.tsx";
 import { Header } from "./sections/Header.tsx";
 import { Hero } from "./sections/Hero.tsx";
@@ -55,6 +56,7 @@ export function Home() {
         <Hero live={LIVE} start={fromEmail ? startHref : undefined} />
         <Letter />
         <Work onOpen={(src, name) => viewer.current?.open(src, name)} />
+        <Fixes />
         <Offer />
         <Faq />
         <Concept live={LIVE} search={search} say={toast.say} />
