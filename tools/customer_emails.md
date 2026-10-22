@@ -24,6 +24,19 @@ There's nothing to pay and nothing else to do until then. If you skipped the pho
 
 Jake
 
+## 1b. Start received, this month is full
+Instead of email 1 when the project has `starts_on` after today (the month's cap of new sites was reached when they started). It counts as email 1: log it as "Sent email 1".
+
+**Subject:** We're building the {business} website
+
+Hi {first name},
+
+Thanks, your form came through. We take on a set number of new sites each month so each one gets real attention, and {this month} is full, so yours is first in line for {next month}. We start on {starts_on, e.g. "Monday, November 2"}, and your private preview will arrive by email by {starts_on + 14 days}.
+
+There's nothing to pay and nothing else to do until then. If you think of anything to add, just reply to this email. Changed your mind? Reply and we'll stop, and you owe nothing.
+
+Jake
+
 ## 2. Preview ready
 Sent once the first preview is deployed.
 

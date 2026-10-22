@@ -1,0 +1,8 @@
+.capacity{margin:20px 0 0;max-width:460px}
+.cap-line{margin:0 0 10px;font-size:15px;line-height:1.45;color:var(--muted)}
+.cap-line b{color:var(--ink);font-weight:600}
+.cap-bar{height:6px;border-radius:99px;background:var(--line);overflow:hidden}
+.cap-bar span{display:block;height:100%;border-radius:inherit;background:var(--ember);transform-origin:left;animation:cap-fill .7s var(--out) both}
+.capacity.full .cap-bar span{background:var(--ink)}
+@keyframes cap-fill{from{transform:scaleX(0)}}
+@media (prefers-reduced-motion:reduce){.cap-bar span{animation:none}}

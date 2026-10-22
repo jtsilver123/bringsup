@@ -4,6 +4,7 @@
 //                                   the project, count rounds and set the builder's next job (`todo`).
 // GET  /projects?status=<ref>       Public: rounds used and left, for the /changes/ and /extra/ pages.
 // GET  /projects?pulse=1            Public: when the operator last ran, for the outside watchdog.
+// GET  /projects?capacity=1         Public: this month's real count of new sites against MONTHLY_CAP, for the home page.
 // GET  /projects?jobs=1             Builder: claim up to 5 projects with work to do (leased 45 min).  (x-worker-token)
 // GET  /projects?ref=<ref>          Builder: one project and its history.                            (x-worker-token)
 // GET  /projects?health=1           Health check: alerts, stuck projects, failing jobs.               (x-worker-token)
@@ -32,6 +33,8 @@ const WORKER_TOKEN = Deno.env.get("WORKER_TOKEN") || "";
 const TALLY_SECRET = Deno.env.get("TALLY_SIGNING_SECRET") || "";
 const APPROVE_PRICE_CENTS = Number(Deno.env.get("APPROVE_PRICE_CENTS") || 100000);
 const ROUNDS_INCLUDED = 2;
+/** New sites we start per month (America/New_York). The home page shows the real count; starts past it begin next month. */
+const MONTHLY_CAP = Number(Deno.env.get("MONTHLY_CAP") || 8);
 /** A request this soon after an updated preview is a follow-up to the same round, not a new one. */
 const GRACE_MS = 48 * 3600_000;
 const BUCKET = "project-files";
@@ -191,14 +194,37 @@ async function onStart(sub: Submission): Promise<Project> {
     return p;
   }
 
+  // This month full? The project is still created now; its build begins on the first business day of next month.
+  const cap = await capacity();
+  const starts_on = cap.left > 0 ? null : cap.next_start;
   let ref = sub.ref && !(await byRef(sub.ref)) ? sub.ref : slugify(business);
   if (await byRef(ref)) ref = `${ref}-${crypto.randomUUID().slice(0, 4)}`;
   const { data, error } = await db.from("projects").insert({
-    ref, ...fields, brief: a, files: sub.files, status: "started", todo: "build", rounds_included: ROUNDS_INCLUDED,
+    ref, ...fields, brief: a, files: sub.files, status: "started", todo: "build", rounds_included: ROUNDS_INCLUDED, starts_on,
   }).select("*").single();
   if (error) throw error;
-  await log(data as Project, "start", `New project: ${business || ref}`);
+  await log(data as Project, "start", `New project: ${business || ref}${starts_on ? ` (this month is full; starts ${starts_on})` : ""}`);
   return data as Project;
+}
+
+/** Year, month (1-12) and day in New York, where the monthly count resets. */
+function nyDate(d = new Date()) {
+  const [y, m, day] = new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York", year: "numeric", month: "2-digit", day: "2-digit" }).format(d).split("-").map(Number);
+  return { y, m, day };
+}
+
+/** This month's new projects against the cap. Cancelled projects and test runs don't count. */
+async function capacity() {
+  const { y, m } = nyDate();
+  // Midnight in New York is 04:00 or 05:00 UTC; 05:00 is safe either way for counting by month.
+  const from = new Date(Date.UTC(y, m - 1, 1, 5)).toISOString();
+  const { count } = await db.from("projects").select("id", { count: "exact", head: true })
+    .gte("created_at", from).neq("status", "cancelled").not("ref", "like", "test-%");
+  const taken = count || 0;
+  const next = new Date(Date.UTC(m === 12 ? y + 1 : y, m === 12 ? 0 : m, 1, 12));
+  while ([0, 6].includes(next.getUTCDay())) next.setUTCDate(next.getUTCDate() + 1);
+  const name = (mm: number) => new Date(Date.UTC(2000, mm - 1, 15)).toLocaleString("en-US", { month: "long", timeZone: "UTC" });
+  return { month: name(m), next_month: name(m === 12 ? 1 : m + 1), cap: MONTHLY_CAP, taken, left: Math.max(0, MONTHLY_CAP - taken), next_start: next.toISOString().slice(0, 10) };
 }
 
 async function onChanges(sub: Submission, paidExtra: boolean): Promise<Project> {
@@ -460,6 +486,11 @@ Deno.serve(async (req) => {
     const { data } = await db.from("operator_runs").select("at").order("at", { ascending: false }).limit(1);
     const last = data?.[0]?.at ?? null;
     return json(200, { last_run_at: last, minutes_since: last ? Math.round((Date.now() - Date.parse(last)) / 60000) : null });
+  }
+
+  if (req.method === "GET" && url.searchParams.has("capacity")) {
+    const { next_start: _, ...c } = await capacity();
+    return new Response(JSON.stringify(c), { status: 200, headers: { "content-type": "application/json", "access-control-allow-origin": "*", "cache-control": "public, max-age=300" } });
   }
 
   const status = url.searchParams.get("status");
