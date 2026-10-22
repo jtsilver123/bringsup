@@ -176,26 +176,19 @@ function useWidth(el: RefObject<HTMLElement | null>, active: boolean): number {
 }
 
 /** One live, scaled copy of the page: laid out at `layoutWidth`, shrunk to `width`, `height` tall on screen. Fades in once loaded. */
-function Screen({ html, scripts, layoutWidth, width, height, title, hint, reveal, onRevealed }: {
+type RevealPhase = "wait" | "today" | "wipe" | "new" | "done";
+
+function Screen({ html, scripts, layoutWidth, width, height, title, hint, reveal, onRevealReady, onRevealFail }: {
   html: string; scripts: boolean; layoutWidth: number; width: number; height: number; title: string; hint?: boolean;
-  /** Their site today: shown over the new one first, then wiped away to reveal it (first visit only). */
-  reveal?: string; onRevealed?: () => void;
+  /** Their site today, laid over the new one, and where the shared reveal is (ResultView runs one timeline for every frame).
+   *  `label` puts "Your site today" / "Your new site" on this frame: only the main one, so the small phone stays clean. */
+  reveal?: { src: string; phase: RevealPhase; label: boolean };
+  onRevealReady?: () => void; onRevealFail?: () => void;
 }) {
   const [ready, setReady] = useState(false);
-  // The reveal: "today" sits on top, then a wipe uncovers the new site, which is labeled for a moment.
-  const [phase, setPhase] = useState<"wait" | "today" | "wipe" | "new" | "done">(reveal ? "wait" : "done");
   const [todayLoaded, setTodayLoaded] = useState(false);
-  useEffect(() => {
-    if (phase === "wait" && ready && todayLoaded) setPhase("today");
-  }, [phase, ready, todayLoaded]);
-  // Each step schedules the next: today (1.5s) -> wipe (1.1s) -> "Your new site" label (2.6s) -> done.
-  useEffect(() => {
-    const next = { today: ["wipe", 1500], wipe: ["new", 1100], new: ["done", 2600] } as const;
-    if (!(phase in next)) return;
-    const [to, ms] = next[phase as keyof typeof next];
-    const t = setTimeout(() => { setPhase(to); if (to === "done") onRevealed?.(); }, ms);
-    return () => clearTimeout(t);
-  }, [phase]); // eslint-disable-line react-hooks/exhaustive-deps -- onRevealed is stable enough for a one-time reveal
+  useEffect(() => { if (reveal && ready && todayLoaded) onRevealReady?.(); }, [ready, todayLoaded]); // eslint-disable-line react-hooks/exhaustive-deps -- report once
+  const phase = reveal?.phase ?? "done";
   // "Scroll to explore" until they've been inside the preview a moment. Scrolling inside the frame can't be seen from here,
   // so a short stay with the pointer (or a finger) over it stands in for "they found it".
   const [explored, setExplored] = useState(false);
@@ -212,11 +205,11 @@ function Screen({ html, scripts, layoutWidth, width, height, title, hint, reveal
         style={{ width: layoutWidth, height: height / scale, transform: `scale(${scale})` }}></iframe>
       {reveal && (phase === "wait" || phase === "today" || phase === "wipe") && (
         <div className={`rv rv-${phase}`} aria-hidden="true">
-          <img src={reveal} alt="" onLoad={() => setTodayLoaded(true)} onError={() => { setPhase("done"); onRevealed?.(); }} />
-          <span className="rv-tag">Your site today</span>
+          <img src={reveal.src} alt="" onLoad={() => setTodayLoaded(true)} onError={() => onRevealFail?.()} />
+          {reveal.label && <span className="rv-tag">Your site today</span>}
         </div>
       )}
-      {reveal && phase === "new" && <span className="rv-tag rv-new" aria-hidden="true">Your new site</span>}
+      {reveal?.label && phase === "new" && <span className="rv-tag rv-new" aria-hidden="true">Your new site</span>}
       {hint && ready && (phase === "done" || phase === "new") && (
         <span className={explored ? "scroll-hint gone" : "scroll-hint"} aria-hidden="true">
           {touch ? "Swipe to explore" : "Scroll to explore"}
@@ -326,17 +319,37 @@ export function ResultView({ hidden, data, onCopy, onFullScreen, onAgain }: Resu
   // First visit to a prospect's preview: their site today wipes away to the new one. Once per preview, never with reduced motion.
   const compare = data?.compare;
   const revealKey = data ? "bu-revealed-" + data.id : "";
-  const [revealing, setRevealing] = useState(false);
+  // One timeline for every visible frame, so the laptop and the phone beside it start on their site today and wipe together.
+  const [phase, setPhase] = useState<RevealPhase>("done");
+  const readyFrames = useRef(new Set<string>());
+  const [readyTick, setReadyTick] = useState(0);
   useEffect(() => {
     if (!compare || !revealKey) return;
     let seenIt = false;
     try { seenIt = localStorage.getItem(revealKey) === "1"; } catch { /* storage blocked */ }
-    setRevealing(!seenIt && !matchMedia("(prefers-reduced-motion: reduce)").matches);
+    if (!seenIt && !matchMedia("(prefers-reduced-motion: reduce)").matches) setPhase("wait");
   }, [revealKey]); // eslint-disable-line react-hooks/exhaustive-deps -- once per preview
-  const revealed = () => {
-    setRevealing(false);
-    try { localStorage.setItem(revealKey, "1"); } catch { /* storage blocked */ }
-  };
+  const revealFrames = [
+    L?.browser.shown && compare?.before.desktop ? "desktop" : "",
+    L?.phone.shown && compare?.before.phone ? "phone" : "",
+  ].filter(Boolean);
+  useEffect(() => {
+    if (phase === "wait" && revealFrames.length && revealFrames.every((k) => readyFrames.current.has(k))) setPhase("today");
+  }, [phase, readyTick, revealFrames.join()]); // eslint-disable-line react-hooks/exhaustive-deps -- revealFrames is derived
+  useEffect(() => {
+    const next = { today: ["wipe", 1500], wipe: ["new", 1100], new: ["done", 2600] } as const;
+    if (!(phase in next)) return;
+    const [to, ms] = next[phase as keyof typeof next];
+    const t = setTimeout(() => {
+      setPhase(to);
+      if (to === "done") try { localStorage.setItem(revealKey, "1"); } catch { /* storage blocked */ }
+    }, ms);
+    return () => clearTimeout(t);
+  }, [phase]); // eslint-disable-line react-hooks/exhaustive-deps -- the key is fixed for the preview
+  const frameReady = (k: string) => { readyFrames.current.add(k); setReadyTick((n) => n + 1); };
+  const stopReveal = () => setPhase("done");
+  // Switching between Desktop and Phone mid-reveal just ends it.
+  useEffect(() => { if (choice) setPhase((p) => (p === "done" ? p : "done")); }, [choice]);
   const name = data?.name || "your business";
   // Outreach concepts carry the prospect's tracker slug, so the start form lands on their row.
   const startHref = data ? "/start/?ref=" + encodeURIComponent(data.ref || "redesign-" + data.id) : "/start/";
@@ -379,7 +392,8 @@ export function ResultView({ hidden, data, onCopy, onFullScreen, onAgain }: Resu
                     <div className="browser">
                       <div className="chrome" aria-hidden="true"><i></i><i></i><i></i><span id="r-host">{data?.address}</span></div>
                       <Screen html={html} scripts={scripts} layoutWidth={DESKTOP_WIDTH} width={L.deskW} height={L.deskH} title={`${name} homepage, desktop`} hint={size === "desktop"}
-                        reveal={revealing && size === "desktop" ? compare?.before.desktop : undefined} onRevealed={revealed} />
+                        reveal={phase !== "done" && L.browser.shown && compare?.before.desktop ? { src: compare.before.desktop, phase, label: size === "desktop" } : undefined}
+                        onRevealReady={() => frameReady("desktop")} onRevealFail={stopReveal} />
                     </div>
                   </div>
                 )}
@@ -388,7 +402,8 @@ export function ResultView({ hidden, data, onCopy, onFullScreen, onAgain }: Resu
                     style={{ width: L.phone.w + L.pad * 2, transform: place(L.phone, L.phone.h + L.pad * 2, L.stageH) }}>
                     <div className="phone">
                       <Screen html={html} scripts={scripts} layoutWidth={PHONE_WIDTH} width={L.phone.w} height={L.phone.h} title={`${name} homepage, phone`} hint={size === "phone"}
-                        reveal={revealing && size === "phone" ? compare?.before.phone || undefined : undefined} onRevealed={revealed} />
+                        reveal={phase !== "done" && L.phone.shown && compare?.before.phone ? { src: compare.before.phone, phase, label: size === "phone" } : undefined}
+                        onRevealReady={() => frameReady("phone")} onRevealFail={stopReveal} />
                     </div>
                   </div>
                 )}
