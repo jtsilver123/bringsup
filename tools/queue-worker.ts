@@ -104,7 +104,7 @@ async function previewImage(file: string, name: string): Promise<string | undefi
     const card = await browser.newPage({ viewport: { width: 1200, height: 630 } });
     const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
     const html = readFileSync(join(import.meta.dirname, "worker", "og-card.html"), "utf8")
-      .replace("{{NAME}}", esc(name)).replace("{{SHOT}}", "data:image/jpeg;base64," + top.toString("base64"));
+      .replaceAll("{{NAME}}", esc(name)).replaceAll("{{SHOT}}", "data:image/jpeg;base64," + top.toString("base64"));
     await card.setContent(html, { waitUntil: "networkidle", timeout: 30_000 }).catch(() => {});
     await card.evaluate(() => document.fonts.ready);
     const shot: Buffer = await card.screenshot({ type: "jpeg", quality: 82 });

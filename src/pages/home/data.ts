@@ -11,8 +11,8 @@ export const NAV: NavLink[] = [
 export type WorkSample = { slug: string; name: string; ariaName: string; kind: string; text: string; height: number };
 export const WORK: WorkSample[] = [
   { slug: "bakery", name: "Marigold Bakery", ariaName: "Marigold Bakery", kind: "Bakery · Westbrook, CT", text: "Looks like a printed menu: the name in classic lettering, real prices joined by dotted lines, and the hours right under the headline.", height: 4044 },
-  { slug: "auto", name: "Linde Motorwerk", ariaName: "Linde Motorwerk", kind: "Porsche & BMW specialist · Boulder, CO", text: "Bold and technical, like a spec sheet: numbered services with prices, and the phone number big enough to tap from across the room.", height: 5163 },
-  { slug: "carpentry", name: "Hartwell Joinery", ariaName: "Hartwell Joinery", kind: "Custom carpentry · Hudson, NY", text: "Quiet and led by the work: big project photos with captions, and how a job runs, told in plain words.", height: 5386 },
+  { slug: "auto", name: "Linde Motorwerk", ariaName: "Linde Motorwerk", kind: "Porsche & BMW specialist · Boulder, CO", text: "Bold and technical, like a spec sheet: numbered services with prices, and the phone number big enough to tap from across the room.", height: 4468 },
+  { slug: "carpentry", name: "Hartwell Joinery", ariaName: "Hartwell Joinery", kind: "Custom carpentry · Hudson, NY", text: "Quiet and led by the work: big project photos with captions, and how a job runs, told in plain words.", height: 4748 },
 ];
 
 /** How it works, as a timeline: when, what happens, and what it costs at that point. */
