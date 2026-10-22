@@ -1,0 +1,35 @@
+name: Deploy backend functions
+
+# When a Supabase Edge Function changes on main, deploy it, so nothing depends on a person or a connector to ship the backend.
+# Needs one repo secret: SUPABASE_ACCESS_TOKEN (a Supabase personal access token). JWT settings come from supabase/config.toml.
+on:
+  push:
+    branches: [main]
+    paths: ["supabase/functions/**", "supabase/config.toml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: functions
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Deploy
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then echo "Add the SUPABASE_ACCESS_TOKEN repo secret (tools/WORKFLOW.md, Systems)."; exit 1; fi
+          supabase functions deploy redesign projects --project-ref rgeeynodxvusivfbaxfu --use-api
+      - name: Check they answer
+        run: |
+          test "$(curl -s -o /dev/null -w '%{http_code}' 'https://rgeeynodxvusivfbaxfu.supabase.co/functions/v1/projects?pulse=1')" = 200
+          test "$(curl -s -o /dev/null -w '%{http_code}' 'https://rgeeynodxvusivfbaxfu.supabase.co/functions/v1/redesign?for=nope-zzzzzzzz&meta=1')" = 404
