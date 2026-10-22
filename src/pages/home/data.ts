@@ -20,7 +20,7 @@ export type Step = { when: string; title: string; text: string; cost: string };
 export const STEPS: Step[] = [
   { when: "Same day", title: "I make your homepage", text: "From your real menu or services, your hours, and the things your reviews keep mentioning. You get a private link to open on your phone.", cost: "Free" },
   { when: "10 minutes", title: "You fill in one form", text: "Hours, services, a few photos, and your logo if you have one. Skip anything you don't have. No call.", cost: "Free" },
-  { when: "About two weeks", title: "I build the whole site", text: "Every page, plus cleaned-up colors and fonts. Your logo stays as it is unless you ask me to tidy it. You get a private preview and two rounds of changes.", cost: "Free" },
+  { when: "About two weeks", title: "I build the whole site", text: "Every page. Your logo and colors stay as they are, or I tidy them up or make new ones if you ask, with a one-page brand guide. You get a private preview and two rounds of changes.", cost: "Free" },
   { when: "When you approve", title: "You pay, and it goes live", text: "On the web address you already have. Your email keeps working. If you don't love it, you owe nothing.", cost: "$1,000" },
 ];
 

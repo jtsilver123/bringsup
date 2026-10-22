@@ -1,6 +1,6 @@
 # Redesign queue worker
 
-Visitors at bringsup.com/try/ (or the homepage form) submit their website and email. Without an Anthropic API key, the Supabase function reads their site and saves the request as `queued`. This runbook turns each queued request into a finished homepage and emails the visitor. A scheduled Claude Code task runs it every hour, on the Claude subscription.
+Visitors at bringsup.com/try/ (or the homepage form) submit their website and email. Without an Anthropic API key, the Supabase function reads their site and saves the request as `queued`. This runbook turns each queued request into a finished homepage and emails the visitor. The hourly "BringsUp operator" task runs it as tools/OPERATOR.md step 4, on the Claude subscription. (The old "redesign queue" task is disabled.)
 
 ## Steps
 

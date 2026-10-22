@@ -139,68 +139,139 @@ function SizeButton({ size, current, onPick, children }: { size: Size; current: 
   return <button type="button" data-view={size} aria-pressed={current === size} onClick={() => onPick(size)}>{children}</button>;
 }
 
-/** Desktop view always lays the page out at this width and scales it to fit, so a phone still sees the desktop design. */
+/** The desktop design is always laid out at this width and scaled to fit; the phone at this one. */
 const DESKTOP_WIDTH = 1280;
+const PHONE_WIDTH = 390;
 
-/** How much to shrink the desktop layout to fit the frame (1 when the frame is already wide enough). */
-function useDesktopScale(frame: RefObject<HTMLDivElement | null>, active: boolean): number {
-  const [scale, setScale] = useState(1);
+/** Width of an element, kept current. 0 until measured (and during prerender). */
+function useWidth(el: RefObject<HTMLElement | null>, active: boolean): number {
+  const [w, setW] = useState(0);
   useEffect(() => {
-    const el = frame.current;
-    if (!el || !active) return setScale(1);
-    const measure = () => setScale(Math.min(1, el.clientWidth / DESKTOP_WIDTH));
+    const node = el.current;
+    if (!node || !active) return;
+    const measure = () => setW(node.clientWidth);
     measure();
     const ro = new ResizeObserver(measure);
-    ro.observe(el);
+    ro.observe(node);
     return () => ro.disconnect();
-  }, [frame, active]);
-  return scale;
+  }, [el, active]);
+  return w;
+}
+
+/** One live, scaled copy of the page: laid out at `layoutWidth`, shrunk to `width`, `height` tall on screen. */
+function Screen({ html, scripts, layoutWidth, width, height, title }: { html: string; scripts: boolean; layoutWidth: number; width: number; height: number; title: string }) {
+  const scale = width > 0 ? Math.min(1, width / layoutWidth) : 1;
+  return (
+    <div className="screen" style={{ height }}>
+      <iframe title={title} sandbox={scripts ? "allow-scripts allow-popups allow-popups-to-escape-sandbox" : "allow-popups"} srcDoc={html}
+        style={{ width: layoutWidth, height: height / scale, transform: `scale(${scale})` }}></iframe>
+    </div>
+  );
+}
+
+/** "What's better": beside the headline on wide screens, below the preview on narrow ones (so the site comes first). */
+function Better({ items, where }: { items?: string[]; where: "wide" | "narrow" }) {
+  if (!items?.length) return null;
+  return (
+    <div className={`r-better ${where}`}>
+      <h2 className="r-label">What's better</h2>
+      <ol className="improved" id={where === "wide" ? "improved" : undefined}>
+        {items.slice(0, 5).map((x, i) => <li key={i}>{x}</li>)}
+      </ol>
+    </div>
+  );
 }
 
 export function ResultView({ hidden, data, onCopy, onFullScreen, onAgain }: ResultProps) {
   const [size, setSize] = useState<Size>("desktop");
-  const frame = useRef<HTMLDivElement>(null);
-  const scale = useDesktopScale(frame, size === "desktop" && !hidden);
-  const scaled = size === "desktop" && scale < 1;
+  const stage = useRef<HTMLDivElement>(null);
+  const stageW = useWidth(stage, !hidden);
+  const small = stageW > 0 && stageW < 720;
+  // Phones open on the phone view, which is what the owner's customers will see.
+  const picked = useRef(false);
+  useEffect(() => { if (small && !picked.current) setSize("phone"); }, [small]);
+  const pick = (s: Size) => { picked.current = true; setSize(s); };
+
+  const html = data?.html || "";
+  const scripts = Boolean(data?.handmade);
+  const name = data?.name || "your business";
   // Outreach concepts carry the prospect's tracker slug, so the start form lands on their row.
   const startHref = data ? "/start/?ref=" + encodeURIComponent(data.ref || "redesign-" + data.id) : "/start/";
+  const forProspect = Boolean(data?.ref);
+
+  // Desktop view on a wide screen: the desktop page with the phone overlapping its corner. Elsewhere, one screen.
+  const showcase = size === "desktop" && !small && stageW > 0;
+  const deskW = showcase ? Math.round(stageW * 0.86) : stageW;
+  const deskH = Math.round(deskW * (showcase ? 0.62 : small ? 1.25 : 0.62));
+  const phoneW = showcase ? Math.max(220, Math.round(stageW * 0.22)) : Math.min(stageW, 420);
+  const phoneH = Math.round(phoneW * (844 / PHONE_WIDTH));
+
   return (
-    <section className="wrap result" id="result" hidden={hidden}>
-      <div className="result-head">
+    <section className="result" id="result" hidden={hidden}>
+      <div className="wrap r-head">
         <div>
-          <h1 className="t2">Here's <span id="r-name">{data?.name || "your business"}</span>, redone.</h1>
+          <p className="r-made">Made for {name} by Jake at BringsUp</p>
+          <h1 className="t1">Here's <span id="r-name">{name}</span>, redone.</h1>
+          <p className="lead">A homepage built from your own {scripts ? "website and menu" : "website"}. It's a real page, so scroll it and tap around.</p>
+          <div className="r-acts">
+            <a className="btn btn-primary" href={startHref}>Start my website <Arrow /></a>
+            <a className="tlink" href="#r-next">How it works</a>
+          </div>
         </div>
-        <ul className="ruled improved" id="improved" aria-label="What changed">
-          {(data?.improvements || []).slice(0, 5).map((x, i) => <li key={i}>{x}</li>)}
-        </ul>
+        <Better items={data?.improvements} where="wide" />
       </div>
-      <div className="bar">
-        <div className="seg" role="group" aria-label="Preview size">
-          <SizeButton size="desktop" current={size} onPick={setSize}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2" /><path d="M8 20h8M12 16v4" /></svg>Desktop</SizeButton>
-          <SizeButton size="phone" current={size} onPick={setSize}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2" /><path d="M11 18h2" /></svg>Phone</SizeButton>
-        </div>
-        <div className="tools">
-          <button className="ghost" type="button" id="copy" onClick={onCopy}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7" /><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7" /></svg>Copy link</button>
-          <button className="ghost" type="button" id="full" onClick={onFullScreen}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 3h6v6" /><path d="M9 21H3v-6" /><path d="M21 3l-7 7" /><path d="M3 21l7-7" /></svg>Full screen</button>
+
+      <div className="r-stage">
+        <div className="wrap">
+          <div className="bar">
+            <div className="seg" role="group" aria-label="Preview size">
+              <SizeButton size="desktop" current={size} onPick={pick}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2" /><path d="M8 20h8M12 16v4" /></svg>Desktop</SizeButton>
+              <SizeButton size="phone" current={size} onPick={pick}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2" /><path d="M11 18h2" /></svg>Phone</SizeButton>
+            </div>
+            <div className="tools">
+              <button className="ghost" type="button" id="copy" onClick={onCopy}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7" /><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7" /></svg>Copy link</button>
+              <button className="ghost" type="button" id="full" onClick={onFullScreen}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 3h6v6" /><path d="M9 21H3v-6" /><path d="M21 3l-7 7" /><path d="M3 21l7-7" /></svg>Full screen</button>
+            </div>
+          </div>
+          <div className={`stage ${showcase ? "showcase" : size}`} id="stage" ref={stage}>
+            {stageW > 0 && html && (size === "desktop" ? (
+              <>
+                <div className="browser" style={{ width: deskW }}>
+                  <div className="chrome" aria-hidden="true"><i></i><i></i><i></i><span id="r-host">{data?.address}</span></div>
+                  <Screen html={html} scripts={scripts} layoutWidth={DESKTOP_WIDTH} width={deskW} height={deskH} title={`${name} homepage, desktop`} />
+                </div>
+                {showcase && (
+                  <div className="phone" style={{ width: phoneW + 16 }}>
+                    <Screen html={html} scripts={scripts} layoutWidth={PHONE_WIDTH} width={phoneW} height={phoneH} title={`${name} homepage, phone`} />
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="phone solo" style={{ width: phoneW + 16 }}>
+                <Screen html={html} scripts={scripts} layoutWidth={PHONE_WIDTH} width={phoneW} height={small ? Math.round(phoneW * 1.7) : phoneH} title={`${name} homepage, phone`} />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-      <div className={size === "phone" ? "stage phone" : "stage"} id="stage">
-        <div className="frame" ref={frame}>
-          <div className="chrome" aria-hidden="true"><i></i><i></i><i></i><span id="r-host">{data?.address}</span></div>
-          <div className="viewport" style={scaled ? { height: `var(--frame-h)` } : undefined}><iframe id="preview" title="Your redesigned homepage" style={scaled ? { width: DESKTOP_WIDTH, height: `calc(var(--frame-h) / ${scale})`, transform: `scale(${scale})`, transformOrigin: "0 0" } : undefined} sandbox={data?.handmade ? "allow-scripts allow-popups allow-popups-to-escape-sandbox" : "allow-popups"} srcDoc={data?.html || undefined}></iframe></div>
-        </div>
-      </div>
-      <div className="next">
-        <div>
-          <h2>Love it? I'll build the whole site.</h2>
-          <p>Every page, ready for you to review in about two weeks, then live on your own domain once you approve it. No calls, and nothing to pay until then. Then one flat $1,000.</p>
-        </div>
-        <div className="acts">
+
+      <div className="wrap"><Better items={data?.improvements} where="narrow" /></div>
+
+      <div className="wrap r-next" id="r-next">
+        <h2 className="t2">Love it? I'll build the whole site.</h2>
+        <ol className="r-steps">
+          <li><b>One 10-minute form</b><span>Your hours, a few photos and your logo if you have one. Skip anything you don't have. No calls.</span></li>
+          <li><b>Your finished site in about two weeks</b><span>Every page, as a private preview. Two rounds of changes are included.</span></li>
+          <li><b>Pay only when you approve it</b><span>A flat $1,000, then it goes live on your own web address. Hosting included, no monthly fee.</span></li>
+        </ol>
+        <div className="r-acts">
           <a className="btn btn-primary" id="start" href={startHref}>Start my website <Arrow /></a>
-          <button className="tlink again" type="button" id="again" onClick={onAgain}>Try another website</button>
+          {forProspect
+            ? <a className="tlink" href="mailto:jake@bringsup.com">Questions? Email Jake</a>
+            : <button className="tlink again" type="button" id="again" onClick={onAgain}>Try another website</button>}
         </div>
+        <p className="small disclaimer">{scripts ? "A homepage idea I made from your public website and menu. Stock photos stand in where yours will go. Not a live site." : "A concept made automatically from your public website. Stock photos are used where we couldn't find yours. Not a live site."}</p>
       </div>
-      <p className="small disclaimer">{data?.handmade ? "A homepage idea I made from your public website and menu. Stock photos stand in where yours will go. Not a live site." : "A concept made automatically from your public website. Stock photos are used where we couldn't find yours. Not a live site."}</p>
     </section>
   );
 }

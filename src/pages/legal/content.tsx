@@ -12,7 +12,7 @@ export interface LegalDoc {
 export const TERMS: LegalDoc = {
   title: "Terms of Service",
   summary: [
-    "The homepage concept we send you is free. You never owe anything for it.",
+    "The homepage we make you is free. You never owe anything for it.",
     "Nothing to pay while we build. You pay the flat $1,000 only if you approve the finished site.",
     "Once you pay, the site, its files and its design are yours.",
     "Hosting is included with no monthly fee. After launch, we fix anything we got wrong for free, and other changes are $150 a round.",
@@ -21,11 +21,11 @@ export const TERMS: LegalDoc = {
   sections: [
     {
       title: "Who we are",
-      body: <><p>BringsUp ("we", "us") designs and builds websites for local businesses. These terms cover bringsup.com, the free concepts we send, and any website we build for you. By submitting one of our forms, signing, or paying, you agree to them.</p></>,
+      body: <><p>BringsUp ("we", "us") designs and builds websites for local businesses. These terms cover bringsup.com, the free homepages we make, and any website we build for you. By submitting one of our forms, signing, or paying, you agree to them.</p></>,
     },
     {
-      title: "Free concepts",
-      body: <><p>We sometimes design a sample homepage for a business before being asked, using information that is already public, like your current website and reviews. Concepts are ideas, not live websites. They aren't published anywhere except a private link we send you, and they don't mean you're affiliated with us or have agreed to anything.</p><p>Don't want one? Reply to our email or write to <a href="mailto:jake@bringsup.com">jake@bringsup.com</a> and we'll delete it and won't contact you again.</p></>,
+      title: "Your free homepage",
+      body: <><p>If you ask us to, we make you a sample homepage from information that is already public, like your current website and reviews. It's an idea, not your live website. It lives only at a private link on bringsup.com that we send you, and it doesn't mean you're affiliated with us or have agreed to anything.</p><p>Don't want one? Reply to our email or write to <a href="mailto:jake@bringsup.com">jake@bringsup.com</a> and we'll delete it and won't contact you again.</p></>,
     },
     {
       title: "Building your website",
@@ -89,7 +89,7 @@ export const PRIVACY: LegalDoc = {
     },
     {
       title: "Who helps us",
-      body: <><p>We use a small set of trusted services to run BringsUp, and they only get what they need to do their job:</p><ul><li><b>Tally</b>, for our forms and file uploads</li><li><b>Stripe</b>, for payments (through the Stripe account of InstateMe, our founder's other company)</li><li><b>Supabase</b>, for storing redesign requests</li><li><b>Anthropic (Claude)</b>, the AI that helps us draft designs and copy from your website's content</li><li><b>GitHub Pages</b>, which hosts bringsup.com</li><li>Our email provider, for sending and receiving email</li></ul><p>We don't sell your information, and we don't share it with advertisers. We'd only share it otherwise if the law requires us to.</p></>,
+      body: <><p>We use a small set of trusted services to run BringsUp, and they only get what they need to do their job:</p><ul><li><b>Tally</b>, for our forms and file uploads</li><li><b>Stripe</b>, for payments (through the Stripe account of InstateMe, our founder's other company)</li><li><b>Supabase</b>, for storing redesign requests, projects and the files you upload</li><li><b>Cloudflare</b>, which hosts the websites we build</li><li><b>Anthropic (Claude)</b>, the AI that helps us draft designs and copy from your website's content</li><li><b>GitHub Pages</b>, which hosts bringsup.com</li><li>Our email provider, for sending and receiving email</li></ul><p>We don't sell your information, and we don't share it with advertisers. We'd only share it otherwise if the law requires us to.</p></>,
     },
     {
       title: "Cookies",
@@ -97,7 +97,7 @@ export const PRIVACY: LegalDoc = {
     },
     {
       title: "How long we keep it",
-      body: <><p>Project information stays for as long as we're working together, plus the time we need for taxes and records. Free concepts and redesign requests that don't become projects are deleted within 12 months, or sooner if you ask.</p></>,
+      body: <><p>Project information stays for as long as we're working together, plus the time we need for taxes and records. Free homepages and redesign requests that don't become projects are deleted within 12 months, or sooner if you ask.</p></>,
     },
     {
       title: "Your choices",

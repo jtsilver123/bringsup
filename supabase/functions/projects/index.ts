@@ -2,7 +2,7 @@
 //
 // POST /projects                    Tally webhook (signed). Start, changes, extra-round and approve submissions update
 //                                   the project, count rounds and set the builder's next job (`todo`).
-// GET  /projects?status=<ref>       Public: rounds used and left, for the /changes/ page.
+// GET  /projects?status=<ref>       Public: rounds used and left, for the /changes/ and /extra/ pages.
 // GET  /projects?jobs=1             Builder: claim up to 5 projects with work to do (leased 45 min).  (x-worker-token)
 // GET  /projects?ref=<ref>          Builder: one project and its history.                            (x-worker-token)
 // GET  /projects?health=1           Health check: alerts, stuck projects, failing jobs.               (x-worker-token)
@@ -12,7 +12,7 @@
 //
 // Rounds: ROUNDS_INCLUDED (2) rounds of changes after the first preview. A request past that is held and the
 // builder offers a $150 extra round; paying for it applies the held request. Requests before the first preview
-// are added to the brief; requests after approval become Care Plan edits or a polite out-of-scope reply.
+// are added to the brief; requests after approval and before launch are applied free at launch; after launch they wait (reply_out_of_scope) until a $150 round is paid, which makes them a care_edit.
 //
 // Secrets: TALLY_SIGNING_SECRET, WORKER_TOKEN; optional TALLY_EXTRA_FORM, APPROVE_PRICE_CENTS (100000).
 // See tools/OPERATOR.md.
@@ -383,7 +383,7 @@ async function work(req: Request): Promise<Response> {
     return json(200, { ok: true, project: updated });
   }
   if (body.action === "payment") {
-    // A completed Stripe Checkout the builder found (tools/OPERATOR.md step 2a). Exactly once per Stripe session id.
+    // A completed Stripe Checkout the builder found (tools/OPERATOR.md step 1b). Exactly once per Stripe session id.
     const pay = body as { stripe_id?: string; kind?: string; cents?: number };
     if (!pay.stripe_id || !["approve", "extra"].includes(pay.kind || "") || !pay.cents) return json(400, { error: "payment needs stripe_id, kind (approve|extra) and cents" });
     const receipt = await db.from("webhook_receipts").insert({ response_id: pay.stripe_id, form_id: "stripe", ref: p.ref, payload: body });
