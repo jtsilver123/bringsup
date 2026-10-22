@@ -10,10 +10,25 @@ One source of truth for the website, cold emails, prospect concept mockups and a
 - **Who we serve:** family-owned local businesses with strong reviews and an outdated website (bakeries, diners and delis, auto shops, florists, plumbers and HVAC, hardware stores).
 
 ## Logo
-- Mark: an up arrow (stroke 2.6, round caps) in Glow `#FFB37A` on an Ink `#16181D` rounded square (radius = 28% of size).
-- Wordmark: "BringsUp" in Bricolage Grotesque 800, letter-spacing -0.02em, Ink.
-- Lockup: mark left of wordmark, gap = 28% of mark size. Minimum mark size 24px.
-- Never recolor the arrow, stretch the mark, or put the wordmark on Ember.
+- Mark: an up arrow (24-unit grid, stroke 2.8, round caps and joins) in Glow `#FFB37A` on an Ink `#16181D` rounded square. Radius = 28% of the tile; the arrow fills about 56% of it.
+- Wordmark: "BringsUp" in Bricolage Grotesque 800, letter-spacing -0.02em, Ink. Cap height = half the mark.
+- Lockup: mark left of wordmark, gap = 28% of mark size. Minimum mark size 24px. Clear space on every side = half the mark.
+- Reverse (on Ink or photos): Paper tile with an Ink arrow, Paper wordmark. This is the only other colorway.
+- Never recolor the arrow outside these two colorways, stretch or rotate the mark, outline the wordmark, or put either on Ember.
+
+### Asset files
+All in `assets/brand/` (wordmark converted to outlines, so no font is needed):
+
+| File | Use |
+|---|---|
+| `logo.svg` | Primary lockup on Paper, Sand or white |
+| `logo-reverse.svg` | Lockup on Ink or dark photos |
+| `mark.svg` / `mark-reverse.svg` | Mark alone: avatars, social profiles, small spaces |
+| `wordmark.svg` | Wordmark alone, when the mark already appears nearby |
+| `icon-192.png`, `icon-512.png`, `apple-touch-icon.png`, `favicon-32.png`, `/favicon.svg` | App and browser icons |
+| `../og.png` | 1200x630 link preview for bringsup.com |
+
+The visual version of this guide lives at `bringsup.com/brand/` (not indexed).
 
 ## Color
 | Token | Hex | Use |
@@ -53,6 +68,12 @@ Jake Silver
 BringsUp — websites for the businesses your town already loves
 bringsup.com
 ```
+
+## Website
+- One page at `index.html`, deployed by GitHub Pages to bringsup.com. Order: hero with before/after slider → "Got an email from Jake?" (for prospects arriving from outreach) → why it matters → sample concepts → how it works → included, pricing, comparison → who we are and our promises → FAQ → concept request form.
+- Sample concepts on the site (`assets/work/`) are **fictional businesses**, generated with `tools/make_concept.py`, and must always be labeled as fictional with stock photos. Never show a real prospect's concept on the site without their written OK.
+- The site's promises must stay true to the runbook: two emails maximum, flat $1,000 split $500/$500, the owner keeps everything.
+- Contact: `hello@bringsup.com` for general mail, `jake@bringsup.com` for outreach replies.
 
 ## Concept mockup labeling
 Every prospect concept carries a small footer: "Concept by BringsUp · Not affiliated with [Business] · Not a live site".
