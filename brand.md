@@ -101,9 +101,9 @@ bringsup.com
 - Sample concepts on the site (`assets/work/`) are **fictional businesses**, generated with `tools/make_concept.py`, and must always be labeled as fictional with stock photos. Never show a real prospect's concept on the site without their written OK.
 - The site's promises must stay true to the runbook: two emails maximum, flat $1,000 paid only on approval, no calls, the owner keeps everything.
 - Contact: `hello@bringsup.com` for general mail, `jake@bringsup.com` for outreach replies.
-- The concept request form is the Tally form "Get your free homepage concept" (`9NqoKQ`, https://tally.so/r/9NqoKQ), embedded in the last section. Hidden fields: `source` (always `website`) and `ref` (copied from the page URL, e.g. `bringsup.com/?ref=marigold-bakery`). Submissions are emailed to the Tally account owner. Edit questions in Tally, not in `index.html`.
+- The concept request form is the Tally form "Get your free homepage concept" (`bZ5vj0`, https://tally.so/r/bZ5vj0), embedded in the last section. Hidden fields: `source` (always `website`) and `ref` (copied from the page URL, e.g. `bringsup.com/?ref=marigold-bakery`). Submissions are emailed to the Tally account owner. Edit questions in Tally, not in `index.html`.
 - Instant redesigns: `/try/` takes a website and email and shows an AI-made homepage in about a minute (backend in `supabase/`, see `supabase/README.md`). It is off until `api` is set in `assets/js/config.js`; while off, every "free concept" button uses the Tally form.
-- Customer flow pages: `/start/` (Tally `o9bkWV`), `/changes/` (`0VQDN6`), `/approve/` (`RWGVEJ`, takes the $1,000 through Stripe). Rebuild them with `python3 tools/make_flow_pages.py`. They're `noindex`; reach them from emails with `?ref=<slug>`.
+- Customer flow pages: `/start/` (Tally `Ar7yBl`), `/changes/` (`EqkMlA`), `/approve/` (`VpLDP6`, takes the $1,000 through Stripe). Rebuild them with `python3 tools/make_flow_pages.py`. They're `noindex`; reach them from emails with `?ref=<slug>`.
 
 ## Concept mockup labeling
 Every prospect concept carries a small footer: "Concept by BringsUp · Not affiliated with [Business] · Not a live site".

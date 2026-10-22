@@ -9,19 +9,19 @@ BODY='M14 4H34A10 10 0 0 1 44 14V30A10 10 0 0 1 34 40H21L10.6 46.6A1 1 0 0 1 9 4
 MARK=f'<svg class="brand-mark" viewBox="0 0 48 48" width="38" height="38" aria-hidden="true"><path class="bm-tile" d="{BODY}"/><g class="bm-arrow" fill="none" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 31V13"/><path d="M16 21l8-8 8 8"/></g></svg>'
 CHECK='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>'
 PAGES={
- 'start': dict(form='o9bkWV', title='Start my website', eyebrow='Start my website',
+ 'start': dict(form='Ar7yBl', title='Start my website', eyebrow='Start my website',
    h1='Let\'s build your <span class="lift">new site.<svg viewBox="0 0 300 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 16 C 70 11, 170 10, 250 12 C 268 12, 282 9, 296 3"/></svg></span>',
    lead='Ten minutes, no call, nothing to pay. We build your whole website from this form. You pay the flat $1,000 only once you\'ve seen it and approved it.',
    steps=[('Fill in this form','Hours, services, a few photos if you have them. Skip anything you\'re not sure about.'),('We build your full site','Every page, plus a refreshed logo and colors. About two weeks.'),('Review and request changes','A private preview link, and two rounds of changes by form.'),('Approve, pay, go live','Love it? Pay the flat $1,000 and it goes live on your domain. If not, you owe nothing.')],
    promise='Nothing to pay until you approve your finished site.', done_h='We\'re on it.', done_p='Your private preview link arrives by email in about two weeks. Keep an eye out for it from jake@bringsup.com.',
    desc='Start your new BringsUp website. Ten minutes, no call, nothing to pay until you approve it.'),
- 'changes': dict(form='0VQDN6', title='Request changes', eyebrow='Request changes',
+ 'changes': dict(form='EqkMlA', title='Request changes', eyebrow='Request changes',
    h1='Tell us what to <span class="lift">change.<svg viewBox="0 0 300 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 16 C 70 11, 170 10, 250 12 C 268 12, 282 9, 296 3"/></svg></span>',
    lead='Look over your preview, then list what you\'d like different. Big or small, it all counts. Your project includes two rounds of changes.',
    steps=[('List your changes','One per line, with the page it\'s on. Screenshots help.'),('We update your preview','You\'ll get an email with the new version as soon as it\'s ready.'),('Approve when you love it','Then you pay the flat $1,000 and it goes live.')],
    promise='Still nothing to pay until you approve.', done_h='Got your changes.', done_p='We\'ll email your updated preview as soon as it\'s ready.',
    desc='Request changes to your BringsUp website preview.'),
- 'approve': dict(form='RWGVEJ', title='Approve and launch', eyebrow='Approve and launch',
+ 'approve': dict(form='VpLDP6', title='Approve and launch', eyebrow='Approve and launch',
    h1='Ready to go <span class="lift">live?<svg viewBox="0 0 300 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 16 C 70 11, 170 10, 250 12 C 268 12, 282 9, 296 3"/></svg></span>',
    lead='Approve your preview and pay the flat $1,000. Then we put your new site live on the domain you already have.',
    steps=[('Approve and pay','One flat $1,000, by card through Stripe. Your receipt comes by email.'),('Connect your domain','We email simple steps for your provider. About 10 minutes, or we send them to your web person.'),('You\'re live','Your email keeps working exactly like it does today. You own the site and every file.')],

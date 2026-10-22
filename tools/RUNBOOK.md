@@ -51,8 +51,8 @@ Set `meta.lastRunAt` and `meta.lastRunSummary` (e.g. "Sent 10 · 2 follow-ups ·
 
 ## Customer flow (no calls)
 Everything after a yes runs through Tally forms wrapped in pages on bringsup.com. Each link carries `?ref=<slug>` so submissions match tracker rows.
-1. **Start** — `https://bringsup.com/start/?ref=<slug>` (Tally `o9bkWV`). Owner gives details, photos and domain info. Nothing is charged. On a new submission: set `status: started`, add a one-line summary to empty `notes`, and push-notify Jake that a site needs building.
+1. **Start** — `https://bringsup.com/start/?ref=<slug>` (Tally `Ar7yBl`). Owner gives details, photos and domain info. Nothing is charged. On a new submission: set `status: started`, add a one-line summary to empty `notes`, and push-notify Jake that a site needs building.
 2. **Build** — Jake (or an agent) builds the full site and emails a private preview link plus `https://bringsup.com/changes/?ref=<slug>`.
-3. **Changes** — `https://bringsup.com/changes/?ref=<slug>` (Tally `0VQDN6`). Two rounds. Each submission goes to Jake to apply, then a new preview email.
-4. **Approve and pay** — `https://bringsup.com/approve/?ref=<slug>` (Tally `RWGVEJ`, $1,000 through Stripe). Paid submission: Jake sets `won`, sends domain steps, and the Care Plan link if they asked for it.
+3. **Changes** — `https://bringsup.com/changes/?ref=<slug>` (Tally `EqkMlA`). Two rounds. Each submission goes to Jake to apply, then a new preview email.
+4. **Approve and pay** — `https://bringsup.com/approve/?ref=<slug>` (Tally `VpLDP6`, $1,000 through Stripe). Paid submission: Jake sets `won`, sends domain steps, and the Care Plan link if they asked for it.
 Never charge, or ask for payment, before the owner approves the finished site.
