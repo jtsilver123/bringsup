@@ -38,7 +38,8 @@ nav{display:flex;flex-wrap:wrap;gap:24px;align-items:center;font-weight:500}
 nav a.plain{color:var(--ink);text-decoration:none}
 nav a.plain:hover{text-decoration:underline}
 nav .btn{min-height:44px;padding:10px 20px;font-size:16px}
-@media (max-width:760px){nav a.plain{display:none}}
+@media (max-width:760px){nav a.plain{display:none}header .wrap{flex-wrap:nowrap}nav .btn{padding:10px 14px;font-size:15px;white-space:nowrap}}
+@media (max-width:420px){.brand-name{font-size:21px}.brand-mark{width:32px;height:32px}}
 /* hero */
 .hero{display:flex;flex-wrap:wrap;gap:56px;align-items:center;padding-top:48px;padding-bottom:88px}
 .hero-copy{flex:1 1 520px;min-width:0}
@@ -58,7 +59,7 @@ nav .btn{min-height:44px;padding:10px 20px;font-size:16px}
 .tag{position:absolute;font-size:12px;font-weight:800;letter-spacing:.06em;padding:5px 10px;border-radius:6px}
 .after{position:absolute;right:0;bottom:0;width:80%;max-width:440px;background:#fff;border-radius:18px;box-shadow:0 24px 60px rgba(22,24,29,.22);overflow:hidden;transform:rotate(2.5deg)}
 .after-top{background:#1E3A2F;color:#F4EFE6;padding:22px 22px 26px}
-@media (max-width:560px){.ba{height:420px}.before{width:92%}.after{width:92%}}
+@media (max-width:560px){.ba{height:400px}.before{width:88%;top:0}.after{width:94%}.after .proof{flex-wrap:wrap;gap:8px 12px}.after .proof .tag{margin-left:0}}
 /* strip */
 .strip{background:var(--ink);color:#F4F2EC}
 .strip .wrap{padding-top:26px;padding-bottom:26px;display:flex;flex-wrap:wrap;gap:12px 32px;justify-content:center;font-family:var(--display);font-weight:700;font-size:20px}
@@ -162,7 +163,7 @@ footer .wrap{padding-top:32px;padding-bottom:40px;display:flex;flex-wrap:wrap;ga
             <span style="border:1.5px solid #F4EFE6;font-weight:700;font-size:13px;padding:8px 14px;border-radius:999px">Get directions</span>
           </div>
         </div>
-        <div style="padding:16px 22px 20px;display:flex;gap:14px;align-items:center">
+        <div class="proof" style="padding:16px 22px 20px;display:flex;gap:14px;align-items:center">
           <span style="color:var(--accent);font-size:18px;letter-spacing:2px" aria-hidden="true">★★★★★</span>
           <span style="font-size:13px;color:#3D414B">Your real Google reviews, front and center</span>
           <span class="tag" style="position:static;margin-left:auto;background:#FFB37A;color:#16181D">AFTER</span>

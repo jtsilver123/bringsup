@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;width:1600px;height:1000px;background:#16181D;font-family:'DM Sans',system-ui,sans-serif;color:#F4F2EC;overflow:hidden;position:relative}
+.head{position:absolute;left:72px;top:56px;right:72px;display:flex;justify-content:space-between;align-items:flex-end}
+.head h1{margin:0;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:52px;letter-spacing:-.02em;line-height:1.05;max-width:1050px}
+.head h1 span{color:#FFB37A}
+.head p{margin:10px 0 0;font-size:20px;color:#C9C7C0}
+.brand{display:flex;align-items:center;gap:10px;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:22px}
+.mark{width:34px;height:34px;border-radius:10px;background:#FBFAF7;display:flex;align-items:center;justify-content:center}
+.laptop{position:absolute;left:72px;top:206px;width:1120px;border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 40px 90px rgba(0,0,0,.5)}
+.bar{height:42px;background:#E9E7E1;display:flex;align-items:center;gap:8px;padding:0 16px}
+.dot{width:12px;height:12px;border-radius:50%;background:#C9C4B8}
+.url{margin-left:18px;flex:1;height:26px;border-radius:8px;background:#fff;color:#3D414B;font-size:14px;display:flex;align-items:center;padding:0 12px;gap:8px}
+.url svg{flex:none}
+.shot{display:block;width:1120px;height:660px;object-fit:cover;object-position:top}
+.phone{position:absolute;right:96px;top:262px;width:300px;height:650px;border-radius:44px;background:#0B0C0F;padding:34px 12px 16px;box-shadow:0 40px 90px rgba(0,0,0,.6)}
+.phone img{display:block;width:276px;height:600px;border-radius:22px;object-fit:cover;object-position:top}
+.notch{position:absolute;top:13px;left:50%;transform:translateX(-50%);width:80px;height:10px;border-radius:6px;background:#2A2C33}
+.foot{position:absolute;left:72px;bottom:30px;font-size:15px;color:#9C9991}
+.foot b{color:#FFB37A}
+</style>
+</head>
+<body>
+<div class="head">
+  <div>
+    <h1>A new homepage for <span>{{ name }}</span></h1>
+    <p>Free concept · Works on every phone · {{ cta }} built in</p>
+  </div>
+  <div class="brand"><span class="mark"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#16181D" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg></span>BringsUp</div>
+</div>
+<div class="laptop">
+  <div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    <div class="url"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1E6B45" stroke-width="2.6"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>{{ domain }}</div>
+  </div>
+  <img class="shot" src="{{ desktop }}" alt="">
+</div>
+<div class="phone"><img src="{{ phone }}" alt=""><span class="notch"></span></div>
+<div class="foot"><b>Concept by BringsUp</b> · An idea for {{ name }}, not a live site · Not affiliated with {{ name }} · bringsup.com</div>
+</body>
+</html>

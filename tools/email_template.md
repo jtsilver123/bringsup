@@ -1,6 +1,6 @@
 # BringsUp cold email templates
 
-Follow `brand.md` voice rules. Plain text only, no images, no tracking pixels, one link. Personalize every bracketed field from the prospect's tracker row; if a field is missing, rewrite the sentence so it reads naturally rather than leaving a gap.
+Follow `brand.md` voice rules. Plain text, short, no images in the body. Every first email carries the prospect's concept: a Drive link to the concept PDF when the BringsUp Drive is connected, otherwise the concept PDF as an attachment (named "<Business> — new homepage concept.pdf", under 1 MB). Personalize every bracketed field from the prospect's tracker row; if a field is missing, rewrite the sentence so it reads naturally rather than leaving a gap.
 
 ## Email 1 (day 0)
 
@@ -10,19 +10,16 @@ Hi {OwnerFirstName or "there"},
 
 I came across {Business} while looking at family-owned {industry, plural} in {City}. {Rating} stars across {ReviewCount} reviews is a reputation most places never build. {One short sentence on what customers praise, in your own words}.
 
-Your website doesn't show any of that yet, so I mocked up what a new homepage could look like, using your real {menu / services} and reviews:
-
-{Concept link}
+Your website doesn't show any of that yet, so I mocked up what a new homepage could look like, using your real {menu / services} and reviews. {If link: "Here it is: {Concept link}" | If attached: "It's attached, desktop and phone."}
 
 If you like it, we'll build the whole site for a flat $1,000: refreshed logo and colors, works on any phone, with {online ordering / online booking / a quote form} built in. Live in about two weeks. If it's not for you, no hard feelings.
 
 Want me to send over a couple of ideas for the rest of the site?
 
 Jake Silver
-BringsUp — websites for the businesses your town already loves
+BringsUp
 bringsup.com
 
-{Mailing address}
 Not interested? Reply "no thanks" and I won't email again.
 
 ## Email 2 (4 business days later, only if no reply)
@@ -31,13 +28,12 @@ Not interested? Reply "no thanks" and I won't email again.
 
 Hi {OwnerFirstName or "there"},
 
-Floating this back up in case it got buried. The concept for {Business} is still here: {Concept link}
+Floating this back up in case it got buried. {If link: "The concept for {Business} is still here: {Concept link}" | If attached: "The concept for {Business} is in my first email."}
 
 Happy to change the colors or layout if you'd like to see a different direction.
 
 Jake
 
-{Mailing address}
 Reply "no thanks" and I won't follow up again.
 
 ## Rules

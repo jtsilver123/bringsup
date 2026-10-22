@@ -94,11 +94,34 @@ def main(src, out_dir):
     open(hp, "w").write(html)
     d, ph = hp.replace("-concept.html", "-desktop.png"), hp.replace("-concept.html", "-phone.png")
     asyncio.run(render(hp, d, ph))
+    # Presentation board: the concept shown in a browser window with their own domain, plus a phone.
+    domain = urlparse(p.get("website") or "").netloc.lower().removeprefix("www.") or slug + ".com"
+    board_html = env.get_template("board_template.html").render(
+        name=p["name"], domain=domain, cta={"Order for pickup": "Online ordering", "Book an appointment": "Online booking", "Order flowers": "Online ordering", "Get a free quote": "Quote requests"}.get(t["primary_cta"], "Contact form"),
+        desktop="file://" + d, phone="file://" + ph)
+    bh = hp.replace("-concept.html", "-board.html"); open(bh, "w").write(board_html)
+    board = hp.replace("-concept.html", "-board.png")
+    asyncio.run(render_board(bh, board))
     from PIL import Image
-    imgs = [Image.open(d).convert("RGB"), Image.open(ph).convert("RGB")]
+    def page(path, max_w):
+        im = Image.open(path).convert("RGB")
+        if im.width > max_w:
+            im = im.resize((max_w, round(im.height * max_w / im.width)))
+        return im
+    imgs = [page(board, 1600), page(d, 1200), page(ph, 600)]
     pdf = hp.replace(".html", ".pdf")
-    imgs[0].save(pdf, save_all=True, append_images=imgs[1:], resolution=144)
-    print(json.dumps({"html": hp, "desktop": d, "phone": ph, "pdf": pdf}))
+    imgs[0].save(pdf, save_all=True, append_images=imgs[1:], resolution=110, quality=82)
+    print(json.dumps({"html": hp, "board": board, "desktop": d, "phone": ph, "pdf": pdf, "pdf_kb": os.path.getsize(pdf) // 1024}))
+
+async def render_board(html_path, out):
+    from playwright.async_api import async_playwright
+    async with async_playwright() as pw:
+        b = await pw.chromium.launch()
+        pg = await b.new_page(viewport={"width": 1600, "height": 1000})
+        await pg.goto("file://" + html_path)
+        await pg.wait_for_timeout(1200)
+        await pg.screenshot(path=out)
+        await b.close()
 
 if __name__ == "__main__":
     main(sys.argv[1], sys.argv[2])

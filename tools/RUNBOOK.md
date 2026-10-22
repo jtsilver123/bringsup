@@ -1,55 +1,48 @@
 # BringsUp daily outreach runbook
 
-This is what the weekday scheduled task does. Read `brand.md` and `tools/email_template.md` first; their rules apply to everything below. The tracker is a claude.ai artifact (its URL is in the scheduled task's prompt) whose database has:
+The job of every run is **to get personalized concept emails out**. Replies and follow-ups first, then send first emails to every ready prospect within today's cap, and only then research enough new prospects to keep tomorrow's queue full.
 
-- `prospects/<slug>`: one document per business (fields below)
-- `meta/pipeline`: `sender`, `mailingAddress`, `dailyCap`, `firstSendDate`, `blocker`, `lastRunAt`, `lastRunSummary`
+Read `brand.md` and `tools/email_template.md` first; their rules apply to everything below. The tracker is a claude.ai artifact (URL in the scheduled task's prompt) whose database has:
 
-Prospect fields: `name, industry, city, website, rating, reviews, ratingSource, email, owner, phone, issues[], praise, services[], hours, founded, conceptUrl, status, addedAt, emailedAt, followUpAt, followedUpAt, repliedAt, lastTouchAt, threadId, notes`.
-`status` is one of `found, concept, emailed, followed_up, replied, won, lost, dnc`. Only Jake sets `won` and `lost` (except bounces, below). Never overwrite `notes`.
+- `prospects/<slug>`: one document per business
+- `meta/pipeline`: `sender`, `dailyCap`, `firstSendDate`, `blocker`, `lastRunAt`, `lastRunSummary`
+
+Prospect fields: `name, industry, city, website, rating, reviews, ratingSource, email, owner, phone, issues[], praise, services[], hours, founded, conceptUrl, conceptFile, status, addedAt, emailedAt, followUpAt, followedUpAt, repliedAt, lastTouchAt, threadId, notes`.
+`status` is one of `found, concept, emailed, followed_up, replied, won, lost, dnc`. Only Jake sets `won` and `lost` (except bounces). Never overwrite `notes` except where this runbook says to add to an empty one.
 
 ## 0. Setup
 1. Attach and clone `jtsilver123/bringsup` (read access is enough).
-2. Install the concept tools: `pip install --break-system-packages jinja2 pillow playwright && python3 -m playwright install chromium`.
+2. `pip install --break-system-packages jinja2 pillow playwright && python3 -m playwright install chromium`.
 3. Read the whole `prospects` collection and `meta/pipeline` from the tracker with ArtifactData. Pin every later write with `if_version`.
 
-## 1. Gates (check before doing anything else)
-- **Sender gate.** Send only with the Composio Gmail tools (GMAIL_SEND_EMAIL, GMAIL_REPLY_TO_THREAD, GMAIL_FETCH_EMAILS, GMAIL_MODIFY_THREAD_LABELS), always passing `account` for the connection signed in as an `@bringsup.com` address (normally jake@bringsup.com). Composio has several Gmail accounts connected; confirm the address from the connection list. **Never send from bettercampus.com, instateme.com, a personal Gmail, or any other domain**, and never send with the native Gmail connector (it rewrites links). If no @bringsup.com connection exists, the gate fails. A send counts only if Composio returns successful=true with an id.
-- **Deliverability.** Cold email only Monday to Friday, 9:00 AM to 5:00 PM ET. Send one at a time with a random 60–150 second wait between sends (in the Composio workbench, at most 2 sends per cell). Before the first send, search `from:(mailer-daemon OR postmaster) newer_than:1d`: 2 or more bounces, or any notice mentioning spam, blocked, policy or rate limit, means send nothing this run and say so in `meta.blocker`. Stop all sending on any send error; don't retry.
-- **Footer gate.** Sending also requires `meta.mailingAddress` to be filled (US law requires a postal address in commercial email).
-- **Drive gate.** Concepts are uploaded to the Google Drive of the same @bringsup.com account (Composio Google Drive, same `account` rule), link-shared as "anyone with the link can view". Never upload or share concepts from another Google account; the native Drive connector is a different account.
-- If any gate fails: still do research (step 4) and build concepts locally (step 5), skip steps 2, 3 and 6, set `meta.blocker` to a one-line plain-English reason, and finish with step 7.
-- If all gates pass: set `meta.sender` to the address, clear `meta.blocker`, and set `meta.firstSendDate` to today if it is empty.
+## 1. Gates
+- **Sender.** Send only with the Composio Gmail tools (GMAIL_SEND_EMAIL, GMAIL_REPLY_TO_THREAD, GMAIL_FETCH_EMAILS, GMAIL_MODIFY_THREAD_LABELS), always passing `account` for the connection signed in as jake@bringsup.com (confirm from the connection list; it was `gmail_gariba-preach`). **Never send from bettercampus.com, instateme.com, a personal Gmail, or any other address**, and never send with the native Gmail connector. If there is no jake@bringsup.com connection, send nothing, set `meta.blocker`, and do steps 4–5 only.
+- **Window.** Cold email only Monday to Friday, 9:00 AM to 5:00 PM ET.
+- **Health check.** Before the first send, search `from:(mailer-daemon OR postmaster) newer_than:1d`. 2 or more bounces, or any notice mentioning spam, blocked, policy or rate limit: send nothing this run and say so in `meta.blocker`. Stop all sending on any send error; don't retry.
+- **Pacing.** One send at a time with a random 60–150 second wait between sends (in the Composio workbench, at most 2 sends per cell).
+- **Concept delivery.** If a Composio Google Drive connection signed in as jake@bringsup.com exists, upload concept PDFs there (folder "BringsUp Concepts"), share as anyone-with-link viewer, and link them. Otherwise attach the PDF to Email 1. Never upload or share concepts from any other Google account.
+- When the sender gate passes: set `meta.sender`, clear `meta.blocker`, set `meta.firstSendDate` to today if empty.
 
-## 2. Handle replies (sender gate passed)
-Search the BringsUp inbox for replies to our threads (match `threadId` or the prospect's email).
-- Interested, a question, or anything that needs Jake: set `status: replied`, `repliedAt`, star the thread, leave it in the inbox. Do not reply for him.
-- "No", "stop", "unsubscribe", "not interested" or similar: set `status: dnc`, archive the thread. Never email them again.
-- Bounce or "address not found": set `status: lost`, add "Email bounced" to the start of `notes` only if `notes` is empty, archive the bounce.
+## 2. Replies
+Search the jake@bringsup.com inbox for replies to our threads (match `threadId` or the prospect's email).
+- Interested, a question, or anything that needs Jake: `status: replied`, `repliedAt`, star the thread, leave it in the inbox. Do not reply for him. Push-notify him.
+- "No", "stop", "unsubscribe", "not interested" or similar: `status: dnc`, archive. Never email them again.
+- Bounce or "address not found": `status: lost`; if `notes` is empty set it to "Email bounced"; archive the bounce.
 - Never create Gmail labels. Use INBOX, STARRED and UNREAD only.
 
-## 3. Follow-ups (sender gate passed)
-For each prospect with `status: emailed`, `followUpAt` on or before today and no reply: send Email 2 from `email_template.md` as a reply in the same thread. Set `status: followed_up`, `followedUpAt`, `lastTouchAt`. Never send a third email.
+## 3. Follow-ups
+For each prospect with `status: emailed`, `followUpAt` on or before today and no reply: send Email 2 as a reply in the same thread. Set `status: followed_up`, `followedUpAt`, `lastTouchAt`. Never send a third email.
 
-## 4. Research new prospects
-Today's send budget = cap for this week minus follow-ups sent today. Weekly cap ramp from `firstSendDate`: week 1 → 5/day, week 2 → 10/day, week 3 onward → 20/day. Before sending has started, use 5.
-Find enough new prospects to fill today's budget (at least 5, at most 10 per run), rotating across: bakeries and diners/delis, independent auto repair, florists and garden centers, plumbers/HVAC/electricians, hardware stores.
+## 4. Make every sendable prospect ready
+Sendable = `status` is `found` or `concept`, has a published `email`, and meets the bar in step 6 (rating 4.5+, 30+ reviews, family-owned or owner-run, outdated site). Rows whose `notes` flag a missing check (e.g. "rating not verified") must be checked on the web first; update the row and skip it if it fails.
+For each sendable `found` row: write its JSON for the generator (name, industry, city_state, website, rating, review_count, rating_source_url, email, owner_name_if_known, site_issues, what_customers_praise, menu_or_services, hours_if_found, phone, year_founded_if_known) and run `python3 tools/make_concept.py prospect.json out/`. Open the `-board.png` once and check it: right business name and domain, no placeholder text, nothing clipped. Upload or keep the PDF per the Concept delivery gate, set `conceptUrl` (Drive link) or `conceptFile` (attachment name), and `status: concept`.
 
-Every prospect must meet all of these, verified on the live web (WebSearch/WebFetch):
-- Family-owned, independent (no franchises, chains or national brands), in the US, open now (reviews from the last 12 months).
-- Strong reputation: 4.5+ stars with 30+ reviews on Google, Yelp or a similar site. Record the source URL.
-- Their own site is clearly outdated: note 3–5 concrete, verifiable issues (old copyright year, FrontPage/Homestead/old Yola, HTTP only, not mobile-friendly, missing hours, no booking/ordering, broken sections). Skip modern sites, wire-service florist storefronts, agency templates, and Facebook-only businesses.
-- A published email address (their site, Google profile or a reputable directory). Never guess an address. Skip businesses without one.
-- Not already in the tracker (compare website domain, email and name + city) and not `dnc`.
-Paraphrase what reviews praise in your own words; never copy review text. Write each new prospect as `status: found`, `addedAt: now`.
+## 5. Send first emails
+Daily cap from `firstSendDate`: week 1 → 10/day, week 2 → 20/day, week 3 onward → 30/day, minus follow-ups already sent today. For `status: concept` rows, oldest first, up to the cap: send Email 1, personalized, with the concept link or the PDF attached. After each send: `status: emailed`, `emailedAt`, `lastTouchAt`, `threadId`, and `followUpAt` = 4 business days later. Then archive our sent thread (it needs nothing from Jake).
 
-## 5. Build concepts
-For each new prospect, write its JSON (fields from the research step: name, industry, city_state, website, rating, review_count, rating_source_url, email, owner_name_if_known, site_issues, what_customers_praise, menu_or_services, hours_if_found, phone, year_founded_if_known) and run:
-`python3 tools/make_concept.py prospect.json out/`
-Open the desktop PNG and check it once: correct business name, no placeholder text, nothing clipped. If the Drive gate passed, upload the PDF to the Drive folder "BringsUp Concepts", named "<Business> — homepage concept by BringsUp.pdf", share it as anyone-with-link viewer, save the link as `conceptUrl` and set `status: concept`.
-
-## 6. Send first emails (all gates passed)
-For prospects with `status: concept`, oldest first, up to today's budget: send Email 1 from `email_template.md`, personalized, with the `conceptUrl` and `meta.mailingAddress`. Plain text, one link, no attachments. After each send set `status: emailed`, `emailedAt`, `lastTouchAt`, `threadId`, and `followUpAt` = 4 business days later.
+## 6. Research to refill the queue
+Only after sending. If fewer than tomorrow's cap of `concept` rows remain, find new prospects (at most 15 per run), rotating across bakeries/diners/delis, independent auto repair, greenhouses and garden centers (skip florists on FTD/Teleflora/BloomNet/Lovingly storefronts), plumbers/HVAC/electricians/locksmiths, and hardware stores.
+Each must be: US, family-owned or owner-run, independent, open now; 4.5+ stars with 30+ reviews (record the source URL); its own site clearly outdated, with 3–5 concrete issues; a published email address (never guess one); not already in the tracker (compare domain, email, name + city) and not `dnc`. Paraphrase review praise in your own words. Write each as `status: found`, `addedAt: now`, then build its concept per step 4 so it's ready for the next run.
 
 ## 7. Wrap up
-Set `meta.lastRunAt` to now and `meta.lastRunSummary` to one short line, e.g. "Found 8 · 8 concepts · 5 sent · 1 follow-up · 1 reply". End the run with a short summary for Jake: replies that need him first (business, what they said, thread link), then counts, then any blocker.
+Set `meta.lastRunAt` and `meta.lastRunSummary` (e.g. "Sent 10 · 2 follow-ups · 1 reply · 12 new prospects ready"). End with a short summary for Jake: replies that need him first (business, what they said, thread link https://mail.google.com/mail/u/0/#all/<threadId>), then emails sent (business names), follow-ups, opt-outs, prospects added, and any blocker.
