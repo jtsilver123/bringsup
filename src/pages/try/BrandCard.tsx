@@ -11,6 +11,8 @@ export interface BrandPreview {
 /** On /try/, only when we made a logo refresh: their logo now and refreshed, and its colors. The full guide comes with the site. */
 export function BrandCard({ name, brand }: { name: string; brand?: BrandPreview }) {
   if (!brand?.after) return null;
+  // Hand-built payloads aren't schema-checked, so a missing or mistyped list just means no swatches.
+  const colors = Array.isArray(brand.colors) ? brand.colors.filter((c) => c && typeof c.hex === "string") : [];
   return (
     <section className="wrap r-brand" aria-labelledby="r-brand-h">
       <h2 className="t3" id="r-brand-h">Your logo, refreshed</h2>
@@ -28,9 +30,9 @@ export function BrandCard({ name, brand }: { name: string; brand?: BrandPreview 
           <figcaption>Refreshed</figcaption>
         </figure>
       </div>
-      {brand.colors.length > 0 && (
+      {colors.length > 0 && (
         <ul className="rb-colors" aria-label="Your colors">
-          {brand.colors.map((c) => (
+          {colors.map((c) => (
             <li key={c.hex}><span className="rb-chip" style={{ background: c.hex }} /><b>{c.name}</b><code>{c.hex}</code></li>
           ))}
         </ul>

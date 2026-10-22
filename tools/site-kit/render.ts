@@ -203,7 +203,7 @@ export function render(c: SiteContent, opts: RenderOptions = {}): Record<string,
   const approach = c.approach && c.approach.paragraphs.filter(Boolean).length ? c.approach : null;
 
   const css = baseCss() + STYLE_CSS[style] + lastCss();
-  const tokens = `:root{--bg:${bg};--alt:${L.alt};--ink:${ink};--muted:${muted};--line:${line};--acc:${fill};--acc-ink:${fillInk};--acc-t:${accT};--dark:${dark};--on-dark:${onDark};--muted-d:${mutedD};--acc-d:${accD};--fd:${L.fd};--fb:${L.fb};--fl:${L.fl};--r:${L.r};--rb:${BUTTON_RADIUS[c.buttons || L.buttons]};${L.vars}}\n`;
+  const tokens = `:root{--bg:${bg};--alt:${L.alt};--ink:${ink};--muted:${muted};--line:${line};--acc:${fill};--acc-ink:${fillInk};--acc-t:${accT};--dark:${dark};--on-dark:${onDark};--muted-d:${mutedD};--acc-d:${accD};--fd:${L.fd};--fb:${L.fb};--fl:${L.fl};--r:${L.r};--rb:${BUTTON_RADIUS[c.buttons && c.buttons in BUTTON_RADIUS ? c.buttons : L.buttons]};${L.vars}}\n`;
 
   const ldjson = JSON.stringify({
     "@context": "https://schema.org", "@type": c.theme === "bakery" ? "Bakery" : c.theme === "restaurant" ? "Restaurant" : c.theme === "auto" ? "AutoRepair" : "LocalBusiness",
