@@ -1,6 +1,6 @@
 # BringsUp cold emails
 
-These go out under Jake's name, so each one has to read like Jake sat down and wrote it to one person. Keep it short and specific, a little informal, with nothing that looks like a mass email. If a sentence could be sent to any business, rewrite it or cut it.
+These go out under Jake's name, so each one has to read like a quick note Jake typed to one person on his phone. **Short beats everything:** Email 1 is 3 or 4 sentences, the follow-ups are 1 or 2. No selling, no adjectives about our work, no explaining the process. If a sentence could be sent to any business, or doesn't help them say yes, cut it.
 
 ## How it works
 1. Research finds the business and what its customers love (RUNBOOK step 6). Nothing is built yet.
@@ -12,8 +12,8 @@ Building only on a yes keeps the effort on the people who asked, and the "yes" r
 ## The one goal: a reply that says "yes"
 Every cold email exists to get one word back: **yes**. Not a click (there are no links), not a call, not the price, not the start form. Write every email so saying yes is the easiest thing to do:
 - **One ask, at the end, answerable with "yes".** "Want me to make it?" works; "What do you think?" or "Would you be open to a conversation?" doesn't.
-- **Say how small the yes is.** Make clear a one-word reply is all it takes, that it costs nothing, and that **saying yes commits them to nothing**: it only means we make the homepage and they look at it. Say that plainly, in their words, right next to the ask: "Just reply yes. It doesn't commit you to anything." (Never "no obligation" or "risk-free": those read as spam. See the banned list.)
-- **Remove reasons to hesitate before they appear.** It's free to look at, nothing to fill in yet, no call. Mention the price only as "you'd only pay if you love the finished site", never a number.
+- **Say how small the yes is, in three words.** "No cost, no strings." right after the ask covers it: a yes commits them to nothing. Don't stack more reassurance on top. (Never "no obligation" or "risk-free": those read as spam. See the banned list.)
+- **No price, no process, no pitch** in cold email. Those come after a yes.
 - **Nothing that competes with the yes.** No second question, no "let me know if you have questions", no options to choose between.
 - **Every follow-up asks for the same yes**, Email 3 included, in fresh words.
 - A yes in any form counts: "sure", "ok", "go ahead", "send it", a thumbs-up. Treat it as yes (OPERATOR step 1).
@@ -33,83 +33,67 @@ Every cold email exists to get one word back: **yes**. Not a click (there are no
 ## How they're sent (deliverability)
 - **Plain text only.** No HTML, no bold or bullets, no images, no tracking pixels and no link shorteners. Use Composio `GMAIL_SEND_EMAIL` with `is_html: false` and `include_signature: false`. The sign-off below is the whole signature.
 - **No links and no attachments in any cold email.** A link or a file from a stranger is the strongest spam and phishing signal there is. The one exception is the bare domain `bringsup.com` on its own line in the sign-off, written as plain text and never as `https://...`, because it's how an owner checks we're real.
-- **Rotate, don't repeat.** Number today's first emails 0, 1, 2… and take subject option (n mod 3) and close option (floor(n / 3) mod 3), so every pairing gets used. Record them as `variant: s<subject>-c<close>`, and the opening angle you used as `opener` (e.g. `reviews`, `years`, `count`). Then write every sentence fresh for this business: the examples below show the shape, never the wording. Before sending, compare with the last three Email 1s in Sent: if any sentence (other than the sign-off, opt-out and address) matches one of them word for word, rewrite it. Mail filters fingerprint repeated sentences, and owners who compare notes would spot it.
+- **Rotate, don't repeat.** Number today's first emails 0, 1, 2… and take subject option (n mod 3) and ask option (floor(n / 3) mod 3), so every pairing gets used. Record them as `variant: s<subject>-c<ask>`, and the opening angle you used as `opener` (e.g. `reviews`, `years`, `count`). Then write every sentence fresh for this business: the examples below show the shape, never the wording. Before sending, compare with the last three Email 1s in Sent: if any sentence other than the short fixed lines ("I'm Jake, I make websites for family businesses.", "No cost, no strings.", the sign-off, opt-out and address) matches one of them word for word, rewrite it. Mail filters fingerprint repeated sentences, and owners who compare notes would spot it.
 - Send one at a time, paced as the RUNBOOK says, and never above the daily cap.
 
 ## Email 1 (step 1, day 0)
 
 **Subject**, all lowercase, the way a real person types it:
-0. `idea for {business}`
-1. `{business} homepage`
+0. `{business}`
+1. `quick idea for {business}`
 2. `{business} website`
 
-**Body** (60–100 words before the sign-off, exactly one question, and the ask (that question plus how small the yes is and that it commits them to nothing) ends the email):
+**Body: 30–55 words before the sign-off, 3 or 4 short sentences, one question.**
 
-> Hi {first name},   ← first names only, at most two ("Hi Ken and Maral,"), even when the address is info@. If no first name is known, just "Hi," (never "Hi there")
+> Hi {first name},   ← first names only, at most two ("Hi Ken and Maral,"). No first name known: just "Hi,"
 >
-> {Opening: one specific, true fact only a reader of their reviews or site would know, plus what customers praise. A different angle each time, e.g.:
-> - "{Review count} reviews on {Google / Yelp}, and the {specific thing} keeps coming up." (Name the source of any number. Never add the two sites' counts together.)
-> - "{Number} years in {town}, and people still write about {specific thing they love}."
-> - "You've been {their work} in {town} since {year}, and the reviews keep coming back to {specific thing}."}
+> {One true, specific line from their reviews or history, e.g. "{Number} years in {town} and people still rave about the {thing}." or "{Review count} reviews on {Google / Yelp} and the {thing} keeps coming up." Name the source of any number; never add the sites' counts together.} Your website doesn't show that.
 >
-> {Bridge, two or three sentences, saying who's writing: "Your website doesn't really show that yet. I'm Jake, and I make websites for family businesses. I'd like to make you a new homepage, built from your actual {menu / services / work} and hours, with {the thing they're known for} front and center and {calling / ordering / booking} one tap away on a phone."}
->
-> {Close: "If you like it, I can build the rest, and you'd only pay if you love it." Then the ask, which is always a yes-question plus how small the yes is, including that a yes commits them to nothing. One of: 0. "Want me to make it? Just reply yes. It doesn't commit you to anything." 1. "Should I put one together for you? A quick yes is all I need, and it doesn't tie you to anything." 2. "Want to see it? Reply yes and I'll send it over this week. Saying yes doesn't commit you to buying."}
+> I'm Jake, I make websites for family businesses. {Ask, one of: 0. "Want me to mock up a new homepage for you?" 1. "Can I make you a new homepage to look at?" 2. "Should I put a new homepage together for you?"} No cost, no strings.
 >
 > Jake Silver
 > bringsup.com
 >
-> If this isn't for you, just say so and I won't email again.
+> Not for you? Just say so and I won't write again.
 > BringsUp, 2195 Kipling Lane, Highland Park, IL 60035
-
-("Free" is on the banned list as a subject-line hype word, but "free to look at" in a plain sentence is honest and fine.)
 
 Example (Marigold Bakery, Westbrook CT):
 
-> Subject: idea for marigold bakery
+> Subject: marigold bakery
 >
 > Hi Rosa,
 >
-> Forty years in Westbrook, and people still write about the sourdough and how your family remembers their names.
+> Forty years in Westbrook and people still rave about the sourdough. Your website doesn't show that.
 >
-> Your website doesn't really show that yet. I'm Jake, and I make websites for family businesses. I'd like to make you a new homepage, built from your actual menu and hours, with the bakery front and center and ordering one tap away on a phone.
->
-> If you like it, I can build the rest, and you'd only pay if you love it. Want me to make it? Just reply yes. It doesn't commit you to anything.
+> I'm Jake, I make websites for family businesses. Want me to mock up a new homepage for you? No cost, no strings.
 >
 > Jake Silver
 > bringsup.com
 >
-> If this isn't for you, just say so and I won't email again.
+> Not for you? Just say so and I won't write again.
 > BringsUp, 2195 Kipling Lane, Highland Park, IL 60035
 
 ## Email 2 (step 2, 3 business days later)
-Two or three short sentences with one new, useful observation. It never just nudges: no "just following up", "bumping this" or "did you see my email". Pick the first angle that's true for this business, and only one:
-1. A factual mismatch between their site and Google (hours, phone, a menu item or service), stated as "still lists", never as a flaw.
-2. The one thing from their reviews the homepage would lead with ("it would lead with the cannoli everyone mentions").
-3. The phone view: "most people who look up a {bakery} are on a phone, so it would put {ordering / calling} one tap away."
-4. Only if none of those apply, the process: "it's one 10-minute form on your end, no calls, and you see the finished site before paying anything."
+One or two sentences: one new, true detail, then the same ask. Never "just following up", "bumping this" or "did you see my email". Pick the first angle that's true, and only one:
+1. A factual mismatch between their site and Google or Yelp (hours, phone, a menu item), said as "still lists", never as a flaw.
+2. What the homepage would lead with ("It would lead with the cannoli everyone mentions.").
+3. Only if neither applies: "Takes you one word to say yes."
 
-> Hi Rosa,
->
-> One more thing I noticed: your site still lists the hours as 7 to 3, and Google has you open until 4 now. On the new homepage the hours and menu would live in one place, so they stay right.
->
-> Want me to make it for you? A one-word yes is all it takes, and it doesn't commit you to anything.
+> Hi Rosa, your site still lists closing at 3, but Google says 4. Want me to make that homepage? Just reply yes.
 >
 > Jake
 >
-> If this isn't for you, just say so and I won't email again.
+> Not for you? Just say so and I won't write again.
 > BringsUp, 2195 Kipling Lane, Highland Park, IL 60035
 
 ## Email 3 (step 3, 7 business days after Email 2)
-The last note. It's short and warm, gives them a graceful way to say "later", and never guilt-trips them ("I guess you're not interested", "closing your file").
+One sentence. Warm, no guilt.
 
-> Hi Rosa,
->
-> Last note from me, so I'm not cluttering your inbox. The offer stands: reply yes, today or months from now, and I'll make you that homepage. You'd just look at it, nothing more.
+> Hi Rosa, last note from me. If you ever want that homepage, just reply yes, even months from now.
 >
 > Jake
 >
-> This is my last email either way. If you'd rather not hear from BringsUp at all, reply "no" and I'll make sure of it.
+> Last email either way. Reply "no" and you won't hear from BringsUp again.
 > BringsUp, 2195 Kipling Lane, Highland Park, IL 60035
 
 ## Building their homepage (only after a yes)
@@ -136,11 +120,9 @@ OPERATOR.md step 1 handles every reply. Send in the prospect's thread (`GMAIL_RE
 >
 > Here it is: {live preview link}
 >
-> It's a real page, so open it on your phone and scroll. That's how most of your customers will see it. Only people with this link can see it. {One honest note, e.g. "I used a stock photo for the window display; one of yours would be better."}
+> Best on your phone. {One honest note if needed, e.g. "The window photo is stock; one of yours would be better."}
 >
-> How it works from here: you fill in one form, about 10 minutes, no calls. It asks for your hours, a few photos and your logo if you have one, and you can skip anything you don't have. I build the full site and send you a private preview in about two weeks. You get two rounds of changes (a round is one list of changes you send at once), and you pay a flat $1,000 only when you approve it. Keeping it online is included, so there's no monthly bill, and the site and your web address stay yours.
->
-> Want me to build the rest of it? Reply yes, or go straight to the form: https://bringsup.com/start/?ref={slug}
+> If you like it, I'll build the whole site: a 10-minute form, then a preview in about two weeks. $1,000, and you only pay once you approve it. Want me to? Reply yes or start here: https://bringsup.com/start/?ref={slug}
 
 **Price ("how much?", "that's a lot", "can you do $500"):**
 > Fair question. It's a flat $1,000 for everyone, and that covers the whole site, two rounds of changes and keeping it online, so there's no monthly bill after. Nothing is charged until you've seen the finished site and approved it. Keeping one price is how I skip the sales calls, so I don't discount it. Want me to make the homepage so you can see what you'd get first?

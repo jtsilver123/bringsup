@@ -19,15 +19,14 @@ export function Letter() {
           <div className="mail-card">
             <dl className="mail-head">
               <div><dt>From</dt><dd><span className="who">Jake Silver</span> <span className="addr">&lt;{EMAIL}&gt;</span></dd></div>
-              <div><dt>Subject</dt><dd className="subj">idea for marigold bakery</dd></div>
+              <div><dt>Subject</dt><dd className="subj">marigold bakery</dd></div>
             </dl>
             <div className="mail-body">
               <p>Hi Rosa,</p>
-              <p>I was reading through your reviews and kept seeing the sourdough, and that your family remembers people's names. Forty years of that is something.</p>
-              <p>Your website doesn't really show it yet. I'd like to make you a new homepage, built from your actual menu and hours, with the bakery front and center and ordering one tap away on a phone.</p>
-              <p>It's free to look at, and if you like it I can build the whole site, and you'd only pay once it's finished and you're happy with it. Want me to make it? Just reply yes. It doesn't commit you to anything.</p>
-              <p>Jake<br />bringsup.com</p>
-              <p className="mail-foot">If this isn't for you, just say so and I won't email again.</p>
+              <p>Forty years in Westbrook and people still rave about the sourdough. Your website doesn't show that.</p>
+              <p>I'm Jake, I make websites for family businesses. Want me to mock up a new homepage for you? No cost, no strings.</p>
+              <p>Jake Silver<br />bringsup.com</p>
+              <p className="mail-foot">Not for you? Just say so and I won't write again.</p>
             </div>
           </div>
           <figcaption className="small">The first email, as it would go to a made-up bakery. Yours would be about your own business.</figcaption>
