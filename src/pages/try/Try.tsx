@@ -99,7 +99,10 @@ export function Try() {
       handmade: Boolean(custom),
       brand: (concept as { brand?: ResultData["brand"] }).brand,
     });
-    if (data.id && data.id !== "demo") setAddress("/try/?id=" + encodeURIComponent(data.id));
+    // Previews made for a prospect have a short address (bringsup.com/for/<slug>-<code>); keep that in the bar.
+    const short = (concept as { short?: string }).short;
+    if (short) setAddress("/for/" + short);
+    else if (data.id && data.id !== "demo") setAddress("/try/?id=" + encodeURIComponent(data.id));
     go("result");
   };
 
@@ -164,7 +167,7 @@ export function Try() {
     if (!w) say("Allow pop-ups to open full screen");
   };
 
-  // Entry points: ?id= (saved redesign), ?demo (sample), a hand-off from the homepage form (sessionStorage), ?url= (prefill).
+  // Entry points: /for/<short> or ?for= (a prospect's preview), ?id= (saved redesign), ?demo (sample), a hand-off from the homepage form (sessionStorage), ?url= (prefill).
   // Read in the browser only, so the server-rendered page is always the ask view. The ref keeps it to one run under StrictMode.
   useEffect(() => {
     if (started.current) return;
@@ -173,12 +176,13 @@ export function Try() {
     let handoff: { url?: string; email?: string } | null = null;
     try { handoff = JSON.parse(sessionStorage.getItem("bu-try") || "null"); sessionStorage.removeItem("bu-try"); } catch { /* storage blocked */ }
     const id = params.get("id");
+    const short = params.get("for") || location.pathname.match(/^\/for\/([a-z0-9-]+)/i)?.[1];
     if (params.has("demo")) {
       setSoon(false);
       void request<Redesign>("/try/demo.json").then((res) => showResult(res.body));
-    } else if (id && API) {
+    } else if ((id || short) && API) {
       go("working");
-      request<Answer>(API + "?id=" + encodeURIComponent(id))
+      request<Answer>(API + (short ? "?for=" + encodeURIComponent(short) : "?id=" + encodeURIComponent(id!)))
         .then((res) => {
           if (res.status === 202) return showQueued(res.body as QueuedRedesign, "");
           if (res.ok) return showResult(res.body as Redesign);

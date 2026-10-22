@@ -1,0 +1,25 @@
+<!doctype html>
+<!-- The link preview card picture (1200x630) for a prospect's preview link. tools/queue-worker.ts fills {{NAME}} and {{SHOT}}. -->
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=DM+Sans:opsz,wght@9..40,500;9..40,700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0}
+body{width:1200px;height:630px;overflow:hidden;background:#FBFAF7;font-family:'DM Sans',system-ui,sans-serif;color:#16181D;position:relative}
+.text{position:absolute;left:64px;top:0;bottom:0;width:470px;display:flex;flex-direction:column;justify-content:center}
+.who{display:flex;align-items:center;gap:10px;font-weight:700;font-size:22px;margin-bottom:28px}
+.who svg{width:34px;height:34px}
+h1{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:64px;line-height:1;letter-spacing:-.025em}
+.for{margin-top:26px;font-size:26px;color:#3D414B;line-height:1.3}
+.for b{color:#C2410C}
+.frame{position:absolute;left:580px;top:70px;width:700px;border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 30px 80px rgba(22,24,29,.22),0 0 0 1px rgba(22,24,29,.08);transform:rotate(-1.5deg)}
+.bar{height:34px;background:#F1EEE6;display:flex;align-items:center;gap:7px;padding:0 14px}
+.bar i{width:11px;height:11px;border-radius:50%;background:#D6D2C8}
+.frame img{display:block;width:100%}
+</style></head><body>
+<div class="text">
+  <p class="who"><svg viewBox="0 0 48 48"><path d="M14 4H34A10 10 0 0 1 44 14V30A10 10 0 0 1 34 40H21L10.6 46.6A1 1 0 0 1 9 45.8V39.3A10 10 0 0 1 4 30V14A10 10 0 0 1 14 4Z" fill="#16181D"/><g fill="none" stroke="#FFB37A" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 31V13"/><path d="M16 21l8-8 8 8"/></g></svg>BringsUp</p>
+  <h1>This could be your new website.</h1>
+  <p class="for">Made for <b>{{NAME}}</b></p>
+</div>
+<div class="frame"><div class="bar"><i></i><i></i><i></i></div><img src="{{SHOT}}" alt=""></div>
+</body></html>
