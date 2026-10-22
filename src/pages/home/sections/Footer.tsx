@@ -10,7 +10,7 @@ export function Footer() {
         <div className="foot-top">
           <div>
             <a className="brand" href="#top" aria-label="BringsUp, back to top"><BrandMark /><span>BringsUp</span></a>
-            <p className="foot-tag">Websites as good as your reviews.</p>
+            <p className="foot-tag">Websites as good as your reviews. Made in Highland Park, Illinois.</p>
           </div>
           <nav className="foot-links" aria-label="Footer">
             {NAV.map((l) => <a key={l.href} href={l.href}>{l.label}</a>)}

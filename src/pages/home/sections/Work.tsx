@@ -64,7 +64,7 @@ export function Work({ onOpen }: { onOpen: Open }) {
     <section id="work" className="sec" aria-labelledby="work-h">
       <div className="wrap">
         <div className="sec-head">
-          <h2 className="t2" id="work-h">Each one is made for one business.</h2>
+          <h2 className="t2" id="work-h">Each one is made for <span className="key">one business</span>.</h2>
           <p>Their colors, their photos, their reviews, and the one button their customers need most. These businesses are made up and the photos are stock. Yours would use your real name, details and reviews.</p>
         </div>
         <div className="work">

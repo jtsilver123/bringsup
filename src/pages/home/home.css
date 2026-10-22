@@ -225,3 +225,12 @@ dialog.viewer[open]::backdrop{background:rgba(22,24,29,.75)}
 
 /* Key phrases in a headline: a straight Ember underline that sits just under the letters (wraps with them, never animates). */
 .key{background:linear-gradient(var(--ember),var(--ember)) no-repeat 0 92%/100% .09em;-webkit-box-decoration-break:clone;box-decoration-break:clone;padding-bottom:.04em}
+
+/* "The same six things": what's common, then what I do instead. */
+.fixes{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 64px;border-top:1.5px solid var(--ink)}
+.fixes li{display:grid;gap:8px;padding:22px 0;border-bottom:1px solid var(--line)}
+.fx-was{margin:0;color:var(--subtle);font-size:16px}
+.fx-now{margin:0;color:var(--ink);font-size:19px;font-weight:600;line-height:1.35;padding-left:26px;position:relative}
+.fx-now::before{content:"";position:absolute;left:0;top:.62em;width:14px;height:2px;background:var(--ember)}
+@media (max-width:800px){.fixes{grid-template-columns:minmax(0,1fr)}}
+.letter .ps{color:var(--muted);font-style:italic}

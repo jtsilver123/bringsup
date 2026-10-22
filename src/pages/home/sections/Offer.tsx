@@ -7,7 +7,7 @@ export function Offer() {
     <section id="how" className="sec" aria-labelledby="how-h">
       <div className="wrap">
         <div className="sec-head">
-          <h2 className="t2" id="how-h">What happens, and what it costs.</h2>
+          <h2 className="t2" id="how-h">What happens, and <span className="key">what it costs</span>.</h2>
           <p>You see your homepage, then your finished site, before you pay anything.</p>
         </div>
         <ol className="timeline">
