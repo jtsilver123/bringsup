@@ -1,6 +1,6 @@
 # BringsUp cold emails
 
-These go out under Jake's name, so each one has to read like a quick note Jake typed to one person on his phone. **Short beats everything:** Email 1 is 3 or 4 sentences, the follow-ups are 1 or 2. No selling, no adjectives about our work, no explaining the process. If a sentence could be sent to any business, or doesn't help them say yes, cut it.
+These go out under Jake's name, so each one has to read like a quick note Jake typed to one person on his phone. **Short beats everything:** Email 1 is 5 short sentences at most, the follow-ups are 1 or 2. No selling, no adjectives about our work, no explaining the process. If a sentence could be sent to any business, or doesn't help them say yes, cut it.
 
 ## How it works
 1. Research finds the business and what its customers love (RUNBOOK step 6). Nothing is built yet.
@@ -43,7 +43,7 @@ Every cold email exists to get one word back: **yes**. Not a click (there are no
 1. `quick idea for {business}`
 2. `{business} website`
 
-**Body: 30–55 words before the sign-off, 3 or 4 short sentences, one question.**
+**Body: 30–55 words before the sign-off, 5 short sentences at most, one question.**
 
 > Hi {first name},   ← first names only, at most two ("Hi Ken and Maral,"). No first name known: just "Hi,"
 >
