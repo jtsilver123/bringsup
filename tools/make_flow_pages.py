@@ -90,6 +90,7 @@ h1{{font-family:var(--display);font-weight:800;letter-spacing:-.035em;font-size:
 .done a.btn{{display:inline-flex;margin-top:22px;min-height:52px;align-items:center;padding:14px 24px;border-radius:999px;background:var(--ink);color:#fff;font-weight:700;text-decoration:none}}
 footer{{border-top:1px solid var(--line)}}
 footer .wrap{{padding-top:24px;padding-bottom:32px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 24px;font-size:14px;color:var(--subtle)}}
+footer a{{color:var(--subtle)}}
 @media (prefers-reduced-motion:reduce){{*,*::before,*::after{{animation:none!important;transition:none!important}}.lift path{{stroke-dashoffset:0}}}}
 </style>
 </head>
@@ -118,7 +119,7 @@ footer .wrap{{padding-top:24px;padding-bottom:32px;display:flex;justify-content:
     </div>
   </div>
 </main>
-<footer><div class="wrap"><span>© <span id="yr">2026</span> BringsUp · Websites as good as your reviews.</span><span>Secure forms by Tally. Payments by Stripe.</span></div></footer>
+<footer><div class="wrap"><span>© <span id="yr">2026</span> BringsUp · Websites as good as your reviews.</span><span>Secure forms by Tally. Payments by Stripe. <a href="/terms/">Terms</a> · <a href="/privacy/">Privacy</a></span></div></footer>
 <script>
 (function () {{
   document.getElementById('yr').textContent = new Date().getFullYear();
