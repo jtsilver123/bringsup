@@ -75,9 +75,13 @@ try {
   await worker("POST", "", { action: "update", ref, applied_seq: 2, set: { status: "preview_sent", todo: null, pending_changes: null } });
   await expect("builder applies round 1", { status: "preview_sent", todo: null, pending_changes: null });
 
+  await submit(FORMS.changes, [text("Your email", email), text("What would you like changed?", "Oh, and Sunday hours")]);
+  await expect("a follow-up within 2 days of the updated preview stays in round 1", { status: "changes_requested", rounds_used: 1, todo: "revise" });
+  await worker("POST", "", { action: "update", ref, applied_seq: 3, set: { status: "preview_sent", todo: null, pending_changes: null, last_preview_at: "2000-01-01T00:00:00Z" } });
+
   await submit(FORMS.changes, [text("Your email", email), text("What would you like changed?", "Round 2: new hours")]);
   await expect("round 2", { status: "changes_requested", rounds_used: 2 });
-  await worker("POST", "", { action: "update", ref, applied_seq: 3, set: { status: "preview_sent", todo: null, pending_changes: null } });
+  await worker("POST", "", { action: "update", ref, applied_seq: 4, set: { status: "preview_sent", todo: null, pending_changes: null, last_preview_at: "2000-01-01T00:00:00Z" } });
 
   await submit(FORMS.changes, [text("Your email", email), text("What would you like changed?", "Round 3: different font")]);
   await expect("a third request is held and an extra round offered", { status: "awaiting_extra", rounds_used: 2, todo: "offer_extra", held_changes: "Round 3: different font" });
@@ -85,7 +89,7 @@ try {
   if (FORMS.extra) {
     await submit(FORMS.extra, [text("Your email", email), text("What would you like changed?", ""), { key: "pay", label: "Pay", type: "PAYMENT", value: { price: 150, currency: "USD" } }]);
     await expect("paying for the extra round applies the held request", { status: "changes_requested", rounds_extra: 1, rounds_used: 3, held_changes: null, paid_cents: 15000 });
-    await worker("POST", "", { action: "update", ref, applied_seq: 4, set: { status: "preview_sent", todo: null, pending_changes: null } });
+    await worker("POST", "", { action: "update", ref, applied_seq: 5, set: { status: "preview_sent", todo: null, pending_changes: null } });
   } else {
     console.log("skip  extra round (TALLY_EXTRA_FORM not set)");
   }

@@ -29,6 +29,8 @@ const WORKER_TOKEN = Deno.env.get("WORKER_TOKEN") || "";
 const TALLY_SECRET = Deno.env.get("TALLY_SIGNING_SECRET") || "";
 const APPROVE_PRICE_CENTS = Number(Deno.env.get("APPROVE_PRICE_CENTS") || 100000);
 const ROUNDS_INCLUDED = 2;
+/** A request this soon after an updated preview is a follow-up to the same round, not a new one. */
+const GRACE_MS = 48 * 3600_000;
 const BUCKET = "project-files";
 
 const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
@@ -36,7 +38,7 @@ const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SE
 export interface Project {
   id: string; ref: string; status: string; todo: string | null; email: string; business_name: string; current_site: string;
   rounds_included: number; rounds_extra: number; rounds_used: number; changes_seq: number;
-  pending_changes: string | null; held_changes: string | null; care_plan: boolean; paid_cents: number; attempts: number;
+  pending_changes: string | null; held_changes: string | null; care_plan: boolean; last_preview_at: string | null; paid_cents: number; attempts: number;
   brief: Record<string, string>; files: TallyFile[];
 }
 
@@ -215,6 +217,11 @@ async function onChanges(sub: Submission, paidExtra: boolean): Promise<Project> 
     await log(p, "changes", `Added to round ${p.rounds_used} (not applied yet, so no extra round used)`, { request }, p.rounds_used);
     return p;
   }
+  if (p.status === "preview_sent" && p.rounds_used > 0 && p.last_preview_at && Date.now() - Date.parse(p.last_preview_at) < GRACE_MS) {
+    p = await save(p, { ...touch, status: "changes_requested", pending_changes: request, changes_seq: p.changes_seq + 1, todo: "revise" });
+    await log(p, "changes", `Follow-up within 2 days of the updated preview; part of round ${p.rounds_used}`, { request }, p.rounds_used);
+    return p;
+  }
   const round = p.rounds_used + 1;
   const allowed = p.rounds_included + p.rounds_extra;
   if (round > allowed) {
@@ -296,7 +303,7 @@ async function webhook(req: Request): Promise<Response> {
 
 const SETTABLE = new Set([
   "status", "todo", "preview_url", "live_url", "next_check_at", "pending_changes", "held_changes", "domain", "domain_provider",
-  "domain_helper", "domain_helper_email", "care_plan", "brief", "site", "pages_project", "last_customer_touch_at",
+  "domain_helper", "domain_helper_email", "care_plan", "brief", "site", "pages_project", "last_customer_touch_at", "last_preview_at",
 ]);
 const TRANSITIONS: Record<string, string[]> = {
   started: ["preview_sent", "cancelled"],
@@ -346,6 +353,7 @@ async function work(req: Request): Promise<Response> {
     set.todo = p.todo === "care_edit" ? "care_edit" : "revise";
     if (set.status === "preview_sent") set.status = "changes_requested";
   }
+  if (set.status === "preview_sent" && !("last_preview_at" in set)) set.last_preview_at = now();
   // A successful update ends the lease and clears the failure count (repeating jobs like DNS checks claim again later).
   p = await save(p, { ...set, claimed_until: null, attempts: 0, last_error: null });
   if (body.event?.kind) await log(p, body.event.kind, body.event.summary || "", body.event.payload ?? {}, body.event.round ?? null);

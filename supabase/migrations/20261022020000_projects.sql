@@ -115,3 +115,6 @@ alter table public.webhook_receipts enable row level security;
 alter table public.projects drop constraint if exists projects_todo_check;
 alter table public.projects add constraint projects_todo_check
   check (todo in ('build', 'revise', 'offer_extra', 'launch', 'check_dns', 'care_edit', 'reply_out_of_scope', 'remind'));
+
+-- Follow-ups sent within 2 days of a new preview join that round instead of using another (owner walkthrough).
+alter table public.projects add column if not exists last_preview_at timestamptz;
