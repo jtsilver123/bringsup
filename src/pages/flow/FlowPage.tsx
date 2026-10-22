@@ -5,7 +5,7 @@ import { TallyEmbed } from "../../components/TallyEmbed.tsx";
 import { TALLY } from "../../lib/config.ts";
 import "./flow.css";
 
-export type FlowKind = "start" | "changes" | "approve";
+export type FlowKind = "start" | "changes" | "approve" | "extra";
 
 interface Flow {
   form: string;
@@ -51,6 +51,21 @@ const FLOWS: Record<FlowKind, Flow> = {
     doneTitle: "Got your changes.",
     doneText: "We'll email your updated preview as soon as it's ready.",
   },
+  extra: {
+    form: TALLY.extra,
+    title: "One more round of changes",
+    eyebrow: "One more round",
+    h1: <>One more round of <Lift>changes.</Lift></>,
+    lead: "You've used the two rounds of changes included with your website. One more round is $150. Already sent us the changes? You don't need to type them again.",
+    steps: [
+      ["Pay for the round", "$150 by card through Stripe. Your receipt comes by email."],
+      ["We make your changes", "Including anything you already sent. Updated preview in about 3 days."],
+      ["Approve when you love it", "Then the flat $1,000 and it goes live. Or approve it as it is anytime."],
+    ],
+    promise: "Only if you want it. You can approve your site as it is instead.",
+    doneTitle: "Got it.",
+    doneText: "We're on your changes. Your updated preview arrives by email in about 3 days.",
+  },
   approve: {
     form: TALLY.approve,
     title: "Approve and launch",
@@ -59,8 +74,8 @@ const FLOWS: Record<FlowKind, Flow> = {
     lead: "Approve your preview and pay the flat $1,000. Then we put your new site live on the domain you already have.",
     steps: [
       ["Approve and pay", "One flat $1,000, by card through Stripe. Your receipt comes by email."],
-      ["Connect your domain", "We email simple steps for your provider. About 10 minutes, or we send them to your web person."],
-      ["You're live", "Your email keeps working exactly like it does today. You own the site and every file."],
+      ["Connect your domain", "We email simple steps for your provider. About 10 minutes, or we send them straight to your web person. We never touch the settings that run your email."],
+      ["You're live", "We check your email still works, then send your launch note. Hosting is included with no monthly fee, and you own the site and every file."],
     ],
     promise: "Secure card payment through Stripe. You own everything.",
     doneTitle: "You're approved.",

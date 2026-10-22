@@ -5,7 +5,8 @@ import { Lift, Stars } from "../bits.tsx";
 import { HERO_CHECKS } from "../data.ts";
 
 /** Hero. With the redesign tool on (live), the main button goes straight to /try/. */
-export function Hero({ live, ref }: { live: boolean; ref?: Ref<HTMLElement> }) {
+/** `start` is set for owners arriving from an outreach email (?ref=): they already have a concept, so the main button starts their site. */
+export function Hero({ live, start, ref }: { live: boolean; start?: string; ref?: Ref<HTMLElement> }) {
   return (
     <section ref={ref} className="wrap hero">
       <div>
@@ -13,7 +14,9 @@ export function Hero({ live, ref }: { live: boolean; ref?: Ref<HTMLElement> }) {
         <h1 className="display">Your reviews say you're the best in town. <em>Your website <Lift>should too.</Lift></em></h1>
         <p className="lead">We turn outdated websites into ones as good as your reviews. See your new homepage free. Like it? We build the whole site and refresh your brand, and you pay a flat <strong>$1,000</strong> only when you approve it.</p>
         <div className="ctas">
-          {live
+          {start
+            ? <a className="btn btn-ember" href={start}>Start my website <Arrow /></a>
+            : live
             ? <a className="btn btn-ember" href="/try/">Redesign my website, free <Arrow /></a>
             : <a className="btn btn-ember" href="#concept">Get my free concept <Arrow /></a>}
           <a className="btn btn-outline" href="#work">See sample work</a>

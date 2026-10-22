@@ -6,6 +6,7 @@
 // GET  /projects?jobs=1             Builder: claim up to 5 projects with work to do (leased 45 min).  (x-worker-token)
 // GET  /projects?ref=<ref>          Builder: one project and its history.                            (x-worker-token)
 // GET  /projects?health=1           Health check: alerts, stuck projects, failing jobs.               (x-worker-token)
+// GET  /projects?email=<address>    Inbox triage: the projects an email address belongs to.          (x-worker-token)
 // POST /projects {action, ref, ...} Builder: "update" (set fields, log an event) or "fail".          (x-worker-token)
 //
 // Rounds: ROUNDS_INCLUDED (2) rounds of changes after the first preview. A request past that is held and the
@@ -126,6 +127,7 @@ async function onStart(sub: Submission): Promise<Project> {
   const fields = {
     business_name: business, owner_name: pick(a, "Your name"), email, phone: pick(a, "Phone"),
     current_site: site, domain: hostOf(site), domain_provider: pick(a, "Who manages your web address"),
+    domain_helper: pick(a, "Who can log in to your domain"), domain_helper_email: pick(a, "Their email").toLowerCase(),
     last_customer_touch_at: now(),
   };
 
@@ -250,9 +252,9 @@ async function onApprove(sub: Submission): Promise<Project> {
   const paid = sub.paidCents >= APPROVE_PRICE_CENTS;
   p = await save(p, {
     last_customer_touch_at: now(),
-    care_plan: /^yes/i.test(pick(a, "Want the Care Plan")),
-    domain_helper: pick(a, "Who should connect your domain"),
-    domain_helper_email: pick(a, "Your web person's email").toLowerCase(),
+    care_plan: /^yes/i.test(pick(a, "Want us to handle updates", "Want the Care Plan")),
+    ...(pick(a, "Who should connect your domain") ? { domain_helper: pick(a, "Who should connect your domain") } : {}),
+    ...(pick(a, "Your web person's email") ? { domain_helper_email: pick(a, "Your web person's email").toLowerCase() } : {}),
     paid_cents: p.paid_cents + sub.paidCents,
     ...(paid ? { status: "approved", todo: "launch" } : {}),
   });
@@ -318,7 +320,7 @@ const TRANSITIONS: Record<string, string[]> = {
 
 async function work(req: Request): Promise<Response> {
   const body = await req.json() as {
-    action?: string; ref?: string; set?: Record<string, unknown>; error?: string;
+    action?: string; ref?: string; set?: Record<string, unknown>; error?: string; text?: string;
     /** For "update": the changes_seq the builder applied. pending_changes is only cleared if nothing new arrived since. */
     applied_seq?: number;
     event?: { kind: string; summary?: string; payload?: unknown; round?: number };
@@ -333,6 +335,14 @@ async function work(req: Request): Promise<Response> {
     if (p.attempts >= 5) await alert("builder", p.ref, `Job "${p.todo}" failed 5 times: ${String(body.error).slice(0, 300)}`);
     return json(200, { ok: true });
   }
+  if (body.action === "email_changes") {
+    // A change request that arrived by email instead of the form: same round rules, logged the same way.
+    const sub: Submission = { formId: "email", responseId: `email-${crypto.randomUUID()}`, ref: p.ref, files: [], paidCents: 0,
+      answers: { "Your email": p.email, "What would you like changed?": String(body.text || "") } };
+    const updated = await onChanges(sub, false);
+    await log(updated, "email", "Change request received by email");
+    return json(200, { ok: true, project: updated });
+  }
   if (body.action === "delete") {
     // Only for tools/simulate-flow.ts test projects.
     if (!p.ref.startsWith("test-")) return json(403, { error: "Only test- projects can be deleted" });
@@ -341,7 +351,7 @@ async function work(req: Request): Promise<Response> {
     await db.from("projects").delete().eq("id", p.id);
     return json(200, { ok: true, deleted: p.ref });
   }
-  if (body.action !== "update") return json(400, { error: 'Use {action: "update" | "fail" | "delete", ref, ...}' });
+  if (body.action !== "update") return json(400, { error: 'Use {action: "update" | "fail" | "email_changes" | "delete", ref, ...}' });
 
   const set = Object.fromEntries(Object.entries(body.set || {}).filter(([k]) => SETTABLE.has(k)));
   if (typeof set.status === "string" && set.status !== p.status && !TRANSITIONS[p.status]?.includes(set.status)) {
@@ -398,6 +408,13 @@ Deno.serve(async (req) => {
     const { data, error } = await db.rpc("claim_project_jobs", { n: 5 });
     if (error) return json(500, { error: error.message });
     return json(200, { jobs: data });
+  }
+  const email = url.searchParams.get("email");
+  if (email) {
+    // Inbox triage: match a sender to their project(s), newest first.
+    const { data } = await db.from("projects").select("ref,business_name,status,email,domain_helper_email,updated_at")
+      .or(`email.eq."${email.toLowerCase().replace(/"/g, "")}",domain_helper_email.eq."${email.toLowerCase().replace(/"/g, "")}"`).order("updated_at", { ascending: false });
+    return json(200, { projects: data || [] });
   }
   const ref = url.searchParams.get("ref");
   if (ref) {

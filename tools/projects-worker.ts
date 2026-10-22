@@ -6,7 +6,11 @@
 //   node tools/projects-worker.ts preview <ref>                build work/projects/<ref>/site.json with the preview bar and deploy it
 //   node tools/projects-worker.ts launch <ref>                 build without the preview bar, deploy to production, attach the domain
 //   node tools/projects-worker.ts dns <ref>                    is the domain pointed at the site and serving it?
-//   node tools/projects-worker.ts update <ref> <json-file>     apply {set?, event?} from a file (see SETTABLE in the projects function)
+//   node tools/projects-worker.ts update <ref> <json-file>     apply {set?, event?, applied_seq?} from a file (see SETTABLE in the projects function)
+//   node tools/projects-worker.ts fail <ref> "<what went wrong>"  record a failed job (5 failures raise an alert)
+//   node tools/projects-worker.ts email-changes <ref> <txt-file>  a change request that came by email: same round rules as the form
+//   node tools/projects-worker.ts find <email>                 which project an email address belongs to
+//   node tools/projects-worker.ts health                       alerts, failing jobs, stuck projects, quiet customers
 //
 // Env: BRINGSUP_WORKER_TOKEN, CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID.
 import { execFileSync } from "node:child_process";
@@ -157,9 +161,12 @@ else if (cmd === "preview" && ref) await preview(ref);
 else if (cmd === "launch" && ref) await launch(ref);
 else if (cmd === "dns" && ref) await dns(ref);
 else if (cmd === "update" && ref && file) {
-  const { set, event } = JSON.parse(readFileSync(file, "utf8"));
-  console.log(JSON.stringify(await update(ref, set, event), null, 2));
-} else {
-  console.error("Usage: node tools/projects-worker.ts jobs | show <ref> | preview <ref> | launch <ref> | dns <ref> | update <ref> <json-file>");
+  const { set, event, applied_seq } = JSON.parse(readFileSync(file, "utf8"));
+  console.log(JSON.stringify(await api("POST", "", { action: "update", ref, set, event, applied_seq }), null, 2));
+} else if (cmd === "fail" && ref) console.log(await api("POST", "", { action: "fail", ref, error: file || "failed" }));
+else if (cmd === "email-changes" && ref && file) console.log(JSON.stringify(await api("POST", "", { action: "email_changes", ref, text: readFileSync(file, "utf8") }), null, 2));
+else if (cmd === "find" && ref) console.log(JSON.stringify(await api("GET", `?email=${encodeURIComponent(ref)}`), null, 2));
+else if (cmd === "health") console.log(JSON.stringify(await api("GET", "?health=1"), null, 2)); else {
+  console.error("Usage: node tools/projects-worker.ts jobs | show <ref> | preview <ref> | launch <ref> | dns <ref> | update <ref> <json-file> | fail <ref> <msg> | email-changes <ref> <txt-file> | find <email> | health");
   process.exit(1);
 }

@@ -15,7 +15,8 @@ export const TERMS: LegalDoc = {
     "The homepage concept we send you is free. You never owe anything for it.",
     "We build your full site for free. You pay the flat $1,000 only if you approve it.",
     "Once you pay, the site, its files and its design are yours.",
-    "The Care Plan is optional, month to month, and you can cancel anytime.",
+    "Hosting is included with no monthly fee. The Care Plan for edits is optional, and you can cancel anytime.",
+    "Two rounds of changes are included. Extra rounds are $150, and we always ask first.",
   ],
   sections: [
     {
@@ -28,7 +29,7 @@ export const TERMS: LegalDoc = {
     },
     {
       title: "Building your website",
-      body: <><p>When you fill in our start form and sign, you're asking us to build your full website. We aim to send a private preview within about two weeks. Your project includes two rounds of changes, requested by form or email. Extra rounds beyond that, or brand-new pages that weren't in scope, may be quoted separately, and we'll always tell you the price before doing the work.</p></>,
+      body: <><p>When you fill in our start form, you're asking us to build your full website. We aim to send a private preview within about two weeks. Your project includes two rounds of changes after that preview, requested by form or email, and we keep count for you. Anything you send within two days of an updated preview is part of the same round. Extra rounds are $150 each, and we always ask before charging. Brand-new pages or features that weren't in scope get a flat price before any work starts.</p><p>If you don't approve your site within 60 days of your last preview, we take the preview down and delete the photos you sent us. You owe nothing, and you can reply anytime before then to pick it back up.</p></>,
     },
     {
       title: "Approval and payment",
@@ -40,11 +41,11 @@ export const TERMS: LegalDoc = {
     },
     {
       title: "The Care Plan",
-      body: <><p>The Care Plan is optional. It covers hosting, security updates and small edits (things like new hours, specials, photos or text changes) for a monthly fee shown on our pricing section, billed by Stripe. It renews monthly until you cancel. You can cancel anytime by emailing us, and it stops at the end of that month. If you leave, we help move your site wherever you'd like.</p><p>Without the Care Plan, you're responsible for hosting your site, and we'll send you the files and setup steps.</p></>,
+      body: <><p>Hosting is included with your website at no monthly cost, so your site stays up whether or not you choose the Care Plan. If we ever stop hosting sites, we'll give you at least 60 days' notice and move your site to a host of your choice, or hand you the files.</p><p>The Care Plan is optional. It covers small edits (things like new hours, specials, photos or text changes), requested by email, for the monthly fee shown on our pricing section, billed by Stripe. It renews monthly until you cancel. You can cancel anytime by emailing us, and it stops at the end of that month.</p></>,
     },
     {
       title: "Your domain and email",
-      body: <><p>Connecting your domain to your new site may mean changing settings at your domain provider. We send step-by-step instructions and take care to leave your email settings alone, but you're responsible for your domain account, and we aren't liable for issues caused by your provider or by changes we didn't make.</p></>,
+      body: <><p>Connecting your domain to your new site means changing two settings at your domain provider, which we explain step by step for your provider (or send straight to your web person). We never ask you to change the settings that run your email (MX records), and we check that your email still works before and after. You stay in charge of your domain account, and we aren't liable for issues caused by your provider or by changes we didn't make.</p></>,
     },
     {
       title: "Electronic signatures",

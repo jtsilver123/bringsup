@@ -13,6 +13,7 @@ const pages: Record<string, () => ReactNode> = {
   start: () => <FlowPage kind="start" />,
   changes: () => <FlowPage kind="changes" />,
   approve: () => <FlowPage kind="approve" />,
+  extra: () => <FlowPage kind="extra" />,
   terms: () => <Legal kind="terms" />,
   privacy: () => <Legal kind="privacy" />,
   brand: () => <Brand />,

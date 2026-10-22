@@ -14,7 +14,7 @@ export const HERO_CHECKS = ["No calls", "Pay only when you approve", "You own ev
 export type Fact = { value: string; label: string };
 export const FACTS: Fact[] = [
   { value: "$0", label: "until you approve your finished site" },
-  { value: "48 hrs", label: "to your free homepage concept" },
+  { value: "1 hour", label: "to your free homepage concept, by email" },
   { value: "0 calls", label: "one 10-minute form, the rest by email" },
   { value: "$1,000", label: "flat, with a brand refresh included" },
 ];
@@ -59,7 +59,8 @@ export const INCLUDED = [
   "Call, book, order or directions buttons",
   "Google Business Profile tidy-up, so you show up right in local search",
   "Connected to your existing domain",
-  "Two rounds of changes",
+  "Hosting included, with no monthly fee",
+  "Two rounds of changes (extra rounds $150, only if you ask)",
   "You own the site and every file",
 ];
 
@@ -70,6 +71,7 @@ export const COMPARE: CompareRow[] = [
   { label: "See it before you pay", diy: "Only what you build", agency: "Usually after a deposit", us: "Yes, your entire finished site" },
   { label: "Price", diy: "Monthly subscription, forever", agency: "Custom quote, often much higher", us: "Flat $1,000, when you approve" },
   { label: "Brand refresh", diy: "Not included", agency: "Usually a separate project", us: "Included" },
+  { label: "Hosting", diy: "Part of the monthly plan", agency: "Usually a monthly fee", us: "Included, no monthly fee" },
   { label: "Who owns it", diy: "Tied to the builder's plan", agency: "Depends on the contract", us: "You, every file" },
 ];
 
@@ -85,13 +87,15 @@ export const FAQ: FaqItem[] = [
   { q: "Is the concept really free?", a: "Yes. We make your homepage concept before we ever talk money. If it's not for you, that's the end of it. No follow-up calls, no invoice." },
   { q: "How did you find my business?", a: "Your reviews. We look for family-owned businesses with a great reputation on Google and a website that hasn't caught up yet. Everything in your concept came from what you've already published." },
   { q: "Why make a concept before I've asked?", a: "Because \"we'll make you a great website\" is easy to say. Showing you is better. If you like what you see, we both save time." },
-  { q: "Do I have to change my domain or email?", a: "No. We launch the new site on the domain you already have, and your email stays exactly as it is." },
+  { q: "Do I have to change my domain or email?", a: "No. We launch the new site on the domain you already have. We only change the two settings that point your web address at the new site. The settings that run your email (called MX records) stay exactly as they are, and we check your email works before and after." },
   { q: "When do I pay?", a: "Only after you've seen your finished site and approved it. One flat $1,000, by card through Stripe. If you don't love it, you owe nothing." },
   { q: "Do I have to get on a call?", a: "No. Everything happens through one short form and email, on your schedule. If you'd rather talk, just reply and ask." },
   { q: "What do you need from me?", a: "One 10-minute form, plus any photos you like. We pull your hours, menu or services and reviews from what's already online." },
-  { q: "What if I need more pages, or online ordering?", a: "Tell us in the start form. Order, booking and quote buttons are part of the $1,000. If you need something bigger, you'll get a flat price before any work starts." },
+  { q: "What if I need more pages, or online ordering?", a: "Tell us in the start form. We connect the ordering or booking service you already use, like Square, Toast or Calendly. If you don't have one, the button calls you or opens a quote form. Those services' own fees are theirs, not ours. Need something bigger? You'll get a flat price before any work starts." },
+  { q: "What if I want more changes?", a: "Two rounds of changes are included, and we keep count for you. Anything you send within two days of an updated preview is part of the same round. After that, extra rounds are $150 each, and we always ask before charging." },
+  { q: "What if I decide not to go ahead?", a: "Then you owe nothing. We take your private preview down after 60 days and delete your photos. Reply anytime before then to pick it back up." },
   { q: "Who owns the website?", a: "You do. The design, the files and the domain are yours, whether or not you keep the Care Plan." },
-  { q: "Can I update it myself?", a: "Yes, you get a simple editor. Or send us the change and we'll handle it on the Care Plan." },
+  { q: "Is there a monthly fee?", a: "No. Hosting is included, so your site stays up with no monthly bill. The optional Care Plan ($79/mo) is only if you'd like us to make updates for you, like new hours, specials and photos, by email. The files are yours, so your own web person can edit them too." },
   { q: "What if I already have a web person?", a: "Great. Share the concept with them. We're happy to hand over the design, or to work alongside them." },
 ];
 

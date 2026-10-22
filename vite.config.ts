@@ -11,6 +11,7 @@ export const pages = {
   start: "start/index.html",
   changes: "changes/index.html",
   approve: "approve/index.html",
+  extra: "extra/index.html",
   terms: "terms/index.html",
   privacy: "privacy/index.html",
   brand: "brand/index.html",

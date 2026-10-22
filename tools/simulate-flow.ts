@@ -97,7 +97,7 @@ try {
   const status = await (await fetch(`${API}?status=${ref}`)).json();
   console.log(`${typeof status.rounds_left === "number" ? "ok  " : "FAIL"}  public status: ${JSON.stringify(status)}`);
 
-  await submit(FORMS.approve, [text("Your email", email), text("Want the Care Plan?", "Yes, send me the Care Plan link"), { key: "pay", label: "Pay", type: "PAYMENT", value: { price: 1000, currency: "USD" } }]);
+  await submit(FORMS.approve, [text("Your email", email), text("Want us to handle updates later?", "Yes, send me the Care Plan link ($79/mo)"), { key: "pay", label: "Pay", type: "PAYMENT", value: { price: 1000, currency: "USD" } }]);
   await expect("approve and pay", { status: "approved", todo: "launch", care_plan: true });
 
   await submit(FORMS.approve, [text("Your email", email), { key: "pay", label: "Pay", type: "PAYMENT", value: { price: 1000, currency: "USD" } }]);
