@@ -28,7 +28,7 @@ Every cold email exists to get one word back: **yes**. Not a click (there are no
 - **A reply from a person stops the drip**, whatever it says. A "no" goes on Do Not Contact. An auto-reply (out of office) only moves the next date: see OPERATOR.md step 1.
 - A bounce stops it too (`status: lost`).
 - Three cold emails per business, ever. There is never a fourth, and never a new sequence for someone who finished one.
-- Steps 2 and 3 are replies in the same thread (`GMAIL_REPLY_TO_THREAD`), so the owner sees one short conversation rather than three separate pitches.
+- **Everything after Email 1 goes in the same thread** (`GMAIL_REPLY_TO_THREAD` on the row's `threadId`): Emails 2 and 3, every reply, the homepage link, the nudges, and later the customer emails (tools/customer_emails.md). The owner sees one conversation, never a second pitch. Never start a new thread with a prospect.
 
 ## How they're sent (deliverability)
 - **Plain text only.** No HTML, no bold or bullets, no images, no tracking pixels and no link shorteners. Use Composio `GMAIL_SEND_EMAIL` with `is_html: false` and `include_signature: false`. The sign-off below is the whole signature.
