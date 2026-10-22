@@ -41,7 +41,7 @@ export function Legal({ kind }: { kind: LegalKind }) {
       </main>
       <footer>
         <div className="wrap">
-          <span>© 2026 BringsUp · Websites as good as your reviews.</span>
+          <span>© {new Date().getFullYear()} BringsUp · 2195 Kipling Lane, Highland Park, IL 60035</span>
           <span><a href="/terms/">Terms</a> · <a href="/privacy/">Privacy</a> · <a href="mailto:jake@bringsup.com">jake@bringsup.com</a></span>
         </div>
       </footer>

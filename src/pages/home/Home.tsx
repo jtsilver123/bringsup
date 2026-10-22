@@ -2,29 +2,24 @@ import { useEffect, useRef, useState, type RefObject } from "react";
 import { Arrow } from "../../components/icons.tsx";
 import { REDESIGN_API } from "../../lib/config.ts";
 import { hasIO, useSearch } from "./hooks.ts";
-import { About } from "./sections/About.tsx";
 import { Concept } from "./sections/Concept.tsx";
-import { Facts } from "./sections/Facts.tsx";
 import { Faq } from "./sections/Faq.tsx";
 import { Footer } from "./sections/Footer.tsx";
 import { Header } from "./sections/Header.tsx";
 import { Hero } from "./sections/Hero.tsx";
-import { HowItWorks } from "./sections/HowItWorks.tsx";
-import { Inbox } from "./sections/Inbox.tsx";
-import { Pricing } from "./sections/Pricing.tsx";
-import { Problem } from "./sections/Problem.tsx";
+import { Letter } from "./sections/Letter.tsx";
+import { Offer } from "./sections/Offer.tsx";
 import { Work } from "./sections/Work.tsx";
 import { Toast, useToast } from "./Toast.tsx";
 import { WorkViewer, type WorkViewerHandle } from "./WorkViewer.tsx";
+import "../../components/site.css";
 import "./home.css";
 
 /** With the redesign backend configured, the page points at the redesign tool instead of the hand-made concept form. */
 const LIVE = REDESIGN_API.length > 0;
 
-type ElRef = RefObject<HTMLElement | null>;
-
-/** The id of the section in the middle of the screen, for the nav's active dot. */
-function useScrollspy(main: ElRef): string {
+/** The id of the section in the middle of the screen, for the nav. */
+function useScrollspy(main: RefObject<HTMLElement | null>): string {
   const [active, setActive] = useState("");
   useEffect(() => {
     const el = main.current;
@@ -38,34 +33,8 @@ function useScrollspy(main: ElRef): string {
   return active;
 }
 
-/** Mobile CTA bar: shows once the hero has scrolled away, hides while the form is on screen. */
-function MobileCta({ hero, concept, startHref }: { hero: ElRef; concept: ElRef; startHref?: string }) {
-  const [pastHero, setPastHero] = useState(false);
-  const [formVisible, setFormVisible] = useState(false);
-  useEffect(() => {
-    if (!hasIO() || !hero.current || !concept.current) return;
-    const a = new IntersectionObserver((en) => setPastHero(!en[0]!.isIntersecting));
-    const b = new IntersectionObserver((en) => setFormVisible(en[0]!.isIntersecting));
-    a.observe(hero.current);
-    b.observe(concept.current);
-    return () => {
-      a.disconnect();
-      b.disconnect();
-    };
-  }, [hero, concept]);
-  return (
-    <div className={pastHero && !formVisible ? "mcta show" : "mcta"} id="mcta">
-      {startHref
-        ? <><span>Your concept is ready</span><a className="btn btn-glow" href={startHref}>Start my website</a></>
-        : <><span>Free homepage concept</span><a className="btn btn-glow" href="#concept">Get mine</a></>}
-    </div>
-  );
-}
-
 export function Home() {
   const main = useRef<HTMLElement>(null);
-  const hero = useRef<HTMLElement>(null);
-  const concept = useRef<HTMLElement>(null);
   const viewer = useRef<WorkViewerHandle>(null);
   const active = useScrollspy(main);
   const search = useSearch();
@@ -77,25 +46,20 @@ export function Home() {
     <>
       <a className="skip" href="#main">Skip to content</a>
       {fromEmail && (
-        <div className="welcome" role="region" aria-label="Welcome">
-          <div className="wrap"><span>The homepage concept in Jake's email was made just for you, free. Like it?</span><a href={startHref}>Start my website <Arrow size={16} /></a></div>
+        <div className="welcome on-dark" role="region" aria-label="Welcome">
+          <div className="wrap"><span>The homepage in Jake's email was made just for you, free. Like it?</span><a href={startHref}>Start my website <Arrow size={16} /></a></div>
         </div>
       )}
-      <Header active={active} />
+      <Header active={active} start={fromEmail ? startHref : undefined} />
       <main id="main" ref={main}>
-        <Hero live={LIVE} start={fromEmail ? startHref : undefined} ref={hero} />
-        <Facts />
-        <Inbox search={search} />
-        <Problem />
+        <Hero live={LIVE} start={fromEmail ? startHref : undefined} />
+        <Letter />
         <Work onOpen={(src, name) => viewer.current?.open(src, name)} />
-        <HowItWorks />
-        <Pricing />
-        <About />
+        <Offer />
         <Faq />
-        <Concept live={LIVE} search={search} say={toast.say} ref={concept} />
+        <Concept live={LIVE} search={search} say={toast.say} />
       </main>
       <WorkViewer ref={viewer} />
-      <MobileCta hero={hero} concept={concept} startHref={fromEmail ? startHref : undefined} />
       <Toast msg={toast.msg} show={toast.show} />
       <Footer />
     </>

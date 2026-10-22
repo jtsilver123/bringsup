@@ -413,6 +413,11 @@ async function work(req: Request, body: any): Promise<Response> {
     // An outreach concept: already designed by the operator, so it's saved done. The ref ties /start/ back to the tracker row.
     const concept = body.concept;
     if (!concept || typeof concept !== "object" || !concept.business_name || !concept.headline) return json(req, 400, { error: "Missing concept (business_name, headline, ...)." });
+    // A hand-built page (OPERATOR "Building their homepage") rides along as finished HTML; /try/ shows it as is.
+    if (typeof body.html === "string") {
+      if (body.html.length > 400_000) return json(req, 400, { error: "html is too large (400 KB max)." });
+      concept.html = body.html;
+    }
     if (body.ref) concept.ref = String(body.ref);
     const images = Array.isArray(body.images) ? body.images.filter((u: unknown) => typeof u === "string" && /^https:\/\//.test(u)).slice(0, 12) : [];
     const { data: made, error } = await db.from("redesigns").insert({ url: String(body.url || ""), email: String(body.email || "").toLowerCase(), ip_hash: "outreach",

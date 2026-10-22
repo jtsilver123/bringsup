@@ -6,7 +6,8 @@
 //   node tools/queue-worker.ts emailed <id>         record that the visitor was emailed
 //   node tools/queue-worker.ts outreach <slug> <dir> publish <dir>/concept.json as a cold-email prospect's private
 //                                                   preview (bringsup.com/try/?id=...&ref=<slug>); <dir>/meta.json may
-//                                                   hold {url, email, images: [https urls]}
+//                                                   hold {url, email, images: [https urls]}; a hand-built <dir>/index.html
+//                                                   (self-contained) is published as is
 //
 // Needs BRINGSUP_WORKER_TOKEN (the function's WORKER_TOKEN secret). Node 22.6+ runs this file directly.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -92,14 +93,17 @@ async function complete(id: string): Promise<void> {
 
 async function outreach(slug: string, dir: string): Promise<void> {
   const concept = JSON.parse(readFileSync(join(dir, "concept.json"), "utf8"));
-  const errors = validate(concept, SCHEMA as unknown as Schema);
+  let html: string | undefined;
+  try { html = readFileSync(join(dir, "index.html"), "utf8"); } catch { /* optional: a hand-built page */ }
+  // A hand-built page only needs its name and headline in concept.json; the schema applies to generated ones.
+  const errors = html ? ["business_name", "headline"].filter((k) => !concept[k]).map((k) => `missing ${k}`) : validate(concept, SCHEMA as unknown as Schema);
   if (errors.length) {
     console.error("concept.json doesn't match the schema:\n- " + errors.join("\n- "));
     process.exit(1);
   }
   let meta: { url?: string; email?: string; images?: string[] } = {};
   try { meta = JSON.parse(readFileSync(join(dir, "meta.json"), "utf8")); } catch { /* optional */ }
-  const res = await call("POST", "", { action: "create", ref: slug, concept, ...meta });
+  const res = await call("POST", "", { action: "create", ref: slug, concept, ...(html ? { html } : {}), ...meta });
   if (!res.link) { console.error(JSON.stringify(res)); process.exit(1); }
   console.log(res.link);
 }

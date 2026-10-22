@@ -1,31 +1,25 @@
-import { useEffect, useState } from "react";
+import { EMAIL, useYear } from "../../../components/Chrome.tsx";
 import { BrandMark } from "../../../components/icons.tsx";
+import { NAV } from "../data.ts";
 
 export function Footer() {
-  // The build year is rendered on the server; the visitor's clock takes over after hydration.
-  const [year, setYear] = useState(2026);
-  useEffect(() => setYear(new Date().getFullYear()), []);
+  const year = useYear();
   return (
-    <footer>
+    <footer className="site-foot">
       <div className="wrap">
         <div className="foot-top">
           <div>
-            <a className="brand" href="#top" aria-label="BringsUp, back to top">
-              <BrandMark />
-              <span className="brand-name">BringsUp</span>
-            </a>
-            <p className="foot-tag">Websites as good as <span>your reviews.</span></p>
+            <a className="brand" href="#top" aria-label="BringsUp, back to top"><BrandMark /><span>BringsUp</span></a>
+            <p className="foot-tag">Websites as good as your reviews.</p>
           </div>
-          <div className="foot-links">
-            <div><b>Site</b><a href="#work">Sample work</a><a href="#how">How it works</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a></div>
-            <div><b>Contact</b><a href="mailto:jake@bringsup.com">jake@bringsup.com</a><a href="#concept">Get a free concept</a></div>
-            <div><b>Legal</b><a href="/terms/">Terms of Service</a><a href="/privacy/">Privacy Policy</a></div>
-          </div>
+          <nav className="foot-links" aria-label="Footer">
+            {NAV.map((l) => <a key={l.href} href={l.href}>{l.label}</a>)}
+            <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
+            <a href="/terms/">Terms</a>
+            <a href="/privacy/">Privacy</a>
+          </nav>
         </div>
-        <div className="foot-bot">
-          <span>© <span id="yr">{year}</span> BringsUp · For the businesses your town already loves.</span>
-          <span>Concepts we send are ideas, not live sites, and aren't affiliated with the businesses shown.</span>
-        </div>
+        <p className="foot-bot">© <span id="yr">{year}</span> BringsUp, 2195 Kipling Lane, Highland Park, IL 60035. Homepages I send are ideas, not live sites, and aren't affiliated with the businesses shown.</p>
       </div>
     </footer>
   );

@@ -11,13 +11,14 @@ import {
   AskView, FailedView, Footer, Header, QueuedView, ResultView, Toast, WorkingView,
   type AskFields, type Failure, type FormError, type QueuedData, type ResultData, type View,
 } from "./views.tsx";
+import "../../components/site.css";
 import "./try.css";
 
 const API: string = REDESIGN_API;
 const POLL_MS = 30000;
 const POLL_RETRY_MS = 60000;
 const DEFAULT_FAIL = "We couldn't redesign that one automatically.";
-const DEFAULT_FAIL_MSG = "Some websites block automatic visitors. We can still make your free concept by hand, within 48 hours.";
+const DEFAULT_FAIL_MSG = "Some websites block automatic visitors. I can still make your free homepage by hand, within 48 hours.";
 
 /** The body depends on the status: 200 a finished redesign, 202 a queued one, otherwise an error. */
 type Answer = Redesign | QueuedRedesign | ApiError;
@@ -75,15 +76,18 @@ export function Try() {
   const showResult = async (data: Redesign) => {
     const gen = generation.current;
     const images = data.images || [];
-    const concept = await checkImages(data.concept, images);
+    // A hand-built preview (tools/email_template.md "Building their homepage") arrives as finished HTML.
+    const custom = (data.concept as { html?: string }).html;
+    const concept = custom ? data.concept : await checkImages(data.concept, images);
     if (gen !== generation.current) return;
     setResult({
       id: data.id,
       name: concept.business_name || "your business",
       address: addressOf(data.url || ""),
-      html: renderConcept(concept, images),
+      html: custom || renderConcept(concept, images),
       improvements: concept.improvements || [],
       ref: (concept as { ref?: string }).ref,
+      handmade: Boolean(custom),
     });
     if (data.id && data.id !== "demo") setAddress("/try/?id=" + encodeURIComponent(data.id));
     go("result");
