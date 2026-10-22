@@ -6,7 +6,7 @@ import { PROJECTS_API, STRIPE_LINKS, TALLY } from "../../lib/config.ts";
 import "../../components/site.css";
 import "./flow.css";
 
-export type FlowKind = "start" | "changes" | "approve" | "extra";
+type FlowKind = "start" | "changes" | "approve" | "extra";
 
 interface Flow {
   form: string;
@@ -113,7 +113,7 @@ function RoundsNote({ kind, rounds }: { kind: FlowKind; rounds: Rounds | null })
   return <p className="rounds">Your {total} included round{total === 1 ? "" : "s"} are used, so this one is paid.</p>;
 }
 
-/** The customer flow pages (/start, /changes, /approve): the steps on the left, the Tally form on the right. */
+/** The customer flow pages (/start, /changes, /approve, /extra): the steps on the left, the Tally form on the right. */
 export function FlowPage({ kind }: { kind: FlowKind }) {
   const f = FLOWS[kind];
   // The approve and extra pages come back from Stripe with ?paid=1; that's their "done" state.

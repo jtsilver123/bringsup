@@ -1,8 +1,8 @@
 // Titles, descriptions and link previews (Open Graph / Twitter cards) for every page.
 // vite.config.ts writes these into each page's <head> at build time, so texts and social posts get a rich preview.
-export const SITE = "https://bringsup.com";
+const SITE = "https://bringsup.com";
 
-export interface PageMeta {
+interface PageMeta {
   path: string;
   title: string;
   description: string;
@@ -28,7 +28,7 @@ export const META: Record<string, PageMeta> = {
   try: {
     path: "/try/",
     title: "See your website, redone · BringsUp",
-    description: "Type in your web address. We rebuild your homepage from your own photos, services and story and email it to you the same day, usually within the hour. Free, no call.",
+    description: "Type in your web address. We rebuild your homepage from your own photos, services and story and email it to you, usually within a few hours. Free, no call.",
     share: "Paste your website and get your new homepage by email, free. No call.",
     ...TRY_IMAGE,
   },

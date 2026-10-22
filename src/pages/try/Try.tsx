@@ -1,4 +1,4 @@
-// /try/: paste a website, get the homepage rebuilt. Requests queue and are emailed within the hour;
+// /try/: paste a website, get the homepage rebuilt. Requests queue and are emailed, usually within a few hours;
 // this page shows a blurred draft meanwhile and checks back every 30 seconds while it's open.
 import { useCallback, useEffect, useRef, useState } from "react";
 import { REDESIGN_API } from "../../lib/config.ts";
@@ -16,8 +16,18 @@ import "./try.css";
 
 const API: string = REDESIGN_API;
 const POLL_MS = 30000;
+let startClicks: (e: MouseEvent) => void = () => {};
 const POLL_RETRY_MS = 60000;
 const DEFAULT_FAIL = "We couldn't redesign that one automatically.";
+
+/** Tells the tracker a prospect opened their preview, or clicked "Start my website". Only a real browser runs this, so
+ *  link-preview fetchers (iMessage, Gmail) never count; automated checks (navigator.webdriver) are skipped too. */
+function beacon(short: string, start = false) {
+  if (navigator.webdriver || !API) return;
+  const body = JSON.stringify({ action: "viewed", short, start });
+  // text/plain keeps it a simple request (no CORS preflight), and sendBeacon survives the page unloading on a click.
+  if (!navigator.sendBeacon?.(API, body)) fetch(API, { method: "POST", body, keepalive: true }).catch(() => {});
+}
 const DEFAULT_FAIL_MSG = "Some websites block automatic visitors. I can still make your free homepage by hand, within 48 hours.";
 
 /** The body depends on the status: 200 a finished redesign, 202 a queued one, otherwise an error. */
@@ -102,8 +112,16 @@ export function Try() {
     });
     // Previews made for a prospect have a short address (bringsup.com/for/<slug>-<code>); keep that in the bar.
     const short = (concept as { short?: string }).short;
-    if (short) setAddress("/for/" + short);
-    else if (data.id && data.id !== "demo") setAddress("/try/?id=" + encodeURIComponent(data.id));
+    if (short) {
+      setAddress("/for/" + short);
+      beacon(short);
+      const onClick = (e: MouseEvent) => {
+        if ((e.target as Element | null)?.closest?.('a[href^="/start/"]')) beacon(short, true);
+      };
+      document.removeEventListener("click", startClicks);
+      startClicks = onClick;
+      document.addEventListener("click", onClick);
+    } else if (data.id && data.id !== "demo") setAddress("/try/?id=" + encodeURIComponent(data.id));
     go("result");
   };
 

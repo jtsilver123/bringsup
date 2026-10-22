@@ -1,5 +1,5 @@
 // What we ask Claude for: the content of a better homepage, as structured JSON.
-// The site (try/index.html) turns this JSON into the page itself, so the design
+// The /try/ page (src/lib/concept-render.ts) turns this JSON into the page itself, so the design
 // stays consistent and the model only has to get the words and facts right.
 import type { SiteData } from "./extract.ts";
 

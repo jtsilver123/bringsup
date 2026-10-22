@@ -41,9 +41,7 @@ function Shot({ work, onOpen }: { work: WorkSample; onOpen: Open }) {
         className="shot-view"
         tabIndex={0}
         role="button"
-        data-src={sharp}
-        data-name={work.name}
-        aria-label={`Open the full homepage for ${work.ariaName}`}
+        aria-label={`Open the full homepage for ${work.name}`}
         style={h === null ? undefined : ({ "--h": `${h}px` } as CSSProperties)}
         onClick={open}
         onKeyDown={onKeyDown}
@@ -54,7 +52,7 @@ function Shot({ work, onOpen }: { work: WorkSample; onOpen: Open }) {
       <h3>{work.name}</h3>
       <p className="k">{work.kind}</p>
       <p>{work.text}</p>
-      <button className="tlink view" type="button" data-src={sharp} data-name={work.name} onClick={open}>View the full homepage <ExpandIcon /></button>
+      <button className="tlink view" type="button" onClick={open}>View the full homepage <ExpandIcon /></button>
     </article>
   );
 }

@@ -3,8 +3,8 @@
    and renders it with tools/site-kit/render.ts, so the concept a prospect sees is the look of the site we'd build. */
 import { render, type SiteContent } from "../../tools/site-kit/render.ts";
 
-export type Theme = "bakery" | "restaurant" | "auto" | "garden" | "trades" | "beauty" | "retail" | "health" | "professional";
-export type CtaKind = "call" | "order" | "book" | "quote" | "directions" | "shop" | "contact";
+type Theme = "bakery" | "restaurant" | "auto" | "garden" | "trades" | "beauty" | "retail" | "health" | "professional";
+type CtaKind = "call" | "order" | "book" | "quote" | "directions" | "shop" | "contact";
 
 /** A redesign's content, as the redesign function returns it (see SCHEMA in supabase/functions/redesign/prompt.ts). */
 export interface Concept {
@@ -41,7 +41,7 @@ export interface Concept {
 }
 
 /** The concept as site content. Only what the concept says: no stock photos, no invented facts. */
-export function conceptToSite(c: Concept, images: string[]): SiteContent {
+function conceptToSite(c: Concept, images: string[]): SiteContent {
   images = images || [];
   const img = (n: number) => (n >= 0 && images[n] ? images[n] : "");
   const phone = c.phone || "";

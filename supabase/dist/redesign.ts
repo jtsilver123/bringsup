@@ -230,7 +230,7 @@ export async function readSite(input: string): Promise<SiteData> {
   return { url: finalUrl.href, host: finalUrl.hostname.replace(/^www\./, ""), title, description, text, phones, emails, images: images.slice(0, 24), colors };
 }
 // What we ask Claude for: the content of a better homepage, as structured JSON.
-// The site (try/index.html) turns this JSON into the page itself, so the design
+// The /try/ page (src/lib/concept-render.ts) turns this JSON into the page itself, so the design
 // stays consistent and the model only has to get the words and facts right.
 
 export const SYSTEM = `You redesign homepages for BringsUp, a studio that builds websites for family-owned local businesses with great reviews and outdated websites.
@@ -335,12 +335,17 @@ ${site.text}
 // Redesigns run on the Claude subscription, never an API key: an hourly scheduled Claude Code task
 // pulls the queue (GET ?queue=1), designs each homepage with the prompt and schema in prompt.ts,
 // posts it back ({action: "complete"}) and emails the visitor their link. See tools/QUEUE_WORKER.md.
-// Worker calls need the x-worker-token header. {action: "create", url, email, concept, images?, ref?, html?, og_image?} saves a
+// Worker calls need the x-worker-token header. {action: "create", url, email, concept, images?, ref?, html?, og_image?, shots?} saves a
 // finished homepage for a cold-email prospect who said "send it over" and returns its private short link,
 // bringsup.com/for/<slug>-<8 random chars> (tools/email_template.md). og_image is a base64 JPEG for the link preview card;
 // shots = {before: {desktop, phone}, after: {desktop, phone}} (base64 JPEGs of their site today and the new one) power the
 // /try/ reveal and the "Today / New" compare.
 // GET ?for=<short> loads it like ?id=; add &meta=1 for just the name, headline and preview image (the /for/ Cloudflare worker).
+// POST {action: "viewed", short, start?} (public): the /for/ page's beacon. Counts real opens in a browser (link-preview
+// fetchers never run it) and the first "Start my website" click. Worker GET ?views=1 lists them for the tracker.
+// Worker {action: "delete", short | id} removes a preview and its pictures (a "no thanks", do-not-contact or privacy request).
+// GET ?queue=1 claims what it returns for 90 minutes, so two overlapping runs never design the same request twice, and
+// also lists finished requests nobody emailed yet (a run that stopped between "complete" and the email).
 //
 // Secrets (Supabase dashboard -> Edge Functions -> Secrets): IP_SALT, WORKER_TOKEN.
 // Optional: ALLOWED_ORIGINS (comma-separated), DAILY_CAP (default 150), PER_VISITOR_DAILY (default 3).
@@ -408,11 +413,17 @@ function preview(site: SavedSite | null) {
   return { name, phone: site.phones[0] || "", colors: site.colors.slice(0, 3), images: site.images.filter((i) => !i.logo).slice(0, 4).map((i) => i.url) };
 }
 
-/** Queued requests with everything a designer needs: the system prompt, the answer schema and a summary of each site. */
+/** Queued requests with everything a designer needs: the system prompt, the answer schema and a summary of each site.
+ *  Each item returned is claimed for 90 minutes; an unfinished claim simply expires and the next run picks it up. */
 async function queue(req: Request): Promise<Response> {
+  const nowIso = new Date().toISOString();
   const { data, error } = await db.from("redesigns").select("id, email, url, site, created_at")
-    .eq("status", "queued").order("created_at").limit(10);
+    .eq("status", "queued").or(`claimed_until.is.null,claimed_until.lt.${nowIso}`).order("created_at").limit(10);
   if (error) return json(req, 500, { error: error.message });
+  const ids = (data || []).map((r) => r.id);
+  if (ids.length) await db.from("redesigns").update({ claimed_until: new Date(Date.now() + 90 * 60_000).toISOString() }).in("id", ids);
+  const { data: unsent } = await db.from("redesigns").select("id, email, url, business_name, created_at")
+    .eq("status", "done").neq("ip_hash", "outreach").is("emailed_at", null).gte("created_at", new Date(Date.now() - 7 * 864e5).toISOString());
   return json(req, 200, {
     system: SYSTEM,
     schema: SCHEMA,
@@ -420,7 +431,30 @@ async function queue(req: Request): Promise<Response> {
       id: r.id, email: r.email, url: r.url, created_at: r.created_at, link: link(r.id),
       prompt: userMessage(r.site as SavedSite),
     })),
+    not_emailed: (unsent || []).map((r) => ({ ...r, link: link(r.id) })),
   });
+}
+
+/** Opens and start clicks on outreach previews, for the tracker (tools/OPERATOR.md). */
+async function views(req: Request): Promise<Response> {
+  const { data, error } = await db.from("redesigns").select("short, business_name, content->>ref, created_at, first_viewed_at, last_viewed_at, view_count, start_clicked_at")
+    .not("short", "is", null).order("created_at", { ascending: false }).limit(200);
+  if (error) return json(req, 500, { error: error.message });
+  return json(req, 200, { previews: data || [] });
+}
+
+/** The /for/ page's beacon: one call when the preview opens, one when "Start my website" is clicked. */
+async function viewed(req: Request, body: { short?: unknown; start?: unknown }): Promise<Response> {
+  const short = String(body.short || "").toLowerCase();
+  if (!/^[a-z0-9-]{3,60}$/.test(short)) return json(req, 400, { error: "Bad request." });
+  const { data: row } = await db.from("redesigns").select("id, first_viewed_at, view_count, start_clicked_at").eq("short", short).maybeSingle();
+  if (!row) return json(req, 404, { error: "Not found." });
+  const at = new Date().toISOString();
+  const set: Record<string, unknown> = body.start
+    ? { start_clicked_at: row.start_clicked_at || at }
+    : { first_viewed_at: row.first_viewed_at || at, last_viewed_at: at, view_count: (row.view_count || 0) + 1 };
+  await db.from("redesigns").update(set).eq("id", row.id);
+  return json(req, 200, { ok: true });
 }
 
 // deno-lint-ignore no-explicit-any
@@ -435,7 +469,6 @@ async function work(req: Request, body: any): Promise<Response> {
       concept.html = body.html;
     }
     if (body.ref) concept.ref = String(body.ref);
-    // The link preview card (iMessage, Gmail, WhatsApp): a picture of their homepage, kept in public storage.
     const base = slugify(String(body.ref || concept.business_name));
     let short = `${base}-${code()}`;
     for (let i = 0; i < 3; i++) {
@@ -450,6 +483,7 @@ async function work(req: Request, body: any): Promise<Response> {
       const up = await db.storage.from("project-files").upload(path, bytes, { contentType: "image/jpeg", upsert: true });
       return up.error ? undefined : db.storage.from("project-files").getPublicUrl(path).data.publicUrl;
     };
+    // The link preview card (iMessage, Gmail, WhatsApp): a picture of their homepage, kept in public storage.
     const og = await store(body.og_image, "");
     if (og) concept.og_image = og;
     const shots = body.shots || {};
@@ -464,6 +498,19 @@ async function work(req: Request, body: any): Promise<Response> {
       status: "done", business_name: concept.business_name, content: concept, images, short }).select("id").single();
     if (error || !made) return json(req, 500, { error: String(error?.message || "insert failed") });
     return json(req, 200, { ok: true, id: made.id, link: shortLink(short), long_link: link(made.id) + (body.ref ? `&ref=${encodeURIComponent(String(body.ref))}` : "") });
+  }
+  if (body.action === "delete") {
+    const short = String(body.short || "").toLowerCase();
+    const sel = db.from("redesigns").select("id, short");
+    const { data: gone } = await (short ? sel.eq("short", short) : sel.eq("id", String(body.id || ""))).maybeSingle();
+    if (!gone) return json(req, 404, { error: "No such redesign." });
+    if (gone.short) {
+      const names = ["", "-before-desktop", "-before-phone", "-after-desktop", "-after-phone"].map((n) => `previews/${gone.short}${n}.jpg`);
+      const rm = await db.storage.from("project-files").remove(names);
+      if (rm.error) return json(req, 500, { error: `Couldn't delete the pictures: ${rm.error.message}` });
+    }
+    await db.from("redesigns").delete().eq("id", gone.id);
+    return json(req, 200, { ok: true, deleted: gone.short || gone.id });
   }
   const id = String(body.id || "");
   const { data: row } = await db.from("redesigns").select("id, site, status").eq("id", id).maybeSingle();
@@ -497,6 +544,7 @@ Deno.serve(async (req) => {
   if (req.method === "GET") {
     const params = new URL(req.url).searchParams;
     if (params.has("queue")) return isWorker(req) ? queue(req) : json(req, 401, { error: "Not allowed." });
+    if (params.has("views")) return isWorker(req) ? views(req) : json(req, 401, { error: "Not allowed." });
     const id = params.get("id") || "";
     const short = (params.get("for") || "").toLowerCase();
     if (!/^[0-9a-f-]{36}$/i.test(id) && !/^[a-z0-9-]{3,60}$/.test(short)) return json(req, 400, { error: "Missing id." });
@@ -525,6 +573,7 @@ Deno.serve(async (req) => {
   } catch {
     return json(req, 400, { error: "Bad request." });
   }
+  if (body.action === "viewed") return viewed(req, body);
   if (body.action) return isWorker(req) ? work(req, body) : json(req, 401, { error: "Not allowed." });
   // Honeypot: real visitors never see or fill this field.
   if (body.company_site) return json(req, 400, { error: "Bad request." });

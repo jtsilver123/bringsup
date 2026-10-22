@@ -106,13 +106,17 @@ export function pick(answers: Record<string, string>, ...prefixes: string[]): st
 // GET  /projects?email=<address>    Inbox triage: the projects an email address belongs to.          (x-worker-token)
 // GET  /projects?plans=1            Managed plan: every project with care_plan on, for the daily checks. (x-worker-token)
 // POST /projects {action, ref, ...} Builder: "update" (set fields, log an event), "fail", "email_changes",
-//                                   or "payment" (a Stripe Checkout payment the builder found; exactly once per stripe_id). (x-worker-token)
+//                                   "payment" (a Stripe Checkout payment the builder found; exactly once per stripe_id),
+//                                   "delete" (test- projects only) or {action: "heartbeat", text}. (x-worker-token)
 //
 // Rounds: ROUNDS_INCLUDED (2) rounds of changes after the first preview. A request past that is held and the
 // builder offers a $150 extra round; paying for it applies the held request. Requests before the first preview
-// are added to the brief; requests after approval and before launch are applied free at launch; after launch they wait (reply_out_of_scope) until a $150 round is paid, which makes them a care_edit.
+// are added to the brief; requests after approval and before launch are applied free at launch. After launch they are a
+// care_edit straight away on the $49/month managed plan (care_plan), otherwise they wait (reply_out_of_scope) until a
+// $150 round is paid, which makes them a care_edit.
 //
-// Secrets: TALLY_SIGNING_SECRET, WORKER_TOKEN; optional TALLY_EXTRA_FORM, APPROVE_PRICE_CENTS (100000).
+// Secrets: TALLY_SIGNING_SECRET, WORKER_TOKEN; optional TALLY_START_FORM, TALLY_CHANGES_FORM, TALLY_EXTRA_FORM,
+// TALLY_APPROVE_FORM (form ids), APPROVE_PRICE_CENTS (100000), MONTHLY_CAP (8).
 // See tools/OPERATOR.md.
 
 declare const EdgeRuntime: { waitUntil(p: Promise<unknown>): void } | undefined;
@@ -138,7 +142,7 @@ const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SE
 export interface Project {
   id: string; ref: string; updated_at: string; status: string; todo: string | null; email: string; business_name: string; current_site: string;
   rounds_included: number; rounds_extra: number; rounds_used: number; changes_seq: number;
-  pending_changes: string | null; held_changes: string | null; care_plan: boolean; care_plan_requested: boolean; last_preview_at: string | null; paid_cents: number; attempts: number;
+  pending_changes: string | null; held_changes: string | null; care_plan: boolean; care_plan_requested: boolean; last_preview_at: string | null; grace_round: number | null; domain: string | null; paid_cents: number; attempts: number;
   brief: Record<string, string>; files: TallyFile[];
 }
 
@@ -288,7 +292,7 @@ async function onStart(sub: Submission): Promise<Project> {
     return p;
   }
 
-  // This month full? The project is still created now; its build begins on the first business day of next month.
+  // This month full? The project is still created now; its build begins on the first business day of the first month with room.
   const cap = await capacity();
   const starts_on = cap.left > 0 ? null : cap.next_start;
   let ref = sub.ref && !(await byRef(sub.ref)) ? sub.ref : slugify(business);
@@ -307,18 +311,33 @@ function nyDate(d = new Date()) {
   return { y, m, day };
 }
 
-/** This month's new projects against the cap. Cancelled projects and test runs don't count. */
+/** "YYYY-MM" for a year and month (1-12). */
+const monthKey = (y: number, m: number) => `${y}-${String(m).padStart(2, "0")}`;
+
+/** This month's sites against the cap. A project counts in the month its build starts: starts_on when it was pushed
+ *  to a later month, otherwise the month it signed up. Cancelled projects and test runs don't count. next_start is
+ *  the first business day of the first later month that still has room, so overflow never piles into one month. */
 async function capacity() {
   const { y, m } = nyDate();
-  // Midnight in New York is 04:00 or 05:00 UTC; 05:00 is safe either way for counting by month.
-  const from = new Date(Date.UTC(y, m - 1, 1, 5)).toISOString();
-  const { count } = await db.from("projects").select("id", { count: "exact", head: true })
-    .gte("created_at", from).neq("status", "cancelled").not("ref", "like", "test-%");
-  const taken = count || 0;
-  const next = new Date(Date.UTC(m === 12 ? y + 1 : y, m === 12 ? 0 : m, 1, 12));
+  const since = new Date(Date.UTC(y, m - 2, 1)).toISOString();
+  const { data } = await db.from("projects").select("created_at,starts_on").neq("status", "cancelled").not("ref", "like", "test-%")
+    .or(`created_at.gte.${since},starts_on.gte.${monthKey(y, m)}-01`);
+  const counts: Record<string, number> = {};
+  for (const p of (data || []) as { created_at: string; starts_on: string | null }[]) {
+    const c = nyDate(new Date(p.created_at));
+    const k = p.starts_on ? p.starts_on.slice(0, 7) : monthKey(c.y, c.m);
+    counts[k] = (counts[k] || 0) + 1;
+  }
+  const taken = counts[monthKey(y, m)] || 0;
+  let ny = y, nm = m;
+  do {
+    nm++;
+    if (nm > 12) { nm = 1; ny++; }
+  } while ((counts[monthKey(ny, nm)] || 0) >= MONTHLY_CAP);
+  const next = new Date(Date.UTC(ny, nm - 1, 1, 12));
   while ([0, 6].includes(next.getUTCDay())) next.setUTCDate(next.getUTCDate() + 1);
   const name = (mm: number) => new Date(Date.UTC(2000, mm - 1, 15)).toLocaleString("en-US", { month: "long", timeZone: "UTC" });
-  return { month: name(m), next_month: name(m === 12 ? 1 : m + 1), cap: MONTHLY_CAP, taken, left: Math.max(0, MONTHLY_CAP - taken), next_start: next.toISOString().slice(0, 10) };
+  return { month: name(m), next_month: name(nm), cap: MONTHLY_CAP, taken, left: Math.max(0, MONTHLY_CAP - taken), next_start: next.toISOString().slice(0, 10) };
 }
 
 async function onChanges(sub: Submission, paidExtra: boolean): Promise<Project> {
@@ -360,11 +379,12 @@ async function onChanges(sub: Submission, paidExtra: boolean): Promise<Project> 
       return write({ pending_changes: join(p.pending_changes, request), changes_seq: p.changes_seq + 1 },
         "changes", "Arrived after approval, before launch; applied at launch (no charge)");
     case "live":
+      // care_plan is the $49 managed plan.
       if (p.care_plan || paidExtra) {
         return write({ pending_changes: join(p.pending_changes, request), changes_seq: p.changes_seq + 1, todo: "care_edit" },
-          "care_edit", paidExtra ? "Round of changes after launch" : "Care Plan edit requested");
+          "care_edit", paidExtra ? "Round of changes after launch" : "Managed plan edit requested");
       }
-      return write({ held_changes: join(p.held_changes, request), todo: "reply_out_of_scope" }, "out_of_scope", "Change requested after approval without the Care Plan");
+      return write({ held_changes: join(p.held_changes, request), todo: "reply_out_of_scope" }, "out_of_scope", "Change requested after launch without the managed plan");
     case "cancelled":
       await alert("projects", p.ref, "Change request for a cancelled project", { request });
       return write({}, "note", "Change request for a cancelled project");
@@ -375,8 +395,9 @@ async function onChanges(sub: Submission, paidExtra: boolean): Promise<Project> 
     return write({ pending_changes: join(p.pending_changes, request), changes_seq: p.changes_seq + 1 },
       "changes", `Added to round ${p.rounds_used} (not applied yet, so no extra round used)`, p.rounds_used);
   }
-  if (p.status === "preview_sent" && p.rounds_used > 0 && p.last_preview_at && Date.now() - Date.parse(p.last_preview_at) < GRACE_MS) {
-    return write({ status: "changes_requested", pending_changes: request, changes_seq: p.changes_seq + 1, todo: "revise" },
+  // One follow-up per round may ride along free; without the grace_round check, every updated preview would reopen the window.
+  if (p.status === "preview_sent" && p.rounds_used > 0 && p.grace_round !== p.rounds_used && p.last_preview_at && Date.now() - Date.parse(p.last_preview_at) < GRACE_MS) {
+    return write({ status: "changes_requested", pending_changes: request, changes_seq: p.changes_seq + 1, todo: "revise", grace_round: p.rounds_used },
       "changes", `Follow-up within 2 days of the updated preview; part of round ${p.rounds_used}`, p.rounds_used);
   }
   const round = p.rounds_used + 1;
@@ -492,6 +513,15 @@ async function work(req: Request): Promise<Response> {
     await db.from("operator_runs").delete().lt("at", new Date(Date.now() - 90 * 864e5).toISOString());
     return json(200, { ok: true });
   }
+  if (body.action === "resolve") {
+    // Closes an alert from ?health=1 once it's handled, so later runs don't act on it again.
+    const id = Number((body as { alert_id?: unknown }).alert_id);
+    if (!Number.isInteger(id)) return json(400, { error: "resolve needs alert_id" });
+    const { data, error } = await db.from("alerts").update({ resolved_at: now(), resolution: String(body.text || "").slice(0, 500) || null })
+      .eq("id", id).is("resolved_at", null).select("id");
+    if (error) return json(500, { error: error.message });
+    return json(200, { ok: true, resolved: (data || []).length });
+  }
   const p0 = await byRef(body.ref || "");
   if (!p0) return json(404, { error: "No such project" });
   let p = p0;
@@ -532,7 +562,7 @@ async function work(req: Request): Promise<Response> {
     await db.from("projects").delete().eq("id", p.id);
     return json(200, { ok: true, deleted: p.ref });
   }
-  if (body.action !== "update") return json(400, { error: 'Use {action: "update" | "fail" | "email_changes" | "payment" | "delete", ref, ...}' });
+  if (body.action !== "update") return json(400, { error: 'Use {action: "update" | "fail" | "email_changes" | "payment" | "delete" | "resolve" | "heartbeat", ...}' });
 
   // Re-read on every attempt: a webhook may have changed the project while the builder worked.
   const result = await withRetry(async () => {
@@ -561,7 +591,9 @@ async function health(): Promise<Response> {
   const [alerts, failing, waitingOnUs, quiet, receipts] = await Promise.all([
     db.from("alerts").select("*").is("resolved_at", null).order("created_at"),
     db.from("projects").select("ref,todo,attempts,last_error,updated_at").gte("attempts", 5).not("todo", "is", null),
-    db.from("projects").select("ref,status,todo,updated_at").not("todo", "is", null).lt("updated_at", day(1)),
+    // Builds waiting on a later starts_on (or any job with a future next_check_at) aren't stuck: they're scheduled.
+    db.from("projects").select("ref,status,todo,updated_at").not("todo", "is", null).lt("updated_at", day(1))
+      .or(`next_check_at.is.null,next_check_at.lte.${new Date().toISOString()}`),
     db.from("projects").select("ref,status,last_customer_touch_at,updated_at").in("status", ["preview_sent", "awaiting_extra", "launching"]).lt("updated_at", day(7)),
     db.from("webhook_receipts").select("response_id", { count: "exact", head: true }).gte("received_at", day(1)),
   ]);
@@ -592,7 +624,7 @@ Deno.serve(async (req) => {
     const p = await byRef(status);
     if (!p) return json(404, { error: "Not found" });
     return json(200, {
-      business_name: p.business_name, status: p.status,
+      business_name: p.business_name, status: p.status, has_domain: !!p.domain,
       rounds_included: p.rounds_included, rounds_extra: p.rounds_extra, rounds_used: p.rounds_used,
       rounds_left: Math.max(0, p.rounds_included + p.rounds_extra - p.rounds_used),
     });
@@ -626,5 +658,5 @@ Deno.serve(async (req) => {
     const { data: events } = await db.from("project_events").select("*").eq("project_id", p.id).order("created_at");
     return json(200, { project: p, events });
   }
-  return json(400, { error: "Use ?jobs=1, ?ref=, ?health=1, ?plans=1 or ?status=" });
+  return json(400, { error: "Use ?jobs=1, ?ref=, ?email=, ?health=1, ?plans=1, ?status=, ?capacity=1 or ?pulse=1" });
 });

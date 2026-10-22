@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, type FormEvent, type Ref, type RefObject } from "react";
+import { useCallback, useEffect, useRef, useState, type FormEvent, type RefObject } from "react";
 import { EMAIL } from "../../../components/Chrome.tsx";
 import { Arrow, Check } from "../../../components/icons.tsx";
 import { TallyEmbed } from "../../../components/TallyEmbed.tsx";
@@ -15,7 +15,7 @@ const EMAIL_OK = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
 
 /**
  * The redesign tool's form. The backend runs in queue mode: the visitor's site and email go to /try/
- * through sessionStorage, and the new homepage is emailed within the hour.
+ * through sessionStorage, and the new homepage is emailed, usually within a few hours.
  */
 function InstantForm() {
   const urlInput = useRef<HTMLInputElement>(null);
@@ -69,7 +69,7 @@ function InstantForm() {
       <label className="field">Your email<input ref={emailInput} name="email" type="email" autoComplete="email" autoCapitalize="off" spellCheck={false} placeholder="you@rosasbakery.com" required onInput={(e) => onInput("email", e.currentTarget.value)} {...invalid("email")} /></label>
       <p className="form-err" id="instant-err" role="alert" hidden={!error}>{error?.message}</p>
       <button className="btn btn-primary" type="submit">Send me my new homepage <Arrow /></button>
-      <p className="small">Same day, usually within the hour. Never shared, never sold.</p>
+      <p className="small">Usually within a few hours. Never shared, never sold.</p>
     </form>
   );
 }
@@ -114,7 +114,7 @@ function AskJake({ say }: { say: (msg: string, quiet?: boolean) => void }) {
   return (
     <p className="ask-jake">
       Questions first? Write to <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
-      <button className="copy" type="button" data-copy={EMAIL} data-copied={copied ? "" : undefined} aria-label={`Copy ${EMAIL}`} onClick={() => copyText(EMAIL, "Email address copied", say, flash)}>
+      <button className="copy" type="button" data-copied={copied ? "" : undefined} aria-label={`Copy ${EMAIL}`} onClick={() => copyText(EMAIL, "Email address copied", say, flash)}>
         <span className="copied-swap" aria-hidden="true"><CopyIcon /><Check size={14} strokeWidth={3} /></span>
         <span className="copy-lbl" aria-hidden="true"><span>Copy</span><span>Copied</span></span>
       </button>
@@ -122,21 +122,21 @@ function AskJake({ say }: { say: (msg: string, quiet?: boolean) => void }) {
   );
 }
 
-export function Concept({ live, search, say, ref }: { live: boolean; search: string; say: (msg: string, quiet?: boolean) => void; ref?: Ref<HTMLElement> }) {
+export function Concept({ live, search, say }: { live: boolean; search: string; say: (msg: string, quiet?: boolean) => void }) {
   const card = useRef<HTMLDivElement>(null);
   const [sent, setSent] = useState(false);
   const fromEmail = new URLSearchParams(search).has("ref");
   if (fromEmail) {
     // They already have their homepage (it came in Jake's reply), so don't offer a second one.
     return (
-      <section ref={ref} id="concept" className="sec closing" aria-labelledby="cta-h">
+      <section id="concept" className="sec closing" aria-labelledby="cta-h">
         <div className="wrap split">
           <div>
             <h2 className="t2" id="cta-h">Ready for the whole site?</h2>
             <p className="lead">The homepage I sent you is the start. Fill in one 10-minute form and I build every page. You see it finished before you pay anything.</p>
           </div>
           <div className="closing-act">
-            <a className="btn btn-primary" href={`/start/${search}`} data-keep-ref="">Start my website <Arrow /></a>
+            <a className="btn btn-primary" href={`/start/${search}`}>Start my website <Arrow /></a>
             <AskJake say={say} />
           </div>
         </div>
@@ -144,7 +144,7 @@ export function Concept({ live, search, say, ref }: { live: boolean; search: str
     );
   }
   return (
-    <section ref={ref} id="concept" className="sec closing" aria-labelledby="cta-h">
+    <section id="concept" className="sec closing" aria-labelledby="cta-h">
       <div className="wrap split">
         <div>
           <h2 className="t2" id="cta-h">See your own homepage first.</h2>
@@ -153,7 +153,7 @@ export function Concept({ live, search, say, ref }: { live: boolean; search: str
             : "Tell me where to find you online. Your free homepage lands in your inbox within 48 hours."}</p>
           <p className="closing-note">Not for you? You'll never hear from me again.</p>
           <AskJake say={say} />
-          <p className="closing-note">Already have one from me? <a href={`/start/${search}`} data-keep-ref="">Start your website</a>.</p>
+          <p className="closing-note">Already have one from me? <a href={`/start/${search}`}>Start your website</a>.</p>
         </div>
         <div className={["formcard", live && "live", sent && "sent"].filter(Boolean).join(" ")} id="formcard" ref={card}>
           {live ? <InstantForm /> : <ConceptRequest card={card} sent={sent} setSent={setSent} />}

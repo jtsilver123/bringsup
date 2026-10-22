@@ -1,7 +1,7 @@
 /* Customer flow pages (/start, /changes, /approve, /extra). Base styles come from components/site.css. */
 .flow-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);grid-template-areas:"top card" "bottom card";gap:0 72px;align-items:start;padding-top:56px;padding-bottom:96px}
 .flow-top{grid-area:top}
-.card{grid-area:card}
+.card{grid-area:card;position:relative;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:24px 24px 12px}
 .flow-bottom{grid-area:bottom;margin-top:44px}
 @media (max-width:960px){
   .flow-grid{grid-template-columns:minmax(0,1fr);grid-template-areas:"top" "card" "bottom";padding-top:32px;padding-bottom:64px}
@@ -21,7 +21,6 @@
 .read-first{margin-top:8px}
 .read-first a{display:inline-flex;align-items:center;min-height:44px;color:var(--subtle);font-weight:700}
 .read-first a:hover{color:var(--ink)}
-.card{position:relative;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:24px 24px 12px}
 @media (max-width:520px){.card{padding:18px 14px 8px}}
 #tally{display:block;width:100%;min-height:520px;border:0}
 .form-help{text-align:center;margin:8px 0 4px}

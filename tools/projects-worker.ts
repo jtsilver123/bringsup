@@ -19,11 +19,11 @@
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { functionApi, requireWorkerToken } from "./function-api.ts";
 import { build } from "./site-kit/build.ts";
 import type { SiteContent } from "./site-kit/render.ts";
 
-const API = process.env.BRINGSUP_PROJECTS_API || "https://rgeeynodxvusivfbaxfu.supabase.co/functions/v1/projects";
-const TOKEN = process.env.BRINGSUP_WORKER_TOKEN || "";
+const api = functionApi(process.env.BRINGSUP_PROJECTS_API || "https://rgeeynodxvusivfbaxfu.supabase.co/functions/v1/projects");
 const CF_TOKEN = process.env.CLOUDFLARE_API_TOKEN || "";
 const CF_ACCOUNT = process.env.CLOUDFLARE_ACCOUNT_ID || "";
 const WRANGLER = "wrangler@4.152.0";
@@ -34,17 +34,6 @@ interface Project {
   rounds_included: number; rounds_extra: number; rounds_used: number; pending_changes: string | null; held_changes: string | null;
   preview_url: string | null; live_url: string | null; domain: string; domain_provider: string; domain_helper_email: string;
   care_plan: boolean; care_plan_requested: boolean; brief: Record<string, string>; files: { name: string; url: string }[]; site: SiteContent | null; pages_project: string;
-}
-
-async function api(method: "GET" | "POST", query: string, body?: unknown): Promise<any> {
-  const res = await fetch(API + query, {
-    method,
-    headers: { "x-worker-token": TOKEN, "content-type": "application/json" },
-    body: body === undefined ? undefined : JSON.stringify(body),
-  });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(`${res.status}: ${data.error || "request failed"}`);
-  return data;
 }
 
 const update = (ref: string, set?: Record<string, unknown>, event?: { kind: string; summary?: string; payload?: unknown; round?: number }) =>
@@ -140,7 +129,7 @@ async function dns(ref: string): Promise<void> {
     try {
       const res = await fetch(`https://${host}/`, { redirect: "follow", signal: AbortSignal.timeout(15_000) });
       const html = await res.text();
-      const ours = html.includes('rel="stylesheet" href="site.css"') || html.includes('href="site.css"');
+      const ours = html.includes('href="site.css"'); // a site-kit homepage
       result[host] = `${res.status}${ours ? " serving the new site" : " not the new site yet"} (${res.url})`;
     } catch (e) {
       result[host] = `unreachable: ${String(e).slice(0, 120)}`;
@@ -150,10 +139,7 @@ async function dns(ref: string): Promise<void> {
 }
 
 const [cmd, ref, file] = process.argv.slice(2);
-if (!TOKEN) {
-  console.error("Set BRINGSUP_WORKER_TOKEN first.");
-  process.exit(1);
-}
+requireWorkerToken();
 if ((cmd === "preview" || cmd === "launch") && (!CF_TOKEN || !CF_ACCOUNT)) {
   console.error("CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID must be set in the environment.");
   process.exit(1);
@@ -171,9 +157,11 @@ else if (cmd === "payment" && ref && process.argv[4] && process.argv[5] && proce
 else if (cmd === "email-changes" && ref && file) console.log(JSON.stringify(await api("POST", "", { action: "email_changes", ref, text: readFileSync(file, "utf8") }), null, 2));
 else if (cmd === "find" && ref) console.log(JSON.stringify(await api("GET", `?email=${encodeURIComponent(ref)}`), null, 2));
 else if (cmd === "health") console.log(JSON.stringify(await api("GET", "?health=1"), null, 2));
+else if (cmd === "summary") console.log(JSON.stringify(await api("GET", "?summary=1")));
 else if (cmd === "plans") console.log(JSON.stringify(await api("GET", "?plans=1"), null, 2));
+else if (cmd === "resolve" && ref) console.log(JSON.stringify(await api("POST", "", { action: "resolve", alert_id: Number(ref), text: file || "" })));
 else if (cmd === "heartbeat") console.log(JSON.stringify(await api("POST", "", { action: "heartbeat", text: ref || "" })));
 else {
-  console.error("Usage: node tools/projects-worker.ts jobs | show <ref> | preview <ref> | launch <ref> | dns <ref> | update <ref> <json-file> | fail <ref> <msg> | email-changes <ref> <txt-file> | payment <ref> <approve|extra> <cents> <stripe-session-id> | find <email> | health | plans | heartbeat <summary>");
+  console.error("Usage: node tools/projects-worker.ts jobs | show <ref> | preview <ref> | launch <ref> | dns <ref> | update <ref> <json-file> | fail <ref> <msg> | email-changes <ref> <txt-file> | payment <ref> <approve|extra> <cents> <stripe-session-id> | find <email> | health | resolve <alert-id> <note> | summary | plans | heartbeat <summary>");
   process.exit(1);
 }

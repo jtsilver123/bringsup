@@ -1,4 +1,5 @@
-# Public endpoint: the function does its own validation and rate limiting.
+# Public endpoints: each function checks its own callers (redesign: validation and rate limits; projects: Tally
+# signatures and the worker token), so JWT verification is off for both.
 [functions.redesign]
 verify_jwt = false
 

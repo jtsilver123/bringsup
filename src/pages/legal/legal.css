@@ -1,16 +1,6 @@
-/* /terms and /privacy. The shared base (tokens, type, brand) is imported here because Legal.tsx doesn't import it. */
-@import "../../components/site.css";
+/* /terms and /privacy. Base styles, header and footer come from components/site.css. */
 
 body{line-height:1.65}
-header{border-bottom:1px solid var(--line)}
-header .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;min-height:68px}
-header nav{display:flex;gap:4px}
-header nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 10px;color:var(--subtle);text-decoration:underline 2px transparent;text-underline-offset:.4em;font-size:16px}
-header nav a:hover,header nav a[aria-current]{color:var(--ink)}
-header nav a:hover{text-decoration-color:var(--rule)}
-header nav a[aria-current]{text-decoration-color:var(--ember)}
-header nav a[aria-current]{font-weight:700}
-
 main .wrap{display:grid;grid-template-columns:220px minmax(0,700px);gap:80px;padding-top:64px;padding-bottom:104px}
 .toc{position:sticky;top:24px;align-self:start;display:grid;padding-top:8px;border-top:1.5px solid var(--ink)}
 /* the table of contents: the hovered entry steps in a few pixels, so you can see which line you're on */
@@ -27,7 +17,6 @@ h1{font-size:clamp(40px,5vw,60px);line-height:1.02;margin-top:4px}
 .short b{font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:-.015em}
 .short ul{list-style:none;padding:0;margin-top:8px}
 .short li{padding:12px 0;border-bottom:1px solid var(--rule);color:var(--ink)}
-.short svg{display:none}
 
 section{margin-top:52px;scroll-margin-top:24px}
 /* the section you jumped to says so, briefly */
@@ -37,8 +26,3 @@ h2{font-size:26px;line-height:1.2;letter-spacing:-.015em}
 section p,section ul{margin-top:12px;color:var(--muted)}
 section ul{padding-left:20px;display:grid;gap:8px}
 section b{color:var(--ink)}
-
-footer{border-top:1px solid var(--line)}
-footer .wrap{padding-top:20px;padding-bottom:28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px 24px;font-size:16px;color:var(--subtle)}
-footer a{color:var(--subtle);display:inline-flex;align-items:center;min-height:44px}
-footer a:hover{color:var(--ink)}

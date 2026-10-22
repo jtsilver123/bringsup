@@ -64,8 +64,7 @@ html{scroll-padding-top:84px}
 @media (max-width:900px){.hero-sub{grid-template-columns:minmax(0,1fr);margin-top:24px}}
 @media (max-width:480px){.hero-act .btn{width:100%}}
 
-/* before / after */
-/* a click or an arrow key glides the handle to its spot; dragging follows the finger exactly */
+/* before / after: the homepage slider goes 4:3 on phones (custom shots keep their own --ba-ratio) */
 @media (max-width:700px){.ba-stage{aspect-ratio:var(--ba-ratio,4/3)}}
 
 /* images fade in once they've loaded, in space already reserved for them (FadeImg; nothing is hidden without JavaScript) */
@@ -193,8 +192,7 @@ img.fade{transition:opacity .3s var(--out)}
 .foot-tag{margin-top:16px;font-family:var(--display);font-weight:800;letter-spacing:-.025em;font-size:clamp(26px,3vw,36px);line-height:1.1;color:#fff;max-width:12em}
 .foot-links{display:grid;grid-template-columns:repeat(2,auto);gap:0 48px;font-size:16px}
 .foot-links a{display:flex;align-items:center;min-height:44px;color:#DAD8D1;text-decoration:underline 1px transparent;text-underline-offset:.3em}
-.foot-links a:hover{text-decoration-color:currentColor}
-.foot-links a:hover{color:var(--glow)}
+.foot-links a:hover{color:var(--glow);text-decoration-color:currentColor}
 .foot-bot{padding-top:24px;font-size:16px;color:#A9A79F}
 
 /* full-page concept viewer */
@@ -222,15 +220,14 @@ dialog.viewer[open]::backdrop{background:rgba(22,24,29,.75)}
   .faq details:not([open]) p{opacity:1;transform:none}
 }
 
-
 /* Key phrases in a headline: a straight Ember underline that sits just under the letters (wraps with them, never animates). */
 .key{background:linear-gradient(var(--ember),var(--ember)) no-repeat 0 92%/100% .09em;-webkit-box-decoration-break:clone;box-decoration-break:clone;padding-bottom:.04em}
 
 /* "The same six things": what's common, then what I do instead. */
-.fixes{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 64px;border-top:1.5px solid var(--ink)}
+.fixes{list-style:none;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 64px;border-top:1.5px solid var(--ink)}
 .fixes li{display:grid;gap:8px;padding:22px 0;border-bottom:1px solid var(--line)}
-.fx-was{margin:0;color:var(--subtle);font-size:16px}
-.fx-now{margin:0;color:var(--ink);font-size:19px;font-weight:600;line-height:1.35;padding-left:26px;position:relative}
+.fx-was{color:var(--subtle);font-size:16px}
+.fx-now{color:var(--ink);font-size:19px;font-weight:600;line-height:1.35;padding-left:26px;position:relative}
 .fx-now::before{content:"";position:absolute;left:0;top:.62em;width:14px;height:2px;background:var(--ember)}
 @media (max-width:800px){.fixes{grid-template-columns:minmax(0,1fr)}}
 .letter .ps{color:var(--muted);font-style:italic}

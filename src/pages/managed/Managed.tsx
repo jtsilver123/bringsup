@@ -18,8 +18,9 @@ const INCLUDED: [string, string][] = [
 export function Managed() {
   const [paid, setPaid] = useState(false);
   const [ref, setRef] = useState("");
-  // Checkout opens only for a live BringsUp site (the ?ref= in their launch email); anyone else would pay for nothing.
-  const [eligible, setEligible] = useState<boolean | null>(null);
+  // Checkout opens only for a live BringsUp site on its own web address (the ?ref= in their launch email): the plan
+  // looks after that address, so anyone else would pay for nothing. "no-domain" is a live site without one yet.
+  const [eligible, setEligible] = useState<boolean | "no-domain" | null>(null);
   const done = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const q = new URLSearchParams(location.search);
@@ -29,7 +30,7 @@ export function Managed() {
     if (!r) { setEligible(false); return; }
     fetch(`${PROJECTS_API}?status=${encodeURIComponent(r)}`)
       .then((res) => (res.ok ? res.json() : null))
-      .then((d) => setEligible(d?.status === "live"))
+      .then((d) => setEligible(d?.status !== "live" ? false : d.has_domain === false ? "no-domain" : true))
       .catch(() => setEligible(false));
   }, []);
   useEffect(() => { if (paid) done.current?.focus({ preventScroll: true }); }, [paid]);
@@ -56,9 +57,9 @@ export function Managed() {
           ) : (
             <div className="m-buy">
               <p className="m-price"><span className="cur">$</span>49<span className="per">a month</span></p>
-              {eligible
+              {eligible === true
                 ? <><a className="btn btn-primary" href={buy}>Start the plan</a><p className="small">Secure checkout with Stripe. Cancel anytime, in two clicks.</p></>
-                : <p className="small m-who">{eligible === null ? "Checking your site…" : <>The plan is for BringsUp sites that are already live. Start it from the link in your launch email, or email <a href={`mailto:${EMAIL}`}>{EMAIL}</a>. New here? <a href="/">See how BringsUp works</a>.</>}</p>}
+                : <p className="small m-who">{eligible === null ? "Checking your site…" : eligible === "no-domain" ? <>The plan looks after your own web address, and your site doesn't have one yet. Email <a href={`mailto:${EMAIL}`}>{EMAIL}</a> and I'll help you get one first.</> : <>The plan is for BringsUp sites that are already live. Start it from the link in your launch email, or email <a href={`mailto:${EMAIL}`}>{EMAIL}</a>. New here? <a href="/">See how BringsUp works</a>.</>}</p>}
             </div>
           )}
 

@@ -1,8 +1,8 @@
 import { EMAIL } from "../../../components/Chrome.tsx";
-import { FAQ, type FaqItem } from "../data.ts";
+import { FAQ } from "../data.ts";
 
 /** Native <details>, so it opens and closes without JavaScript. */
-export function Faq({ items = FAQ }: { items?: FaqItem[] }) {
+export function Faq() {
   return (
     <section id="faq" className="sec" aria-labelledby="faq-h">
       <div className="wrap split faq-split">
@@ -11,7 +11,7 @@ export function Faq({ items = FAQ }: { items?: FaqItem[] }) {
           <p>Something else? Write to <a href={`mailto:${EMAIL}`}>{EMAIL}</a> and I'll answer the same day.</p>
         </div>
         <div className="faq">
-          {items.map((f) => (
+          {FAQ.map((f) => (
             <details key={f.q}>
               <summary>{f.q}<span className="pm" aria-hidden="true"></span></summary>
               <p>{f.a}</p>
