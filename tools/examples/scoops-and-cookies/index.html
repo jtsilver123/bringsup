@@ -23,7 +23,7 @@ a{color:inherit}
 .wrap{max-width:1160px;margin:0 auto;padding:0 20px}
 .display{font-family:Fraunces,Georgia,serif;font-variation-settings:"SOFT" 100,"WONK" 1;font-weight:700;letter-spacing:-.02em;line-height:1.02;margin:0}
 .idea{background:var(--ink);color:#F6E9DF;font-size:14px;text-align:center;padding:9px 16px}
-.idea a{color:var(--butter);font-weight:600}
+.idea{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px 16px}.idea a{color:var(--butter);font-weight:600}.idea a.buy{background:var(--butter);color:var(--ink);text-decoration:none;font-weight:700;padding:8px 14px;border-radius:5px;min-height:40px;display:inline-flex;align-items:center}
 header.top{background:var(--paper);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
 header.top .wrap{display:flex;align-items:center;justify-content:space-between;height:72px;gap:16px}
 header.top img{height:46px;width:auto}
@@ -132,17 +132,28 @@ footer .logo img{height:34px;width:auto}
 @media (max-width:760px){.mbar{display:grid;grid-template-columns:1fr 1fr;position:sticky;bottom:0;z-index:6;background:var(--paper);border-top:1px solid var(--line);padding:10px 12px;gap:10px}.mbar a{min-height:48px;font-size:16px;padding:12px}}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 html{scroll-behavior:smooth}
+.gate{position:relative;max-height:1100px;overflow:hidden}
+.gate-blur{filter:blur(7px);opacity:.75;pointer-events:none;user-select:none}
+.gate::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(255,248,241,0) 0,rgba(255,248,241,.55) 30%,rgba(255,248,241,.95) 75%)}
+.gate-card{position:absolute;z-index:2;left:50%;top:120px;transform:translateX(-50%);width:min(560px,calc(100% - 32px));background:var(--paper);border:1px solid var(--line);border-top:5px solid var(--pink-d);border-radius:6px;padding:32px;box-shadow:0 24px 60px rgba(58,34,22,.18)}
+.gate-card .k{margin:0 0 8px;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--pink-d)}
+.gate-card h2{font-size:clamp(30px,4vw,42px)}
+.gate-card p{color:var(--muted);margin:14px 0 0}
+.gate-card p b{color:var(--ink)}
+.gate-card .btn{margin-top:22px}
+.gate-card .small{font-size:15px}
+@media (max-width:560px){.gate{max-height:1200px}.gate-card{top:60px;padding:24px}}
 </style>
 </head>
 <body>
-<div class="idea">A homepage idea for Scoops &amp; Cookies, made by <a href="https://bringsup.com">BringsUp</a>. Not the live site.</div>
+<div class="idea"><span>A homepage idea for Scoops &amp; Cookies from <a href="https://bringsup.com/?ref=scoops-and-cookies">BringsUp</a>. Not the live site yet.</span> <a class="buy" href="https://bringsup.com/start/?ref=scoops-and-cookies">Get the whole site →</a></div>
 <header class="top"><div class="wrap">
   <a href="#" class="brand" aria-label="Scoops and Cookies home"><span class="lockup"><svg class="mk" viewBox="0 0 64 64" aria-hidden="true"><path d="M20 30 L32 60 L44 30 Z" fill="#915B3D"/><path d="M24 34 L37 47 M30 31 L40 41 M22 39 L35 52 M40 34 L27 47 M34 31 L24 41 M42 39 L29 52" stroke="#E9C9A8" stroke-width="2" stroke-linecap="round"/><path d="M15 31 C 13 17, 22 7, 32 7 C 42 7, 51 17, 49 31 C 47 34, 44 31, 42 34 C 40 37, 37 33, 35 35 C 33 37, 30 33, 28 36 C 26 38, 23 33, 21 35 C 19 37, 16 34, 15 31 Z" fill="#F389AF"/><path d="M23 15 C 26 12, 30 11, 33 11" stroke="#fff" stroke-width="2.6" stroke-linecap="round" fill="none" opacity=".8"/></svg>
 <span class="wm"><span class="s1">scoops</span> <span class="amp">&amp;</span> <span class="s2">cookies</span></span></span></a>
   <nav aria-label="Main">
     <a class="link" href="#flavors">Flavors</a>
     <a class="link" href="#find">Find the door</a>
-    <a class="link" href="#visit">Hours</a>
+    <a class="link" href="#flavors">Hours</a>
     <a class="link" href="brand.html">Brand guide</a>
     <a class="call" href="tel:+12242842973"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>Call<span class="num">&nbsp;224-284-2973</span></a>
   </nav>
@@ -154,7 +165,7 @@ html{scroll-behavior:smooth}
     <h1 class="display">59 flavors.<br>One little door <em>around back.</em></h1>
     <p class="lede">Award-winning ice cream, dairy-free sorbets, no-sugar-added picks and cookies, in a little shop on Waukegan Road in Deerfield.</p>
     <p class="today" id="today"><i aria-hidden="true"></i><b>Open daily from noon</b><span>summer hours, call to confirm</span></p>
-    <div class="ctas"><a class="btn pink" href="#flavors">See all 59 flavors</a><a class="btn line" href="#find">How to find our door</a></div>
+    <div class="ctas"><a class="btn pink" href="https://bringsup.com/start/?ref=scoops-and-cookies">Get the whole site</a><a class="btn line" href="#find">How to find our door</a></div>
   </div>
   <figure>
     <img src="https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?auto=format&fit=crop&w=900&q=72" srcset="https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?auto=format&fit=crop&w=900&q=72 900w, https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?auto=format&fit=crop&w=1400&q=72 1400w" sizes="(max-width:860px) 100vw, 46vw" alt="A strawberry and vanilla double scoop in a waffle cone, held against a yellow wall" width="900" height="1125">
@@ -191,6 +202,8 @@ html{scroll-behavior:smooth}
   </div>
 </div></section>
 
+<div class="gate">
+  <div class="gate-blur" aria-hidden="true" inert>
 <section class="flavors" id="flavors" aria-labelledby="fl-h"><div class="wrap">
   <div class="head"><h2 class="display" id="fl-h">The flavor board<small>Everything on our list, all 59 of them. Find your favorite.</small></h2></div>
   <div class="tools">
@@ -241,6 +254,23 @@ html{scroll-behavior:smooth}
     </div>
   </div>
 </div></section>
+<section style="background:var(--ink);color:#F6E9DF"><div class="wrap" style="padding-top:64px;padding-bottom:64px;display:grid;gap:18px;max-width:760px;text-align:center">
+<p style="margin:0;font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:var(--butter);font-weight:700">From BringsUp</p>
+<h2 class="display" style="font-size:clamp(34px,5vw,54px);color:#fff">Like it? This can be your real website.</h2>
+<p style="margin:0 auto;max-width:52ch;color:#E9D8CC">We'd build every page from your own flavors, photos and hours, with the refreshed logo and brand guide if you want them. One flat $1,000, paid only after you've seen the finished site and approved it. Hosting included, no monthly fee, no calls.</p>
+<p style="margin:8px 0 0"><a class="btn pink" href="https://bringsup.com/start/?ref=scoops-and-cookies">Start my website</a></p>
+<p style="margin:0;font-size:15px;color:#CDB8A9">Questions? <a href="mailto:jake@bringsup.com" style="color:#fff">jake@bringsup.com</a></p>
+</div></section>
+  </div>
+  <div class="gate-card" role="region" aria-label="See the rest">
+    <p class="k">This is a preview</p>
+    <h2 class="display">Want the rest of your site?</h2>
+    <p>The full flavor board, hours, the cookies page and every other page get built from your real menu and photos, plus the refreshed logo and brand guide if you want them.</p>
+    <p><b>One 10-minute form starts it. Still nothing to pay</b> until you've seen the finished site and approved it. Then it's a flat $1,000.</p>
+    <a class="btn pink" href="https://bringsup.com/start/?ref=scoops-and-cookies">Start my website</a>
+    <p class="small">Questions? <a href="mailto:jake@bringsup.com">jake@bringsup.com</a></p>
+  </div>
+</div>
 </main>
 
 <footer><div class="wrap">
