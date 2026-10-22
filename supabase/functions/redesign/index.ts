@@ -184,8 +184,11 @@ async function work(req: Request, body: any): Promise<Response> {
     if (compare.before.desktop && compare.after.desktop) concept.compare = { ...compare, ...(tallSet.before.desktop && tallSet.after.desktop ? { tall: tallSet } : {}) };
     concept.short = short;
     const images = Array.isArray(body.images) ? body.images.filter((u: unknown) => typeof u === "string" && /^https:\/\//.test(u)).slice(0, 12) : [];
-    const row = { url: String(body.url || ""), email: String(body.email || "").toLowerCase(), ip_hash: "outreach",
-      status: "done", business_name: concept.business_name, content: concept, images, short };
+    // Replacing keeps the stored url, email and images unless this publish brings new ones.
+    const row: Record<string, unknown> = { ip_hash: "outreach", status: "done", business_name: concept.business_name, content: concept, short };
+    if (!replacing || body.url) row.url = String(body.url || "");
+    if (!replacing || body.email) row.email = String(body.email || "").toLowerCase();
+    if (!replacing || images.length) row.images = images;
     const { data: made, error } = replacing
       ? await db.from("redesigns").update(row).eq("id", replacing.id).select("id").single()
       : await db.from("redesigns").insert(row).select("id").single();

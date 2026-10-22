@@ -29,4 +29,7 @@
 .ba-stage.tall .ba-line,.ba-stage.tall .ba-knob{z-index:1}
 .ba-stage.tall .ba-knob{pointer-events:none}
 @media (pointer:fine){.ba-stage.tall{cursor:ew-resize}}
+/* Clipped like the Today side, so the note never sits on top of the new page. */
+.ba-end-pane{position:absolute;inset:0;clip-path:inset(0 0 0 var(--pos));pointer-events:none}
+.ba-stage.glide .ba-end-pane{transition:clip-path .22s var(--out)}
 .ba-end{position:absolute;right:24px;margin-top:20px;font-size:14px;font-weight:700;color:var(--subtle);pointer-events:none}

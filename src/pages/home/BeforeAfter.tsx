@@ -137,7 +137,9 @@ export function BeforeAfter(props: Props = {}) {
               <FadeImg className="ba-old" src={before.src} width={before.width} height={before.height} alt={before.alt} />
               <FadeImg className="ba-after" src={after.src} width={after.width} height={after.height} fetchPriority="high" alt={after.alt} />
               {/* Their page today often stops partway down; say so instead of leaving a blank strip. */}
-              {beforeTall < canvas - 0.01 && <span className="ba-end" style={{ top: `${(beforeTall / canvas) * 100}%` }}>End of page</span>}
+              {beforeTall < canvas - 0.01 && (
+                <div className="ba-end-pane"><span className="ba-end" style={{ top: `${(beforeTall / canvas) * 100}%` }}>End of page</span></div>
+              )}
             </div>
           </div>
         ) : (
