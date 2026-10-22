@@ -338,7 +338,8 @@ async function work(req: Request): Promise<Response> {
     set.todo = p.todo === "care_edit" ? "care_edit" : "revise";
     if (set.status === "preview_sent") set.status = "changes_requested";
   }
-  if (Object.keys(set).length) p = await save(p, { ...set, claimed_until: null });
+  // A successful update ends the lease and clears the failure count (repeating jobs like DNS checks claim again later).
+  p = await save(p, { ...set, claimed_until: null, attempts: 0, last_error: null });
   if (body.event?.kind) await log(p, body.event.kind, body.event.summary || "", body.event.payload ?? {}, body.event.round ?? null);
   return json(200, { ok: true, project: p });
 }
