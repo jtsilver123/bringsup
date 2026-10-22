@@ -103,6 +103,19 @@ async function outreach(slug: string, dir: string): Promise<void> {
   }
   let meta: { url?: string; email?: string; images?: string[] } = {};
   try { meta = JSON.parse(readFileSync(join(dir, "meta.json"), "utf8")); } catch { /* optional */ }
+  if (html) {
+    // /try/ shows the page from a string, so it can't load files next to it: every link and image must be absolute or inline.
+    const attrs = [...html.matchAll(/\b(?:src|href|poster|action)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>"']+))/gi)].map((m) => m[1] ?? m[2] ?? m[3]);
+    const srcsets = [...html.matchAll(/\b(?:srcset|imagesrcset)\s*=\s*(?:"([^"]*)"|'([^']*)')/gi)]
+      .flatMap((m) => (m[1] ?? m[2]).split(",").map((c) => c.trim().split(/\s+/)[0]));
+    const cssUrls = [...html.matchAll(/url\(\s*["']?([^"')]+?)["']?\s*\)/gi), ...html.matchAll(/@import\s+["']([^"']+)["']/gi)].map((m) => m[1]);
+    const relative = [...attrs, ...srcsets, ...cssUrls]
+      .filter((u) => u && !/^(https?:|mailto:|tel:|sms:|data:|#|javascript:void)/i.test(u.trim()));
+    if (relative.length) {
+      console.error("index.html must be self-contained. Make these absolute (https://...) or inline them (data: URIs):\n- " + [...new Set(relative)].join("\n- "));
+      process.exit(1);
+    }
+  }
   const res = await call("POST", "", { action: "create", ref: slug, concept, ...(html ? { html } : {}), ...meta });
   if (!res.link) { console.error(JSON.stringify(res)); process.exit(1); }
   console.log(res.link);
