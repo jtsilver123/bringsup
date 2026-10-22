@@ -1,4 +1,5 @@
 import { useImperativeHandle, useRef, useState, type Ref } from "react";
+import { FadeImg } from "../../components/FadeImg.tsx";
 import { CloseIcon } from "./icons.tsx";
 
 export type WorkViewerHandle = { open: (src: string, name: string) => void };
@@ -39,7 +40,8 @@ export function WorkViewer({ ref }: { ref?: Ref<WorkViewerHandle> }) {
         <button className="v-close" type="button" aria-label="Close" onClick={() => dialog.current?.close()}><CloseIcon /></button>
       </div>
       <div className="v-body" ref={body}>
-        <img id="v-img" src={shot?.src} alt={shot ? `Full homepage concept for ${shot.name}` : ""} />
+        {/* keyed by the shot, so a different homepage never flashes the last one while it loads */}
+        <FadeImg key={shot?.src ?? "none"} id="v-img" src={shot?.src} width={1200} alt={shot ? `Full homepage concept for ${shot.name}` : ""} />
       </div>
     </dialog>
   );

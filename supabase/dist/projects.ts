@@ -404,7 +404,7 @@ async function onApprove(sub: Submission): Promise<Project> {
   const paid = sub.paidCents >= APPROVE_PRICE_CENTS;
   p = await save(p, {
     last_customer_touch_at: now(),
-    // Interest only. care_plan itself is set by the builder once a Care Plan subscription exists.
+    // Interest only. care_plan itself is set by the builder once a managed-plan subscription is paid (OPERATOR.md "Managed plan").
     ...(pick(a, "Want us to handle updates", "Want the Care Plan") ? { care_plan_requested: /^yes/i.test(pick(a, "Want us to handle updates", "Want the Care Plan")) } : {}),
     ...(pick(a, "Who should connect your domain") ? { domain_helper: pick(a, "Who should connect your domain") } : {}),
     ...(pick(a, "Your web person's email") ? { domain_helper_email: pick(a, "Your web person's email").toLowerCase() } : {}),
@@ -464,7 +464,7 @@ async function webhook(req: Request): Promise<Response> {
 
 const SETTABLE = new Set([
   "status", "todo", "preview_url", "live_url", "next_check_at", "pending_changes", "held_changes", "domain", "domain_provider",
-  "domain_helper", "domain_helper_email", "care_plan", "care_plan_requested", "brief", "site", "pages_project", "last_customer_touch_at", "last_preview_at",
+  "domain_helper", "domain_helper_email", "care_plan", "care_plan_requested", "plan_subscription", "brief", "site", "pages_project", "last_customer_touch_at", "last_preview_at",
 ]);
 const TRANSITIONS: Record<string, string[]> = {
   started: ["preview_sent", "cancelled"],

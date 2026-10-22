@@ -7,7 +7,8 @@ The one map of the business: every step, who or what does it, which system it to
 - If they say yes, they get it as a private live link on bringsup.com.
 - If they want the whole site, one 10-minute form starts it. We build every page and send a private preview in about two weeks.
 - Two rounds of changes are included. Extra rounds, and changes after launch, are $150 each. Anything we got wrong is fixed free.
-- They pay a flat $1,000 only when they approve the finished site. Hosting is included. There's no Care Plan or monthly fee for now.
+- They pay a flat $1,000 only when they approve the finished site. Hosting is included, with no monthly fee.
+- Optional after launch: the managed plan, $49 a month (/managed/, Stripe subscription). Updates by email included, plus a daily check of their site and email settings, a monthly check against their Google listing, and renewal reminders (OPERATOR.md "Managed plan"). Offered only in emails 8 and 11, never in cold email.
 - We start at most 8 new sites a month (`MONTHLY_CAP` in the projects function). The home page shows the real count from `?capacity=1`. Starts past the cap are welcomed with email 1b and begin on the first business day of next month (OPERATOR.md build step 0).
 - A logo and color refresh is included if they ask for one (start form question "Your logo and colors"). A one-page brand guide comes with it.
 
@@ -24,7 +25,7 @@ The one map of the business: every step, who or what does it, which system it to
 | 7 | Rounds of changes: two included, two-day window, held changes and the paid extra round | Automatic counting, operator applies | Tally EqkMlA and 5XBMpd, Stripe link | OPERATOR.md "revise", "offer_extra" |
 | 8 | Approve, then pay $1,000 | Owner: form, then Stripe. Operator records the payment | Tally VpLDP6 → Stripe Payment Link, operator step 1b | OPERATOR.md step 1b |
 | 9 | Launch: production deploy, domain steps sent, DNS checks and reminders, "you're live" | Operator, step 2 `launch` and `check_dns`. The owner or their web person changes two DNS settings | Cloudflare Pages, customer_emails.md 6–8 | OPERATOR.md "launch", "Domain steps" |
-| 10 | After launch: our mistakes fixed free, other changes $150 a round | Operator, step 2 `care_edit` and `reply_out_of_scope` | Stripe extra link | customer_emails.md 11 |
+| 10 | After launch: our mistakes fixed free, other changes $150 a round, or the $49/month managed plan | Operator, step 2 `care_edit` and `reply_out_of_scope`; plan start, end and daily/monthly care in step 1b and "Managed plan" | Stripe extra link, managed link and customer portal | customer_emails.md 11–14 |
 | 11 | Quiet customers: reminder at 10 days, closing notice at 45, takedown at 60 | Operator, step 3 | | customer_emails.md 9–10 |
 | 12 | Health, alerts and stuck jobs | Operator, step 6. Push to Jake only for what's in step 7 | `projects-worker health` | OPERATOR.md steps 6–7 |
 | 12b | Is the operator itself running, and are the site, forms and payment links up? | Watchdog, every 2 hours. A failure emails Jake | GitHub Actions, `?pulse=1` heartbeat | `tools/watchdog.sh` |
@@ -57,7 +58,7 @@ Each is prepared so it takes minutes, and each reaches him as a push (OPERATOR.m
 - **Email:** jake@bringsup.com through Composio Gmail (`gmail_gariba-preach`) only.
 - **Forms (Tally, jake@bringsup.com workspace):** start `Ar7yBl`, changes `EqkMlA`, approve `VpLDP6` and extra round `5XBMpd` post to the projects function webhook. Concept `bZ5vj0` is only the fallback form when `REDESIGN_API` is off.
 - **Backend (Supabase `rgeeynodxvusivfbaxfu`):** functions `projects` (state machine, webhooks, worker API) and `redesign` (/try/ and outreach previews). Deploy with tools/bundle_function.sh, then switch JWT verification off again.
-- **Payments:** Stripe Payment Links on the InstateMe account (Jake's other company, for now): $1,000 `plink_1UTR1oB5nImYYaicDgVP1GNc`, $150 `plink_1UTR1oB5nImYYaicoE1lqGy6`. Pages, terms and receipts say so.
+- **Payments:** Stripe Payment Links on the InstateMe account (Jake's other company, for now): $1,000 `plink_1UTR1oB5nImYYaicDgVP1GNc`, $150 `plink_1UTR1oB5nImYYaicoE1lqGy6`, managed plan $49/month `plink_1UTSSeB5nImYYaicwTOnMVrB` (price `price_1UTSSTB5nImYYaicNjcHpxT5`). Customers manage or cancel the plan at the portal https://billing.stripe.com/p/login/7sY9AS3QO8f9fvd5i43cc00 (configuration `bpc_1UTSSeB5nImYYaic30KCOL3u`, which became InstateMe's default portal). Pages, terms and receipts say so.
 - **Hosting:** Cloudflare Pages, account `10b43838f31b9959c8eb61aafdd200f3`, with one project per customer.
 - **Watchdog:** `.github/workflows/watchdog.yml` runs `tools/watchdog.sh` every 2 hours: bringsup.com pages, the projects function, the four Tally forms, both Stripe links, and the operator's heartbeat (`?pulse=1`, from `projects-worker heartbeat` at the end of every run; 5 hours without one fails). A failed run makes GitHub email Jake. GitHub turns off scheduled workflows in repos without commits for 60 days, so it re-enables itself each run, and the operator checks once a day (public API, step 6) that it's still on and tells Jake if not.
 - **Tests:** `node tools/simulate-flow.ts` (signed fake submissions against production; it cleans up after itself).

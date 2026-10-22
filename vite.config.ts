@@ -12,6 +12,7 @@ export const pages = {
   changes: "changes/index.html",
   approve: "approve/index.html",
   extra: "extra/index.html",
+  managed: "managed/index.html",
   terms: "terms/index.html",
   privacy: "privacy/index.html",
   brand: "brand/index.html",

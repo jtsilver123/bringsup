@@ -12,7 +12,12 @@ export const PROJECTS_API = "https://rgeeynodxvusivfbaxfu.supabase.co/functions/
 export const STRIPE_LINKS = {
   approve: "https://buy.stripe.com/8x2dR80ECbrl4Qz9yk3cc08",
   extra: "https://buy.stripe.com/9B69ASevs1QL3Mv39W3cc09",
+  /** The $49/month managed plan (a subscription); Stripe sends them back to /managed/?paid=1. */
+  managed: "https://buy.stripe.com/8x228qafcanh4QzaCo3cc0a",
 } as const;
+
+/** Stripe's hosted login page where managed-plan customers update their card or cancel. */
+export const STRIPE_PORTAL = "https://billing.stripe.com/p/login/7sY9AS3QO8f9fvd5i43cc00";
 
 export const TALLY = {
   concept: "bZ5vj0",

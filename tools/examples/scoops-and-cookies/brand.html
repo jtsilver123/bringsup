@@ -146,8 +146,38 @@ html{scroll-behavior:smooth}
 .rules h3{margin:0;font-size:18px}
 .voice blockquote{margin:20px 0 0;font-family:Fraunces,Georgia,serif;font-size:26px;line-height:1.3;max-width:28ch}
 @media (max-width:760px){.type,.rules{grid-template-columns:1fr}}
+
+/* ---- feel: hover, press and focus states (CSS first; everything works without JavaScript) ---- */
+a{text-underline-offset:.2em;transition:color .15s,text-decoration-color .15s,text-decoration-thickness .15s}
+a:hover{text-decoration-thickness:2px}
+.btn,.call,.idea a.buy{-webkit-tap-highlight-color:transparent;transition:background-color .15s,color .15s,border-color .15s,transform .12s cubic-bezier(.16,1,.3,1)}
+.btn:active,.call:active,.idea a.buy:active{transform:translateY(1px) scale(.985);transition-duration:.06s}
+.btn.pink:active{background:#922651}
+.btn.line:active{background:#1F120B;border-color:#1F120B;color:#fff}
+.call:active{background:#5A3420}
+.idea a.buy:hover{background:#FFE08F}
+.btn:focus-visible,.call:focus-visible,.idea a.buy:focus-visible{outline-offset:4px}
+.ar{display:inline-block;transition:transform .22s cubic-bezier(.16,1,.3,1)}
+a:hover > .ar,a:focus-visible > .ar{transform:translateX(3px)}
+a:active > .ar{transform:translateX(5px)}
+header nav a.link{text-decoration:underline 2px transparent;text-underline-offset:.4em}
+header nav a.link:hover{text-decoration-color:var(--pink)}
+.lockup .mk{transition:transform .25s cubic-bezier(.16,1,.3,1)}
+.brand:hover .mk{transform:rotate(-6deg)}
+img.fade{transition:opacity .35s cubic-bezier(.16,1,.3,1)}
+img.fading{opacity:0}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+
+/* hex codes copy on click (with JavaScript), confirming in place */
+.hex{font:inherit;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:14px;color:var(--muted);background:transparent;border:1px solid transparent;border-radius:4px;padding:2px 6px;margin-left:-7px;cursor:copy;transition:border-color .15s,background-color .15s,color .15s}
+.hex:hover{border-color:var(--line);background:var(--paper);color:var(--ink)}
+.hex:active{transform:translateY(1px)}
+.hex[data-copied]{color:#2E7D4F;border-color:#BFDCC8;background:#F1FAF3}
+.sw .chip{transition:transform .2s cubic-bezier(.16,1,.3,1)}
+.tile{transition:border-color .15s}
+.tile:hover{border-color:#D9C3B1}
 </style></head><body>
-<div class="idea"><span>A brand guide idea for Scoops &amp; Cookies from <a href="https://bringsup.com/?ref=scoops-and-cookies">BringsUp</a>. <a href="index.html">See the homepage</a>.</span> <a class="buy" href="https://bringsup.com/start/?ref=scoops-and-cookies">Get the whole site →</a></div>
+<div class="idea"><span>A brand guide idea for Scoops &amp; Cookies from <a href="https://bringsup.com/?ref=scoops-and-cookies">BringsUp</a>. <a href="index.html">See the homepage</a>.</span> <a class="buy" href="https://bringsup.com/start/?ref=scoops-and-cookies">Get the whole site <span class="ar" aria-hidden="true">→</span></a></div>
 <main class="wrap">
 <section class="g"><h1 class="display" style="font-size:clamp(44px,7vw,80px)">Scoops &amp; Cookies<br>brand guide</h1>
 <p class="intro" style="margin-top:18px">One page that keeps the website, signs, menus, boxes and social posts looking like the same shop. The pink and cocoa are carried over from the current logo, so regulars still recognize it.</p></section>
@@ -179,4 +209,11 @@ html{scroll-behavior:smooth}
 </main>
 <footer><div class="wrap"><span class="brand foot"><span class="lockup"><svg class="mk" viewBox="0 0 64 64" aria-hidden="true"><path d="M20 30 L32 60 L44 30 Z" fill="#915B3D"/><path d="M24 34 L37 47 M30 31 L40 41 M22 39 L35 52 M40 34 L27 47 M34 31 L24 41 M42 39 L29 52" stroke="#E9C9A8" stroke-width="2" stroke-linecap="round"/><path d="M15 31 C 13 17, 22 7, 32 7 C 42 7, 51 17, 49 31 C 47 34, 44 31, 42 34 C 40 37, 37 33, 35 35 C 33 37, 30 33, 28 36 C 26 38, 23 33, 21 35 C 19 37, 16 34, 15 31 Z" fill="#F389AF"/><path d="M23 15 C 26 12, 30 11, 33 11" stroke="#fff" stroke-width="2.6" stroke-linecap="round" fill="none" opacity=".8"/></svg>
 <span class="wm"><span class="s1">scoops</span> <span class="amp">&amp;</span> <span class="s2">cookies</span></span></span></span><span><a href="index.html">Back to the homepage idea</a></span></div></footer>
+<script>
+// Images fade in once loaded instead of popping in (only images not yet loaded are hidden, and only by this script).
+document.querySelectorAll("main img").forEach(i=>{if(i.complete)return;i.classList.add("fade","fading");const d=()=>i.classList.remove("fading");i.addEventListener("load",d,{once:true});i.addEventListener("error",d,{once:true});});
+// Each hex code becomes a button that copies it, and says so in place for two seconds.
+document.querySelectorAll(".sw code").forEach(c=>{const hex=c.textContent,b=document.createElement("button");b.type="button";b.className="hex";b.textContent=hex;b.setAttribute("aria-label","Copy "+hex);let t;
+b.addEventListener("click",()=>{(navigator.clipboard?navigator.clipboard.writeText(hex):Promise.reject()).then(()=>{b.setAttribute("data-copied","");b.textContent="Copied";clearTimeout(t);t=setTimeout(()=>{b.removeAttribute("data-copied");b.textContent=hex;},1600);},()=>{});});c.replaceWith(b);});
+</script>
 </body></html>

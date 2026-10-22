@@ -1,3 +1,4 @@
+import { Capacity } from "../../../components/Capacity.tsx";
 import { INCLUDED, STEPS } from "../data.ts";
 
 /** How it works and what it costs, as one timeline, then the price and what it covers. */
@@ -21,9 +22,10 @@ export function Offer() {
 
         <div className="price" id="pricing">
           <div className="price-main">
-            <p className="price-amt"><span className="sr">The price: </span>$1,000</p>
+            <p className="price-amt"><span className="sr">The price: </span><span className="cur">$</span>1,000</p>
             <p className="price-what">Flat, for the whole site and a brand refresh.</p>
             <p>That's the whole price, and you pay it only after you've seen your finished site and approved it. No deposit, no contract, no monthly bill.</p>
+            <Capacity />
           </div>
           <div className="price-inc">
             <h3>What's included</h3>
@@ -33,7 +35,7 @@ export function Offer() {
           </div>
           <div className="price-after">
             <h3>After it's live</h3>
-            <p>Hosting stays included, with no monthly fee. Anything I got wrong is fixed free. Other updates, like new hours or photos, are $150 a round, the same as an extra round of changes before launch. Just reply by email. The files are yours, so your own web person can edit them too.</p>
+            <p>Hosting stays included, with no monthly fee. Anything I got wrong is fixed free. Other updates, like new hours or photos, are $150 a round, the same as an extra round of changes before launch. Just reply by email. Or, if you'd rather never think about it, the <a href="/managed/">managed plan</a> is $49 a month with updates included. The files are yours, so your own web person can edit them too.</p>
           </div>
         </div>
       </div>

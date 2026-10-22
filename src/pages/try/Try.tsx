@@ -30,11 +30,15 @@ export function Try() {
   const [soon, setSoon] = useState(!API);
   const [fields, setFields] = useState<AskFields>({ url: "", email: "", company_site: "" });
   const [formError, setFormError] = useState<FormError | null>(null);
+  /** Fields flagged by a failed submit; from then on they're re-checked as the visitor types. */
+  const [flagged, setFlagged] = useState<Partial<Record<FormError["field"], boolean>>>({});
+  /** True once the page has moved past its first view, so later views ease in (the first one never waits). */
+  const [moved, setMoved] = useState(false);
   const [workingHost, setWorkingHost] = useState("your website");
   const [result, setResult] = useState<ResultData | null>(null);
   const [queued, setQueued] = useState<QueuedData | null>(null);
   const [failure, setFailure] = useState<Failure | null>(null);
-  const [toast, setToast] = useState({ message: "", show: false });
+  const [toast, setToast] = useState({ message: "", show: false, ok: false });
 
   const urlRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
@@ -47,6 +51,7 @@ export function Try() {
 
   const go = useCallback((next: View) => {
     setView(next);
+    setMoved(true);
     window.scrollTo({ top: 0, behavior: "auto" });
   }, []);
 
@@ -57,15 +62,19 @@ export function Try() {
 
   useEffect(() => () => { clearTimeout(pollTimer.current); clearTimeout(toastTimer.current); }, []);
 
-  const say = (message: string) => {
-    setToast({ message, show: true });
+  /** Show a toast. `quiet` only announces it to screen readers, for actions that confirm themselves on screen. */
+  const say = (message: string, { ok = false, quiet = false } = {}) => {
     clearTimeout(toastTimer.current);
+    if (quiet) { setToast({ message, show: false, ok }); return; }
+    setToast({ message, show: true, ok });
     toastTimer.current = setTimeout(() => setToast((t) => ({ ...t, show: false })), 2400);
   };
 
-  const copyLink = () => {
+  // The copy button shows its own checkmark; if the clipboard is blocked, the toast shows the link to copy by hand.
+  const copyLink = (): Promise<boolean> => {
     const link = location.href;
-    (navigator.clipboard ? navigator.clipboard.writeText(link) : Promise.reject()).then(() => say("Link copied"), () => say(link));
+    return (navigator.clipboard ? navigator.clipboard.writeText(link) : Promise.reject())
+      .then(() => { say("Link copied", { ok: true, quiet: true }); return true; }, () => { say(link); return false; });
   };
 
   const fail = (message?: string, title?: string) => {
@@ -135,8 +144,8 @@ export function Try() {
   const submit = (values: AskFields) => {
     const url = values.url.trim(), email = values.email.trim();
     setFormError(null);
-    if (!isUrl(url)) { setFormError({ field: "url", message: "Add your website address, like rosasbakery.com." }); urlRef.current?.focus(); return; }
-    if (!isEmail(email)) { setFormError({ field: "email", message: "Add your email so we can follow up about your redesign." }); emailRef.current?.focus(); return; }
+    if (!isUrl(url)) { setFlagged((f) => ({ ...f, url: true })); setFormError({ field: "url", message: "Add your website address, like rosasbakery.com." }); urlRef.current?.focus(); return; }
+    if (!isEmail(email)) { setFlagged((f) => ({ ...f, email: true })); setFormError({ field: "email", message: "Add your email so we can follow up about your redesign." }); emailRef.current?.focus(); return; }
     if (!API) { location.href = "/#concept"; return; }
     run(url, email, values.company_site);
   };
@@ -187,13 +196,18 @@ export function Try() {
   return (
     <>
       <Header />
-      <main>
+      <main className={moved ? "views moved" : "views"}>
         <AskView
           hidden={view !== "ask"}
           soon={soon}
           fields={fields}
-          onField={(name, value) => setFields((f) => ({ ...f, [name]: value }))}
+          onField={(name, value) => {
+            setFields((f) => ({ ...f, [name]: value }));
+            // Clear the error the moment a flagged field is right.
+            if (formError?.field === name && (name === "url" ? isUrl(value.trim()) : name === "email" ? isEmail(value.trim()) : false)) setFormError(null);
+          }}
           error={formError}
+          fixed={{ url: flagged.url && isUrl(fields.url.trim()), email: flagged.email && isEmail(fields.email.trim()) }}
           onSubmit={() => submit(fields)}
           urlRef={urlRef}
           emailRef={emailRef}
@@ -203,7 +217,7 @@ export function Try() {
         <QueuedView hidden={view !== "queued"} data={queued} onCopy={copyLink} />
         <FailedView hidden={view !== "failed"} failure={failure} onRetry={again} />
       </main>
-      <Toast message={toast.message} show={toast.show} />
+      <Toast message={toast.message} show={toast.show} ok={toast.ok} />
       <Footer />
     </>
   );

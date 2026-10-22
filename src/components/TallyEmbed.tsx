@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 declare global {
   interface Window {
@@ -24,7 +24,21 @@ export function TallyEmbed({ formId, title, height = 520, extra = "", lazy = fal
   fallback?: ReactNode;
 }) {
   const frame = useRef<HTMLIFrameElement>(null);
+  // "idle" on the server and without JavaScript (nothing hidden); "loading" from hydration until the form arrives.
+  const [state, setState] = useState<"idle" | "loading" | "ready">("idle");
   const src = `https://tally.so/embed/${formId}?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1${extra}`;
+
+  // Show placeholder fields until the form's own page has loaded (the first, empty about:blank load doesn't count).
+  useEffect(() => {
+    const el = frame.current;
+    if (!el) return;
+    const loaded = () => { if (el.src && el.src !== "about:blank") setState("ready"); };
+    setState("loading");
+    el.addEventListener("load", loaded);
+    // Never hold the form back: if it's slow or blocked, show whatever is there after a while.
+    const giveUp = setTimeout(() => setState("ready"), 12000);
+    return () => { el.removeEventListener("load", loaded); clearTimeout(giveUp); };
+  }, [src]);
 
   useEffect(() => {
     const load = () => {
@@ -58,7 +72,8 @@ export function TallyEmbed({ formId, title, height = 520, extra = "", lazy = fal
   }, [onSubmit]);
 
   return (
-    <>
+    <div className="tally" data-state={state}>
+      <div className="tally-ph" aria-hidden="true"><div><i></i><b></b></div><div><i></i><b></b></div><span>Loading the form…</span></div>
       <iframe
         ref={frame}
         id="tally"
@@ -74,6 +89,6 @@ export function TallyEmbed({ formId, title, height = 520, extra = "", lazy = fal
       <noscript>
         {fallback ?? <p className="foot"><a href={`https://tally.so/r/${formId}`}>Open the form</a></p>}
       </noscript>
-    </>
+    </div>
   );
 }
