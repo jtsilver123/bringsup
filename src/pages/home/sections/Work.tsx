@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 import { WORK, type WorkSample } from "../data.ts";
 import { ExpandIcon } from "../icons.tsx";
-import { Reveal } from "../Reveal.tsx";
 
 type Open = (src: string, name: string) => void;
 
@@ -33,7 +32,7 @@ function Shot({ work, onOpen }: { work: WorkSample; onOpen: Open }) {
   };
 
   return (
-    <Reveal as="article" className="shot">
+    <article className="shot">
       <div
         ref={view}
         className="shot-view"
@@ -41,7 +40,7 @@ function Shot({ work, onOpen }: { work: WorkSample; onOpen: Open }) {
         role="button"
         data-src={full}
         data-name={work.name}
-        aria-label={`Open the full homepage concept for ${work.ariaName}`}
+        aria-label={`Open the full homepage for ${work.ariaName}`}
         style={h === null ? undefined : ({ "--h": `${h}px` } as CSSProperties)}
         onClick={open}
         onKeyDown={onKeyDown}
@@ -49,31 +48,25 @@ function Shot({ work, onOpen }: { work: WorkSample; onOpen: Open }) {
         <img className="full" src={full} width={1200} height={work.height} loading="lazy" alt="" />
         <img className="phone" src={`/assets/work/${work.slug}-phone.jpg`} width={390} height={844} loading="lazy" alt="" />
       </div>
-      <div className="shot-meta">
-        <p className="k">{work.kind}</p>
-        <h3>{work.name}</h3>
-        <p>{work.text}</p>
-        <button className="view" type="button" data-src={full} data-name={work.name} onClick={open}>View the full homepage <ExpandIcon /></button>
-      </div>
-    </Reveal>
+      <h3>{work.name}</h3>
+      <p className="k">{work.kind}</p>
+      <p>{work.text}</p>
+      <button className="tlink view" type="button" data-src={full} data-name={work.name} onClick={open}>View the full homepage <ExpandIcon /></button>
+    </article>
   );
 }
 
 export function Work({ onOpen }: { onOpen: Open }) {
   return (
-    <section id="work" className="sand" aria-labelledby="work-h">
-      <div className="wrap pad">
-        <Reveal className="sec-head">
-          <div>
-            <p className="eyebrow">Sample work</p>
-            <h2 className="display h2" id="work-h">Every business gets its own look. Not a template with your name on it.</h2>
-          </div>
-          <p className="lead">Your colors, your photos, your real reviews, and the one button your customers need most.</p>
-        </Reveal>
+    <section id="work" className="sec" aria-labelledby="work-h">
+      <div className="wrap">
+        <div className="sec-head">
+          <h2 className="t2" id="work-h">Each one is made for one business.</h2>
+          <p>Their colors, their photos, their reviews, and the one button their customers need most. These businesses are made up and the photos are stock. Yours would use your real name, details and reviews.</p>
+        </div>
         <div className="work">
           {WORK.map((w) => <Shot key={w.slug} work={w} onOpen={onOpen} />)}
         </div>
-        <p className="work-note">These businesses are fictional, made to show our process, with stock photos. Your concept uses your real name, details and reviews.</p>
       </div>
     </section>
   );

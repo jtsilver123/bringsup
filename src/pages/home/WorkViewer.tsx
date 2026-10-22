@@ -35,7 +35,7 @@ export function WorkViewer({ ref }: { ref?: Ref<WorkViewerHandle> }) {
       onClose={() => lastFocus.current?.focus()}
     >
       <div className="v-head">
-        <div><b id="v-title">{shot?.name ?? "Concept"}</b><small>Sample concept · fictional business · stock photos</small></div>
+        <div><b id="v-title">{shot?.name ?? "Concept"}</b><small>Sample homepage · made-up business · stock photos</small></div>
         <button className="v-close" type="button" aria-label="Close" onClick={() => dialog.current?.close()}><CloseIcon /></button>
       </div>
       <div className="v-body" ref={body}>

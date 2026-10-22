@@ -7,7 +7,7 @@ One source of truth for the website, cold emails, prospect concept mockups and a
 - **Tagline:** Websites as good as your reviews. (The whole business in five words. Use it in the footer, social bios, email signature and link previews.)
 - **Descriptor:** For the businesses your town already loves. (Supporting line, never the headline.)
 - **Promise:** Your reviews say you're the best in town. Your website should too.
-- **Offer:** Free homepage concept first. Then the owner fills in one 10-minute form (no calls), we build the full site and brand refresh, and they pay one flat $1,000 only when they approve the finished site. Preview in about two weeks, two rounds of changes. Optional Care Plan $79/mo.
+- **Offer:** Free homepage concept first. Then the owner fills in one 10-minute form (no calls), we build the full site and brand refresh, and they pay one flat $1,000 only when they approve the finished site. Preview in about two weeks, two rounds of changes. After launch: hosting stays included with no monthly fee, anything we got wrong is fixed free, other updates are $150 a round (same as an extra round), and the files are theirs so their own web person can edit them. No Care Plan for now.
 - **The promise behind it:** See it first. Pay only if you love it. Nothing is charged before approval, and everything happens by email, so there's nothing to schedule.
 - **Who we serve:** family-owned local businesses with strong reviews and an outdated website (European auto specialists, remodelers and custom carpenters, landscapers, upholsterers, framers, jewelers, tailors, high-end bakeries; see tools/RUNBOOK.md step 6 for the current list).
 
@@ -39,40 +39,44 @@ The visual version of this guide lives at `bringsup.com/brand/` (not indexed).
 | Ink | `#16181D` | Text, dark sections, primary dark buttons, logo mark |
 | Paper | `#FBFAF7` | Page background |
 | Sand | `#F1EEE6` | Alternate section background |
-| Line | `#E4E1D9` | Borders, dividers |
-| Ember | `#C2410C` | The one accent: primary buttons, numbers, icons, CTA panel |
+| Line | `#E4E1D9` | Borders, section hairlines |
+| Rule | `#D6D2C8` | Rules between list items |
+| Ember | `#C2410C` | The one accent: the primary button, and the price that's due |
 | Ember Deep | `#9A3412` | Accent text and links, Ember hover |
 | Glow | `#FFB37A` | Accent on Ink only (logo arrow, buttons on dark) |
-| Tint | `#FFE8DC` | Icon tiles, eyebrow pills |
+| Tint | `#FFE8DC` | Text selection only |
 | Muted | `#3D414B` | Body copy |
 | Subtle | `#5A5F6B` | Captions, fine print |
 
 Rules: one accent (Ember) per screen. No gradients. No other hues in BringsUp-branded surfaces. Prospect concept mockups use the *prospect's* colors, not ours.
 
 ## Type
-- **Display:** Bricolage Grotesque 800, letter-spacing -0.03em, line-height ~1.0. H1 clamp(42–80px), H2 clamp(34–56px).
-- **Body:** DM Sans 400/500/700. Body 17–20px, line-height 1.55.
-- **Eyebrow:** DM Sans 700, 15px, uppercase, +0.06em, Ember Deep. Every section opens with one.
+Typography carries the page. No decorative icons, badges or illustrations.
+- **Display:** Bricolage Grotesque 800, letter-spacing -0.025em (-0.035em at the largest size). Two sizes only: page title `clamp(40px, 6.2vw, 84px)`, section title `clamp(30px, 3.6vw, 46px)`. Small headings (22px) use it too.
+- **Body:** DM Sans 400/700. Body 18px, line-height 1.6. Lead paragraphs 20px (18px on phones). Small print 16px. Nothing on a phone is smaller than 16px.
+- **No eyebrows.** A heading says what the section is; there's no uppercase label above it.
+- Keep text to a readable measure (about 34em for leads, 40em for answers).
 
-## Signature devices
-These two make a page recognizably BringsUp. Use each at most once per screen.
-- **The lift.** A hand-drawn Ember underline that rises at its right end, like the arrow in the mark. It draws itself in once (0.9s) when it scrolls into view. Use it under the one phrase that carries the promise ("should too."). Never on links, never more than once per page section.
-- **Five stars.** Ember ★★★★★ is our shorthand for "your reputation". The stars light up one by one (80ms apart) when first seen. Pair them with words about reviews, never with claims about BringsUp itself.
+## Layout
+- One rhythm for sections: a 1px hairline on top, generous space (104px desktop, 64px phone), and the heading sitting next to or above a short intro. Vary what follows: the work full width, the process as a ruled timeline, a letter, the FAQ.
+- Lists are ruled (hairlines between items), never check-icon bullets. Numbered steps use a plain numeral, never a filled circle.
+- Show real artifacts instead of decoration: the before/after, the sample homepages, the actual first email.
+- No stat strips, chips or pills, no glowing buttons, no fade-in-on-scroll. Everything is visible without JavaScript.
 
 ## Shape
-- Radius: 12px (inputs, icon tiles), 20px (cards), 32px (big panels), pill (all buttons).
-- Buttons: pill, min height 56px (44px in nav). Primary = Ember fill + white text. Secondary = 2px Ink outline. On dark = Glow fill + Ink text.
+- Radius: 6px for buttons, inputs, cards and images. The slider handle is the only circle.
+- Buttons: min height 52px (44px in the header). Primary = Ember fill + white text, one per screen. Secondary = 1.5px Ink outline, or a plain underlined text link. Ink fill for the header button and on-page "back" actions.
+- Borders over shadows. A shadow is allowed only on the email artifact, to read as a sheet of paper.
+
+## Motion
+Almost none. Motion explains something or confirms an action; it is never decoration.
+- Hovers and presses: 150 to 200ms color changes. The sample homepages scroll inside their frame on hover.
+- The before/after sways once the first time it's seen, to show it can be dragged.
+- No reveals on scroll, no drawn underlines, no lighting-up stars.
+- Everything respects `prefers-reduced-motion`.
 
 ## Color in UI states
 Functional colors are allowed only for form feedback: Error `#B42318` (border + message), Success `#1F7A4D` (check mark). Nothing decorative.
-
-## Motion
-Quick, warm, purposeful. Motion explains something or confirms an action; it is never decoration.
-- Durations: 150–250ms for hovers and presses, 300–450ms for panels and dialogs, 600ms for scroll reveals, 900ms for the lift.
-- Easing: `cubic-bezier(.2,.7,.2,1)` (fast out, soft landing). Spring overshoot only on small confirmations (stars, check marks).
-- Buttons press to 97% scale. Arrow icons nudge 4px toward where they lead. Cards lift 6px on hover.
-- Reveals stagger 90ms within a group, max 4 steps. Content is never hidden if JavaScript fails.
-- Everything respects `prefers-reduced-motion`: no movement, content shown immediately.
 
 ## Voice
 - Plain, warm and specific. Write like a neighbor who happens to build websites.
@@ -81,7 +85,9 @@ Quick, warm, purposeful. Motion explains something or confirms an action; it is 
 - Lead with what's great about the business (their reviews, their history). Then show the gap.
 - **Never** mention or quote a business's bad reviews. Never insult their current site; say "outdated" or "doesn't match your reputation".
 - No jargon (SEO, conversion, UX), no hype words (revolutionary, cutting-edge), no emojis.
-- Always say "flat $1,000" and "free concept". Never invent stats or client results.
+- Always say "flat $1,000". To owners, the free concept is "your new homepage" ("free concept" is fine internally). Never invent stats or client results.
+- On the website, Jake speaks in the first person ("I"). Legal pages say "we".
+- No em dashes, no exclamation marks, and none of the phrases on the banned list in tools/email_template.md.
 
 ### Microcopy
 - Buttons say what happens, in the visitor's words: "Get my free concept", "Send me my free concept", "View the full homepage". Never "Submit", "Learn more" or "Click here".
@@ -97,7 +103,7 @@ bringsup.com
 ```
 
 ## Website
-- React + TypeScript (Vite), pre-rendered to static HTML at build time and deployed by a GitHub Action to GitHub Pages at bringsup.com. Run `npm install`, then `npm run dev` to work on it locally or `npm run build` to build. The homepage lives in `src/pages/home/`. Order: hero with before/after slider → "Got an email from Jake?" (for prospects arriving from outreach) → why it matters → sample concepts → how it works → included, pricing, comparison → who we are and our promises → FAQ → concept request form.
+- React + TypeScript (Vite), pre-rendered to static HTML at build time and deployed by a GitHub Action to GitHub Pages at bringsup.com. Run `npm install`, then `npm run dev` to work on it locally or `npm run build` to build. The homepage lives in `src/pages/home/`. Order: hero (the promise, Jake's one-paragraph intro, one button, then the before/after) → "Got an email from me?" (who Jake is, next to the actual first email) → sample homepages → what happens and what it costs (timeline, price, what's included, after launch) → FAQ → the request form. Shared base styles live in `src/components/site.css`; the sub-page header and footer in `src/components/Chrome.tsx`.
 - Sample concepts on the site (`assets/work/`) are **fictional businesses**, generated with `tools/make_concept.py`, and must always be labeled as fictional with stock photos. Never show a real prospect's concept on the site without their written OK.
 - The site's promises must stay true to the runbook: three cold emails maximum (one drip, never repeated), flat $1,000 paid only on approval, no calls, the owner keeps everything.
 - Contact: `jake@bringsup.com` for everything: outreach, customers and support. It's the only address we send from or publish.

@@ -15,7 +15,7 @@ export const TERMS: LegalDoc = {
     "The homepage concept we send you is free. You never owe anything for it.",
     "Nothing to pay while we build. You pay the flat $1,000 only if you approve the finished site.",
     "Once you pay, the site, its files and its design are yours.",
-    "Hosting is included with no monthly fee. The Care Plan for edits is optional, and you can cancel anytime.",
+    "Hosting is included with no monthly fee. After launch, we fix anything we got wrong for free, and other changes are $150 a round.",
     "Two rounds of changes are included. Extra rounds are $150, and we always ask first.",
   ],
   sections: [
@@ -33,15 +33,15 @@ export const TERMS: LegalDoc = {
     },
     {
       title: "Approval and payment",
-      body: <><p>You pay nothing up front. If you approve your finished site, you pay a flat fee of $1,000 (US dollars) by card through Stripe when you approve it. If you decide not to approve it, you can walk away and you owe nothing. We don't publish an unapproved site.</p><p>Because you see and approve the finished work before paying, payments are generally non-refundable. If something we built doesn't work as shown in the approved preview, tell us within 30 days of launch and we'll fix it at no charge.</p></>,
+      body: <><p>You pay nothing up front. If you approve your finished site, you pay a flat fee of $1,000 (US dollars) by card through Stripe when you approve it. Payments are processed through the Stripe account of InstateMe, our founder's other company, so its name appears on the payment page and receipt. If you decide not to approve it, you can walk away and you owe nothing. We don't publish an unapproved site.</p><p>Because you see and approve the finished work before paying, payments are generally non-refundable. If something we built doesn't work as shown in the approved preview, tell us within 30 days of launch and we'll fix it at no charge.</p></>,
     },
     {
       title: "Who owns what",
       body: <><p>Once you've paid, you own the finished website, its design and its files, and we'll hand over everything if you ask. Your domain always stays in your name. We may show your site in our portfolio unless you ask us not to.</p><p>You keep ownership of everything you send us, like your logo, photos and text. You give us permission to use it to build and run your site, and you confirm you have the right to share it. Stock photos we add are licensed for use on your website.</p></>,
     },
     {
-      title: "The Care Plan",
-      body: <><p>Hosting is included with your website at no monthly cost, so your site stays up whether or not you choose the Care Plan. If we ever stop hosting sites, we'll give you at least 60 days' notice and move your site to a host of your choice, or hand you the files.</p><p>The Care Plan is optional. It covers small edits (things like new hours, specials, photos or text changes), requested by email, for the monthly fee shown on our pricing section, billed by Stripe. It renews monthly until you cancel. You can cancel anytime by emailing us, and it stops at the end of that month.</p></>,
+      title: "Hosting and changes after launch",
+      body: <><p>Hosting is included with your website at no monthly cost. If we ever stop hosting sites, we'll give you at least 60 days' notice and move your site to a host of your choice, or hand you the files.</p><p>After launch, we fix anything we got wrong (something that doesn't match your approved preview, or details that were right on your start form) for free. Other changes, like new hours, specials, photos or text, are $150 a round, requested by email, and we always tell you before charging. The files are yours, so your own web person can edit them too.</p></>,
     },
     {
       title: "Your domain and email",
@@ -89,7 +89,7 @@ export const PRIVACY: LegalDoc = {
     },
     {
       title: "Who helps us",
-      body: <><p>We use a small set of trusted services to run BringsUp, and they only get what they need to do their job:</p><ul><li><b>Tally</b>, for our forms and file uploads</li><li><b>Stripe</b>, for payments</li><li><b>Supabase</b>, for storing redesign requests</li><li><b>Anthropic (Claude)</b>, the AI that helps us draft designs and copy from your website's content</li><li><b>GitHub Pages</b>, which hosts bringsup.com</li><li>Our email provider, for sending and receiving email</li></ul><p>We don't sell your information, and we don't share it with advertisers. We'd only share it otherwise if the law requires us to.</p></>,
+      body: <><p>We use a small set of trusted services to run BringsUp, and they only get what they need to do their job:</p><ul><li><b>Tally</b>, for our forms and file uploads</li><li><b>Stripe</b>, for payments (through the Stripe account of InstateMe, our founder's other company)</li><li><b>Supabase</b>, for storing redesign requests</li><li><b>Anthropic (Claude)</b>, the AI that helps us draft designs and copy from your website's content</li><li><b>GitHub Pages</b>, which hosts bringsup.com</li><li>Our email provider, for sending and receiving email</li></ul><p>We don't sell your information, and we don't share it with advertisers. We'd only share it otherwise if the law requires us to.</p></>,
     },
     {
       title: "Cookies",

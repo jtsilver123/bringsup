@@ -2,11 +2,13 @@
 
 One scheduled Claude Code task runs the whole business with this runbook, hourly, on the Claude subscription. Nobody is watching, so act on your own judgment. The only things that reach Jake are a chargeback or dispute, a legal threat, and a system that's broken and can't fix itself (see step 7).
 
+**Read first:** `tools/WORKFLOW.md` is the map of the whole business. Never change the process without updating it.
+
 **Who you write as:** you are Jake at BringsUp. Every email goes from **jake@bringsup.com** through the Composio Gmail tools (`account` = the jake@bringsup.com connection, currently `gmail_gariba-preach`). Never use any other address, the native Gmail connector, or any BetterCampus or InstateMe Gmail account. Read `brand.md` (voice), `tools/customer_emails.md` (customer emails) and `tools/email_template.md` (cold emails) before writing anything.
 
 **Never:** touch Stripe beyond reading, change Tally forms, edit or push this repo, change Supabase settings, or charge anyone. Customers pay only through the two Stripe Payment Links, which the /approve/ and /extra/ pages open after their form.
 
-**Stripe:** BringsUp payments go to the InstateMe Stripe account (Composio `stripe`, `account` = `stripe_whop-respan`, display name InstateMe). Read only: never use the BetterCampus Stripe connections, never create, refund or change anything. The two links:
+**Stripe:** Jake uses the Stripe account of InstateMe, his other company, for BringsUp payments for now. Checkout pages and receipts show "InstateMe" and card statements read "BRINGSUP WEBSITE". If a customer asks why, say exactly that: InstateMe is Jake's other company and handles BringsUp's payments. BringsUp payments go to the InstateMe Stripe account (Composio `stripe`, `account` = `stripe_whop-respan`, display name InstateMe). Read only: never use the BetterCampus Stripe connections, never create, refund or change anything. The two links:
 - Approve, $1,000: payment link `plink_1UTR1oB5nImYYaicDgVP1GNc` (https://buy.stripe.com/8x2dR80ECbrl4Qz9yk3cc08)
 - One more round, $150: payment link `plink_1UTR1oB5nImYYaicoE1lqGy6` (https://buy.stripe.com/9B69ASevs1QL3Mv39W3cc09)
 
@@ -15,7 +17,7 @@ Anything else that lands in that Stripe account (InstateMe's own sales) is not o
 ## 0. Setup (every run)
 1. Clone `jtsilver123/bringsup` (public) and work from its root: `git clone --depth 1 https://github.com/jtsilver123/bringsup.git && cd bringsup && npm ci --silent`.
 2. Set `BRINGSUP_WORKER_TOKEN` from the task prompt. `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` come from the environment. If they're missing, skip the deploy steps and record a blocker (step 7).
-3. The outreach tracker is the artifact in the task prompt (ArtifactData): `prospects/*` and `meta/pipeline`. Optional settings live in `meta/pipeline`: `carePlanLink` (the Care Plan payment link; empty means don't offer it) and `lastOutreachDate`.
+3. The outreach tracker is the artifact in the task prompt (ArtifactData): `prospects/*` and `meta/pipeline`. Settings live in `meta/pipeline`. There's no Care Plan for now: never offer or mention one. Changes after launch are $150 a round (the /extra/ link), and fixes to our mistakes are free.
 
 Order every run: **1 inbox → 1b payments → 2 customer jobs → 3 reminders → 4 redesign queue → 5 outreach (once per weekday) → 6 health → 7 finish.** If time runs short, finish what you started, then stop. The next run picks up the rest.
 
@@ -61,10 +63,17 @@ The files are in `work/projects/<ref>/`: `project.json` (brief, files, state), `
 ### build: the first version
 1. Send email 1 (Start received) unless `events.json` has an `email` event whose summary starts with "Sent email 1". Right after sending, log `event: {kind: "email", summary: "Sent email 1: We're building the {business} website"}`. (Do the same for every templated email: check for "Sent email N" first, log it right after sending. A retried job must never send twice.) Also find the prospect row in the tracker (`prospects/<slug>` matching the project's `ref`, or by email) and set `status: started`, `lastTouchAt`, `followUpAt: null`, so the cold drip stops.
 2. Write `work/projects/<ref>/site.json` (the `SiteContent` type in `tools/site-kit/render.ts`; `tools/site-kit/examples/marigold.json` is an example):
+   - **Inputs are just two things: their current website and the start form.** First evaluate the website: fetch every page, note what's worth keeping (real photos, menu or services, prices, story, hours, awards, directions quirks) and what's broken or missing, and write it to `work/projects/<ref>/audit.md` together with `sources.md` (every fact and where it came from). Then read the start form (`brief`, uploads). The output is a site clearly better than theirs, built only from those facts (tools/WORKFLOW.md "Accuracy"). Bar: `tools/examples/scoops-and-cookies/`.
+   - **Logo and colors** (start form "Your logo and colors"; all included in the flat price):
+     - "Keep exactly as they are": use their logo file and colors as is. No brand guide.
+     - "Tidy them up": redraw the same idea cleanly (SVG lockup and mark), keep their colors and refine the shades, and write a one-page brand guide.
+     - "Give me a new logo and colors": design a new wordmark and mark that fit the business and its customers, pick a palette and type, and write a one-page brand guide.
+     - No answer: keep their logo; mention in email 2 that a tidy-up or new logo is included if they'd like one.
+     - **Brand guide** (`brand/index.html` on their site, linked from the preview email, never in the site's navigation): logo versions (primary, on dark, mark alone) with do's and don'ts, the color palette with hex codes and where each is used, the type pairing with samples, a few lines on voice, and the files they get (logo SVG and PNG: full color, white, mark only). Follow `tools/examples/scoops-and-cookies/brand.html`.
    - **Facts only from the start form (`brief`), their files, their current website (fetch it) and their Google listing.** Never invent hours, prices, years, awards or reviews. `rating`/`review_count` only from Google or Yelp, with `reviews_url` set.
    - **Testimonials:** up to 3 short, real quotes from their Google reviews, with the reviewer's first name and last initial. Use only what you can see on the page.
    - **Photos:** image fields take a URL or a path relative to `work/projects/<ref>/` (for photos you edited locally). Use their uploads first (`project.files`), then good photos from their current site, then Unsplash stock that clearly matches. Never put a photo on a card it doesn't show (no croissant labeled "Cannoli"). If nothing fits an item, leave its `image` empty.
-   - **Logo:** use their uploaded logo. If there isn't one, leave `logo` empty and the wordmark renders.
+   - **Logo:** per their "Logo and colors" answer above. Keeping it: use their uploaded logo (or the one on their current site). If there isn't one, leave `logo` empty and the wordmark renders.
    - **Main button (`primary_cta`):** take it from "What should the main button on your site do?" A link to their existing ordering, booking or quote tool (Square, Toast, Calendly…) if they have one. Otherwise `{"label": "Call to order", "href": "tel:..."}` or a quote/contact link to `contact/`. Never promise online ordering they don't have.
    - **Copy:** warm, specific, in their words where possible. Use "Extra notes from the owner" in the brief and "Anything to change from the concept we sent?".
    - **Theme:** use the same theme as the concept they were sent (`theme_for` in `tools/make_concept.py`): `home` for remodelers, carpenters, upholsterers, framers and furniture restorers; `boutique` for jewelers, watch repair, tailors and bridal; `garden` for landscapers and tree services; `restaurant` for delis, pizza and diners; `bakery` for bakeries and cafes; `auto` for auto shops; `professional` for education and consulting; `trades` for everything else.
@@ -95,10 +104,10 @@ Run `node tools/projects-worker.ts dns <ref>`.
 - **`www.<domain>` is serving the new site:** if `pending_changes` has anything (sent after approval), apply it and run `launch <ref>` again first. Check the email records are intact: run the same `resolveMx` command (`dig` isn't installed). If the list differs from the `launch_steps_sent` payload, or is empty when it wasn't, don't send email 8 yet: email the owner (CC the helper) that a mail setting changed, give the exact MX values to put back, and check again in 6 hours. Then send email 8 (You're live), with its "without www" note if the bare domain doesn't redirect to www yet. `update`: `set: {status: "live", todo: null, live_url: "https://www.<domain>", pending_changes: null}`, `event: {kind: "live"}`. Then set the matching tracker prospect row (same slug as `ref`, or by email) to `status: won`, `lastTouchAt`.
 - **Not yet:** `update` with `set: {next_check_at: <now + 6h>}` (todo stays). On day 2 and day 5 after `launch_steps_sent` (whole days since that event), send email 7 once: skip it if events already have `{kind: "domain_reminder", payload: {day: N}}` for that day, and log exactly that after sending. On day 10, send the steps again to anyone they've named (log `{kind: "domain_reminder", payload: {day: 10}}`) and offer to walk them through by email. After 14 days, keep checking daily, and flag it in the daily digest (it's waiting on them, not broken).
 
-### care_edit: change after launch (Care Plan, or a paid $150 round)
+### care_edit: a paid $150 round after launch
 Apply `pending_changes` to `site.json`, run `launch <ref>` (production deploy), reply "Done" in their thread with what changed. `update`: `applied_seq`, `set: {todo: null, pending_changes: null}`, `event: {kind: "care_edit_done"}`.
 
-### reply_out_of_scope: change after launch, no Care Plan
+### reply_out_of_scope: a change after launch
 If it's only fixing something we got wrong (a typo, or wrong details that were right in their start form), fix it free like a care_edit. Otherwise send email 11. `update`: `set: {todo: null}`.
 
 ### Domain steps

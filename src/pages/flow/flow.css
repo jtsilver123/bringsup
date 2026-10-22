@@ -1,56 +1,33 @@
-/* BringsUp brand tokens — see brand.md */
-:root{--ink:#16181D;--muted:#3D414B;--subtle:#5A5F6B;--paper:#FBFAF7;--sand:#F1EEE6;--line:#E4E1D9;--ember:#C2410C;--ember-deep:#9A3412;--glow:#FFB37A;--tint:#FFE8DC;--display:'Bricolage Grotesque',system-ui,sans-serif;--ease:cubic-bezier(.2,.7,.2,1)}
-*{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:'DM Sans',system-ui,sans-serif;font-size:18px;line-height:1.55;-webkit-font-smoothing:antialiased}
-::selection{background:var(--tint)}
-a{color:var(--ember-deep)}a:hover{color:var(--ink)}
-h1,h2,h3,p,ol{margin:0}
-:focus-visible{outline:3px solid var(--ember-deep);outline-offset:3px}
-footer :focus-visible{outline-color:var(--glow)}
-.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
-header .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;padding-top:18px;padding-bottom:18px}
-.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);font-family:var(--display);font-weight:800;font-size:24px;letter-spacing:-.02em}
-.brand:hover{color:var(--ink)}
-.brand-mark{width:38px;height:38px;flex:none}
-.bm-tile{fill:var(--ink)}.bm-arrow{stroke:var(--glow);transition:transform .3s var(--ease)}.brand:hover .bm-arrow{transform:translateY(-2.5px)}
-header .help{font-size:16px;color:var(--subtle)}
-main .wrap{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:56px;align-items:start;padding-top:40px;padding-bottom:96px}
-@media (max-width:960px){main .wrap{grid-template-columns:minmax(0,1fr);gap:36px;padding-top:16px}}
-.side{position:sticky;top:24px}
-@media (max-width:960px){.side{position:static}}
-.eyebrow{color:var(--ember-deep);font-weight:700;font-size:15px;letter-spacing:.06em;text-transform:uppercase}
-h1{font-family:var(--display);font-weight:800;letter-spacing:-.035em;font-size:clamp(40px,5vw,64px);line-height:1;margin-top:12px;text-wrap:balance}
-.lift{position:relative;white-space:nowrap;display:inline-block;color:var(--ember)}
-.lift svg{position:absolute;left:-2%;bottom:-.12em;width:106%;height:.32em;overflow:visible}
-.lift path{fill:none;stroke:var(--ember);stroke-width:6;stroke-linecap:round;vector-effect:non-scaling-stroke;stroke-dasharray:1;stroke-dashoffset:1;animation:draw .9s .3s var(--ease) forwards}
-@keyframes draw{to{stroke-dashoffset:0}}
-.lead{font-size:19px;color:var(--muted);margin-top:20px;text-wrap:pretty}
-.steps{list-style:none;padding:0;margin-top:32px;display:grid;gap:18px;counter-reset:n}
-.steps li{display:grid;grid-template-columns:34px 1fr;gap:14px;counter-increment:n}
-.steps li::before{content:counter(n);width:34px;height:34px;border-radius:50%;background:var(--ink);color:var(--glow);font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center}
-.steps b{display:block;font-size:18px}
-.steps span{display:block;font-size:16px;color:var(--muted);line-height:1.5}
-.rounds{margin:-6px 0 18px;font-weight:700;color:var(--ember-deep);font-size:17px}
+/* Customer flow pages (/start, /changes, /approve, /extra). Base styles come from components/site.css. */
+.flow-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);grid-template-areas:"top card" "bottom card";gap:0 72px;align-items:start;padding-top:56px;padding-bottom:96px}
+.flow-top{grid-area:top}
+.card{grid-area:card}
+.flow-bottom{grid-area:bottom;margin-top:44px}
+@media (max-width:960px){
+  .flow-grid{grid-template-columns:minmax(0,1fr);grid-template-areas:"top" "card" "bottom";padding-top:32px;padding-bottom:64px}
+  .card{margin-top:32px}
+}
+.flow h1{font-size:clamp(38px,4.6vw,60px);line-height:1.02}
+.flow .lead{margin-top:20px}
+.rounds{margin-top:20px;font-weight:700;color:var(--ember-deep)}
 .rounds a{color:inherit}
-.read-first{margin-top:12px;font-size:16px;color:var(--subtle)}
-.read-first a{color:inherit;font-weight:600}
-.promise{margin-top:30px;display:flex;gap:10px;align-items:center;background:var(--tint);color:var(--ember-deep);font-weight:700;font-size:16px;padding:12px 16px;border-radius:12px}
-.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:24px 24px 16px;box-shadow:0 1px 2px rgba(22,24,29,.06),0 18px 48px rgba(22,24,29,.10)}
+.flow-h{font-family:var(--body);font-size:16px;font-weight:700;color:var(--subtle);letter-spacing:0;margin-bottom:12px}
+.flow-steps{counter-reset:n;border-top:1.5px solid var(--ink)}
+.flow-steps li{counter-increment:n;display:grid;grid-template-columns:32px minmax(0,1fr);column-gap:8px;padding:16px 0}
+.flow-steps li::before{content:counter(n);grid-row:span 2;font-family:var(--display);font-weight:800;font-size:20px;line-height:1.3;color:var(--ember-deep)}
+.flow-steps b{display:block;font-size:18px}
+.flow-steps span{display:block;margin-top:2px;color:var(--muted)}
+.promise{margin-top:24px;font-weight:700}
+.read-first{margin-top:8px}
+.read-first a{display:inline-flex;align-items:center;min-height:44px;color:var(--subtle);font-weight:700}
+.card{position:relative;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:24px 24px 12px}
+@media (max-width:520px){.card{padding:18px 14px 8px}}
 #tally{display:block;width:100%;min-height:520px;border:0}
-.card .foot{font-size:14px;color:var(--subtle);text-align:center;margin:6px 0 4px}
-.done{display:none;text-align:center;padding:28px 8px}
-.card.sent #tally,.card.sent .foot{display:none}
-.card.sent .done{display:block;animation:pop .45s var(--ease)}
-@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.done .tick{width:64px;height:64px;border-radius:50%;background:var(--tint);color:var(--ember);display:flex;align-items:center;justify-content:center;margin:0 auto}
-.done h2{font-family:var(--display);font-weight:800;letter-spacing:-.02em;font-size:30px;margin-top:18px}
-.done p{color:var(--muted);margin-top:8px}
-.done a.btn{display:inline-flex;margin-top:22px;min-height:52px;align-items:center;padding:14px 24px;border-radius:999px;background:var(--ink);color:#fff;font-weight:700;text-decoration:none}
-footer{border-top:1px solid var(--line)}
-footer .wrap{padding-top:24px;padding-bottom:32px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 24px;font-size:14px;color:var(--subtle)}
-footer a{color:var(--subtle)}
-@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.lift path{stroke-dashoffset:0}}
-
-.card{position:relative}
-.form-help{font-size:15px;color:var(--subtle);text-align:center;margin:10px 0 0}
-footer a,header .help a{display:inline-block;padding:10px 0}
+.form-help{text-align:center;margin:8px 0 4px}
+.done{display:none;padding:24px 4px 20px}
+.done:focus{outline:0}
+.card.sent #tally,.card.sent .form-help{display:none}
+.card.sent .done{display:block}
+.done h2{font-size:32px;line-height:1.1}
+.done p{color:var(--muted);margin-top:10px;max-width:30em}
+.done .btn{margin-top:24px}

@@ -1,0 +1,92 @@
+/* BringsUp shared base: tokens, type, buttons, page chrome. Every page imports this first; see brand.md. */
+:root{
+  --ink:#16181D;--muted:#3D414B;--subtle:#5A5F6B;--paper:#FBFAF7;--sand:#F1EEE6;--line:#E4E1D9;--rule:#D6D2C8;
+  --ember:#C2410C;--ember-deep:#9A3412;--glow:#FFB37A;--tint:#FFE8DC;
+  --display:'Bricolage Grotesque',system-ui,sans-serif;--body:'DM Sans',system-ui,sans-serif;
+  --r:6px;--ease:cubic-bezier(.2,.7,.2,1);--fast:.18s;
+  --gutter:24px;--max:1200px;
+}
+@media (max-width:640px){:root{--gutter:20px}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:18px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:var(--tint);color:var(--ink)}
+img{display:block;max-width:100%;height:auto}
+h1,h2,h3,p,ul,ol,dl,dd,figure{margin:0}
+a{color:var(--ember-deep);text-decoration-thickness:1px;text-underline-offset:.2em;transition:color var(--fast)}
+a:hover{color:var(--ink)}
+:focus-visible{outline:3px solid var(--ember-deep);outline-offset:3px}
+.on-dark :focus-visible{outline-color:var(--glow)}
+[hidden]{display:none!important}
+.wrap{max-width:calc(var(--max) + var(--gutter) * 2);margin:0 auto;padding-left:var(--gutter);padding-right:var(--gutter)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:absolute;left:var(--gutter);top:-80px;background:var(--ink);color:#fff;padding:12px 18px;border-radius:var(--r);z-index:100;text-decoration:none;font-weight:700}
+.skip:focus{top:12px;color:#fff}
+
+/* type: two display sizes, one body size, one small size */
+.display,h1,h2{font-family:var(--display);font-weight:800;letter-spacing:-.025em;text-wrap:balance}
+.t1{font-size:clamp(40px,6.2vw,84px);line-height:1;letter-spacing:-.035em}
+.t2{font-size:clamp(30px,3.6vw,46px);line-height:1.08}
+.lead{font-size:20px;line-height:1.55;color:var(--muted);text-wrap:pretty;max-width:34em}
+@media (max-width:640px){.lead{font-size:18px}}
+.small{font-size:16px;line-height:1.5;color:var(--subtle)}
+.measure{max-width:36em}
+
+/* buttons: one primary, one plain outline, and text links for everything else */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:13px 22px;border-radius:var(--r);font:inherit;font-weight:700;font-size:18px;line-height:1.2;text-decoration:none;border:0;cursor:pointer;transition:background-color var(--fast),color var(--fast),box-shadow var(--fast)}
+.btn svg{flex:none;transition:transform .2s var(--ease)}
+.btn:hover svg.go{transform:translateX(3px)}
+.btn-primary{background:var(--ember);color:#fff}
+.btn-primary:hover{background:var(--ember-deep);color:#fff}
+.btn-ink{background:var(--ink);color:#fff}
+.btn-ink:hover{background:#000;color:#fff}
+.btn-line{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.btn-line:hover{background:var(--ink);color:#fff}
+.btn-light{background:var(--paper);color:var(--ink)}
+.btn-light:hover{background:#fff;color:var(--ink)}
+.btn-sm{min-height:44px;padding:9px 16px;font-size:16px}
+.btn[aria-busy="true"]{pointer-events:none;opacity:.85}
+.tlink{display:inline-flex;align-items:center;gap:8px;min-height:44px;font-weight:700;color:var(--ink);text-decoration:underline;text-decoration-color:var(--rule);text-decoration-thickness:2px;text-underline-offset:.3em}
+.tlink:hover{color:var(--ember-deep);text-decoration-color:currentColor}
+
+/* the brand lockup */
+.brand{display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:-.02em;min-height:44px}
+.brand:hover{color:var(--ink)}
+.brand-mark{width:32px;height:32px;flex:none}
+.bm-tile{fill:var(--ink)}
+.bm-arrow{stroke:var(--glow)}
+
+/* sub-page header and footer (flow pages, /try/, legal) */
+.sub-head{border-bottom:1px solid var(--line)}
+.sub-head .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;min-height:68px}
+.sub-head .help{font-size:16px;color:var(--subtle)}
+.sub-head nav{display:flex;gap:4px}
+.sub-head nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 10px;color:var(--subtle);text-decoration:none;font-size:16px}
+.sub-head nav a:hover,.sub-head nav a[aria-current]{color:var(--ink)}
+.sub-head nav a[aria-current]{font-weight:700}
+@media (max-width:560px){.sub-head .help .lbl{display:none}}
+.sub-foot{border-top:1px solid var(--line)}
+.sub-foot .wrap{padding-top:20px;padding-bottom:28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px 24px;font-size:16px;color:var(--subtle)}
+.sub-foot a{color:var(--subtle);display:inline-flex;align-items:center;min-height:44px}
+.sub-foot a:hover{color:var(--ink)}
+
+/* forms */
+.field{display:flex;flex-direction:column;gap:6px;font-size:16px;font-weight:700}
+.field input{font:inherit;font-weight:400;font-size:18px;padding:12px 14px;border:1.5px solid #A9A498;border-radius:var(--r);min-height:52px;width:100%;background:#fff;color:var(--ink);transition:border-color var(--fast),box-shadow var(--fast)}
+.field input:hover{border-color:var(--subtle)}
+.field input:focus{outline:0;border-color:var(--ink);box-shadow:0 0 0 3px var(--glow)}
+.field input[aria-invalid="true"]{border-color:#B42318}
+.form-err{color:#B42318;font-size:16px;font-weight:500}
+
+/* a ruled list: hairlines between items instead of icons */
+.ruled{list-style:none;padding:0;border-top:1px solid var(--rule)}
+.ruled > li{padding:14px 0;border-bottom:1px solid var(--rule)}
+
+.toast{position:fixed;left:50%;bottom:24px;z-index:90;max-width:calc(100vw - 32px);transform:translate(-50%,16px);opacity:0;background:var(--ink);color:#fff;font-weight:700;font-size:16px;padding:12px 18px;border-radius:var(--r);box-shadow:0 12px 32px rgba(0,0,0,.25);display:flex;gap:8px;align-items:center;pointer-events:none;transition:opacity .2s,transform .25s var(--ease)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast svg{color:var(--glow);flex:none}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto!important}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;transition-delay:0s!important}
+}

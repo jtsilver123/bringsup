@@ -1,31 +1,34 @@
 import type { Ref } from "react";
-import { Arrow, Check } from "../../../components/icons.tsx";
+import { Arrow } from "../../../components/icons.tsx";
 import { BeforeAfter } from "../BeforeAfter.tsx";
-import { Lift, Stars } from "../bits.tsx";
-import { HERO_CHECKS } from "../data.ts";
 
-/** Hero. With the redesign tool on (live), the main button goes straight to /try/. */
-/** `start` is set for owners arriving from an outreach email (?ref=): they already have a concept, so the main button starts their site. */
+/**
+ * Hero: the promise, who's making it, one action, then the proof (the before/after).
+ * With the redesign tool on (live), the main button goes straight to /try/. `start` is set for owners
+ * arriving from an outreach reply (?ref=): they already have a homepage, so the button starts their site.
+ */
 export function Hero({ live, start, ref }: { live: boolean; start?: string; ref?: Ref<HTMLElement> }) {
   return (
-    <section ref={ref} className="wrap hero">
-      <div>
-        <p className="pill"><Stars />For family businesses<span className="hide-sm">{" "}with great reviews</span></p>
-        <h1 className="display">Your reviews say you're the best in town. <em>Your website <Lift>should too.</Lift></em></h1>
-        <p className="lead">{start ? "We've already made your new homepage. Like it?" : "See your new homepage free. Like it?"} We build the whole site and refresh your brand for a flat <strong>$1,000</strong>, paid only when you approve it.</p>
-        <div className="ctas">
-          {start
-            ? <a className="btn btn-ember" href={start}>Start my website <Arrow /></a>
-            : live
-            ? <a className="btn btn-ember" href="/try/">See my new homepage, free <Arrow /></a>
-            : <a className="btn btn-ember" href="#concept">Get my free concept <Arrow /></a>}
-          <a className="btn btn-outline" href="#work">See sample work</a>
+    <section ref={ref} className="hero" aria-labelledby="hero-h">
+      <div className="wrap">
+        <h1 className="t1" id="hero-h">Your reviews say you're the best in town. Your website should&nbsp;too.</h1>
+        <div className="hero-sub">
+          <p className="lead">
+            {start
+              ? <>I'm Jake Silver, and I've already made your new homepage. If you like it, I'll build the whole site for a flat $1,000, and you pay only once it's finished and you've approved it.</>
+              : <>I'm Jake Silver. I make websites for family-owned businesses whose customers already love them. I'll make your new homepage first, for free. If you want the whole site, it's a flat $1,000, paid only once it's finished and you've approved it.</>}
+          </p>
+          <div className="hero-act">
+            {start
+              ? <a className="btn btn-primary" href={start}>Start my website <Arrow /></a>
+              : live
+              ? <a className="btn btn-primary" href="/try/">See my new homepage, free <Arrow /></a>
+              : <a className="btn btn-primary" href="#concept">Get my free homepage <Arrow /></a>}
+            <p className="small">No calls. Everything happens by email.</p>
+          </div>
         </div>
-        <ul className="checks">
-          {HERO_CHECKS.map((c) => <li key={c}><Check size={18} />{c}</li>)}
-        </ul>
+        <BeforeAfter />
       </div>
-      <BeforeAfter />
     </section>
   );
 }
