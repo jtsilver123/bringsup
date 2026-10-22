@@ -23,9 +23,9 @@ export function Letter() {
             </dl>
             <div className="mail-body">
               <p>Hi Rosa,</p>
-              <p>Forty years in Westbrook and people still rave about the sourdough. Your website doesn't show that.</p>
-              <p>I'm Jake, I make websites for family businesses. Want me to mock up a new homepage for you? No cost, no strings.</p>
-              <p>Jake Silver<br />bringsup.com</p>
+              <p>Forty years in Westbrook and people still rave about your sourdough. Your website doesn't really show that.</p>
+              <p>I'm Jake, I make websites for family businesses. Want me to make you a new one? Happy to send you a demo link for free. Just let me know.</p>
+              <p>Jake<br />bringsup.com</p>
               <p className="mail-foot">Not for you? Just say so and I won't write again.</p>
             </div>
           </div>

@@ -11,8 +11,10 @@ Building only on a yes keeps the effort on the people who asked, and the "yes" r
 
 ## The one goal: a reply that says "yes"
 Every cold email exists to get one word back: **yes**. Not a click (there are no links), not a call, not the price, not the start form. Write every email so saying yes is the easiest thing to do:
-- **One ask, at the end, answerable with "yes".** "Want me to make it?" works; "What do you think?" or "Would you be open to a conversation?" doesn't.
-- **Say how small the yes is, in three words.** "No cost, no strings." right after the ask covers it: a yes commits them to nothing. Don't stack more reassurance on top. (Never "no obligation" or "risk-free": those read as spam. See the banned list.)
+- **Sound like a person, not a campaign.** Write it the way Jake would text a friend's business: plain words, contractions, no marketing phrases. Read it out loud; if it sounds like an ad or a robot, rewrite it.
+- **Be explicit about the offer.** Say what you'll do and that it's free: "Want me to make you a new website? Happy to send you a demo link for free. Just let me know." No hints, no teasers.
+- **One ask, at the end, answerable with "yes".** "Want me to make you a new website?" works; "What do you think?" or "Would you be open to a conversation?" doesn't.
+- **The free demo is the whole reassurance.** Saying the demo is free and ending with "just let me know" makes clear a yes commits them to nothing. Don't add more ("no strings", "no obligation", "risk-free" all read as spam).
 - **No price, no process, no pitch** in cold email. Those come after a yes.
 - **Nothing that competes with the yes.** No second question, no "let me know if you have questions", no options to choose between.
 - **Every follow-up asks for the same yes**, Email 3 included, in fresh words.
@@ -33,25 +35,25 @@ Every cold email exists to get one word back: **yes**. Not a click (there are no
 ## How they're sent (deliverability)
 - **Plain text only.** No HTML, no bold or bullets, no images, no tracking pixels and no link shorteners. Use Composio `GMAIL_SEND_EMAIL` with `is_html: false` and `include_signature: false`. The sign-off below is the whole signature.
 - **No links and no attachments in any cold email.** A link or a file from a stranger is the strongest spam and phishing signal there is. The one exception is the bare domain `bringsup.com` on its own line in the sign-off, written as plain text and never as `https://...`, because it's how an owner checks we're real.
-- **Rotate, don't repeat.** Number today's first emails 0, 1, 2… and take subject option (n mod 3) and ask option (floor(n / 3) mod 3), so every pairing gets used. Record them as `variant: s<subject>-c<ask>`, and the opening angle you used as `opener` (e.g. `reviews`, `years`, `count`). Then write every sentence fresh for this business: the examples below show the shape, never the wording. Before sending, compare with the last three Email 1s in Sent: if any sentence other than the short fixed lines ("I'm Jake, I make websites for family businesses.", "No cost, no strings.", the sign-off, opt-out and address) matches one of them word for word, rewrite it. Mail filters fingerprint repeated sentences, and owners who compare notes would spot it.
+- **Rotate, don't repeat.** Number today's first emails 0, 1, 2… and take subject option (n mod 3) and ask option (floor(n / 3) mod 3), so every pairing gets used. Record them as `variant: s<subject>-c<ask>`, and the opening angle you used as `opener` (e.g. `reviews`, `years`, `count`). Then write every sentence fresh for this business: the examples below show the shape, never the wording. Before sending, compare with the last three Email 1s in Sent: if any sentence other than the short fixed lines ("I'm Jake, I make websites for family businesses.", "Just let me know.", the sign-off, opt-out and address) matches one of them word for word, rewrite it. Mail filters fingerprint repeated sentences, and owners who compare notes would spot it.
 - Send one at a time, paced as the RUNBOOK says, and never above the daily cap.
 
 ## Email 1 (step 1, day 0)
 
 **Subject**, all lowercase, the way a real person types it:
 0. `{business}`
-1. `quick idea for {business}`
-2. `{business} website`
+1. `{business} website`
+2. `new website for {business}?`
 
-**Body: 30–55 words before the sign-off, 5 short sentences at most, one question.**
+**Body: 30–55 words before the sign-off. A real note from one person.**
 
 > Hi {first name},   ← first names only, at most two ("Hi Ken and Maral,"). No first name known: just "Hi,"
 >
-> {One true, specific line from their reviews or history, e.g. "{Number} years in {town} and people still rave about the {thing}." or "{Review count} reviews on {Google / Yelp} and the {thing} keeps coming up." Name the source of any number; never add the sites' counts together.} Your website doesn't show that.
+> {One true, specific line from their reviews or history, in your own words, e.g. "Forty years in {town} and people still rave about your {thing}." or "Your reviews on {Google / Yelp} keep coming back to the {thing}." Name the source of any number; never add the sites' counts together.} {One plain line about the site, e.g. "Your website doesn't really show that." Never call it bad or ugly.}
 >
-> I'm Jake, I make websites for family businesses. {Ask, one of: 0. "Want me to mock up a new homepage for you?" 1. "Can I make you a new homepage to look at?" 2. "Should I put a new homepage together for you?"} No cost, no strings.
+> I'm Jake, I make websites for family businesses. {The ask, one of: 0. "Want me to make you a new one? Happy to send you a demo link for free. Just let me know." 1. "Want me to put a new one together for you? I can send you a free demo link to look at. Just let me know." 2. "Would you like a new one? Happy to make you a demo and send the link over, free. Just let me know."}
 >
-> Jake Silver
+> Jake
 > bringsup.com
 >
 > Not for you? Just say so and I won't write again.
@@ -63,23 +65,23 @@ Example (Marigold Bakery, Westbrook CT):
 >
 > Hi Rosa,
 >
-> Forty years in Westbrook and people still rave about the sourdough. Your website doesn't show that.
+> Forty years in Westbrook and people still rave about your sourdough. Your website doesn't really show that.
 >
-> I'm Jake, I make websites for family businesses. Want me to mock up a new homepage for you? No cost, no strings.
+> I'm Jake, I make websites for family businesses. Want me to make you a new one? Happy to send you a demo link for free. Just let me know.
 >
-> Jake Silver
+> Jake
 > bringsup.com
 >
 > Not for you? Just say so and I won't write again.
 > BringsUp, 2195 Kipling Lane, Highland Park, IL 60035
 
 ## Email 2 (step 2, 3 business days later)
-One or two sentences: one new, true detail, then the same ask. Never "just following up", "bumping this" or "did you see my email". Pick the first angle that's true, and only one:
-1. A factual mismatch between their site and Google or Yelp (hours, phone, a menu item), said as "still lists", never as a flaw.
-2. What the homepage would lead with ("It would lead with the cannoli everyone mentions.").
-3. Only if neither applies: "Takes you one word to say yes."
+One or two sentences, like a quick second thought: one new, true detail, then the same offer. Never "just following up", "bumping this" or "did you see my email". Pick the first angle that's true, and only one:
+1. A factual mismatch between their site and Google or Yelp (hours, phone, a menu item), said as "still says", never as a flaw.
+2. What the new site would lead with ("I'd lead with the cannoli everyone mentions.").
+3. Only if neither applies, just the offer again in fresh words.
 
-> Hi Rosa, your site still lists closing at 3, but Google says 4. Want me to make that homepage? Just reply yes.
+> Hi Rosa, also noticed your site still says you close at 3, but Google has 4. Still happy to make you a free demo if you want one.
 >
 > Jake
 >
@@ -89,7 +91,7 @@ One or two sentences: one new, true detail, then the same ask. Never "just follo
 ## Email 3 (step 3, 7 business days after Email 2)
 One sentence. Warm, no guilt.
 
-> Hi Rosa, last note from me. If you ever want that homepage, just reply yes, even months from now.
+> Hi Rosa, last one from me. If you ever want that free demo, just reply and I'll send it over.
 >
 > Jake
 >
@@ -118,7 +120,7 @@ OPERATOR.md step 1 handles every reply. Send in the prospect's thread (`GMAIL_RE
 
 > {Their question answered first, in one or two sentences. Skip this if there was none.}
 >
-> Here it is: {live preview link}
+> Here's your demo: {live preview link}
 >
 > Best on your phone. {One honest note if needed, e.g. "The window photo is stock; one of yours would be better."}
 >
@@ -168,7 +170,7 @@ They read as AI or as spam:
 - "I came across", "I stumbled upon", "I hope this email finds you well", "I wanted to reach out", "I'd love to", "touch base", "circle back", "just following up", "bumping this", "quick question"
 - "elevate", "boost", "transform", "take it to the next level", "game-changer", "seamless", "cutting-edge", "in today's digital world", "online presence", "stand out from the competition", "unlock"
 - gushing compliments like "a reputation most places never build" (one plain, specific observation beats praise)
-- "free" as a hook, "guaranteed", "no obligation", "risk-free", "limited time", "act now", "100%", any dollar figure in a cold email, ALL CAPS, exclamation marks, emojis
+- "free" in a subject line or as a hook (a plain "free demo" in the body is fine and expected), "guaranteed", "no obligation", "risk-free", "limited time", "act now", "100%", any dollar figure in a cold email, ALL CAPS, exclamation marks, emojis
 - em dashes (—), semicolons, tidy lists of three, and sign-offs like "Best regards" or "Cheers"
 - anything about their current site being bad, broken or ugly, or about it "hurting their business" ("outdated" is the strongest word allowed, and you rarely need even that)
 
