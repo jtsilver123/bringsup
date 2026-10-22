@@ -102,7 +102,9 @@ try {
   const status = await (await fetch(`${API}?status=${ref}`)).json();
   console.log(`${typeof status.rounds_left === "number" ? "ok  " : "FAIL"}  public status: ${JSON.stringify(status)}`);
 
-  await submit(FORMS.approve, [text("Your email", email), text("Want us to handle updates later?", "Yes, send me the Care Plan link ($79/mo)")]);
+  // A "yes" to the approve form's updates question only records interest (care_plan_requested); care_plan itself
+  // turns on when a managed-plan subscription is paid (below).
+  await submit(FORMS.approve, [text("Your email", email), text("Want us to handle updates later?", "Yes, tell me about the managed plan")]);
   await expect("the approve form alone records the answers and waits for payment", { status: "preview_sent", care_plan_requested: true, care_plan: false });
   await worker("POST", "", { action: "payment", ref, stripe_id: `cs_test_${ref}_approve`, kind: "approve", cents: 100000 });
   await expect("the $1,000 payment approves and queues the launch", { status: "approved", todo: "launch", care_plan_requested: true, paid_cents: 115000 });

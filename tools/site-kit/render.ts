@@ -3,8 +3,8 @@
 // The operator (tools/OPERATOR.md) writes the content; tools/site-kit/build.ts downloads images and writes files.
 // No imports, so the /try/ page (src/lib/concept-render.ts) renders a prospect's concept with this same code.
 
-/** Match the concept the owner was sent (tools/make_concept.py theme_for): "home" for remodelers, carpenters, upholsterers,
- * framers and furniture restorers; "boutique" for jewelers, watch repair, tailors and bridal. */
+/** The kind of business: "home" for remodelers, carpenters, upholsterers, framers and furniture restorers;
+ * "boutique" for jewelers, watch repair, tailors and bridal. */
 export type Theme = "bakery" | "restaurant" | "auto" | "garden" | "trades" | "beauty" | "retail" | "health" | "professional" | "home" | "boutique";
 
 /**
@@ -82,7 +82,7 @@ const HINTS: [RegExp, Style][] = [
   [/\bauto|motor|garage|porsche|bmw|mercedes|audi|volvo|mechanic|\btires?\b|transmission|collision|plumb|hvac|heating|electric|roofing/i, "workshop"],
 ];
 /** The look for a theme. Broad themes (trades, retail...) are refined by keywords in `hint` (name, tagline, services). */
-export function styleFor(theme: Theme, hint = ""): Style {
+function styleFor(theme: Theme, hint = ""): Style {
   const base = STYLE_FOR_THEME[theme] || "craft";
   if (!["trades", "retail", "professional", "health", "beauty"].includes(theme)) return base;
   for (const [re, s] of HINTS) if (re.test(hint)) return s;
@@ -164,7 +164,7 @@ const firstItems = (groups: Group[], n: number): Group[] => {
 };
 
 const PHONE_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>';
-/** Progressive touches, a few lines with no dependencies. Without them (or in the sandboxed /try/ preview) everything still works:
+/** Progressive touches, a few lines with no dependencies. Without them everything still works:
  * images fade in once loaded instead of popping (only ones not yet loaded are hidden, and only by this script), and the
  * no-JavaScript menu also closes on Escape, on a tap outside it, or when one of its links is used. Left out of the standalone
  * /try/ concept, whose sandboxed iframe can't run scripts. */
@@ -201,6 +201,8 @@ export function render(c: SiteContent, opts: RenderOptions = {}): Record<string,
   const city = c.city_state.split(",")[0].trim();
   const specialties = (c.specialties || []).filter(Boolean);
   const approach = c.approach && c.approach.paragraphs.filter(Boolean).length ? c.approach : null;
+  // How they work, or else the start of their story (craft and landscape homes).
+  const words = approach || (c.about.paragraphs.length ? { heading: c.about.heading, paragraphs: c.about.paragraphs.slice(0, 2) } : null);
 
   const css = baseCss() + STYLE_CSS[style] + lastCss();
   const tokens = `:root{--bg:${bg};--alt:${L.alt};--ink:${ink};--muted:${muted};--line:${line};--acc:${fill};--acc-ink:${fillInk};--acc-t:${accT};--dark:${dark};--on-dark:${onDark};--muted-d:${mutedD};--acc-d:${accD};--fd:${L.fd};--fb:${L.fb};--fl:${L.fl};--r:${L.r};--rb:${BUTTON_RADIUS[c.buttons && c.buttons in BUTTON_RADIUS ? c.buttons : L.buttons]};${L.vars}}\n`;
@@ -245,6 +247,9 @@ export function render(c: SiteContent, opts: RenderOptions = {}): Record<string,
   };
   const addressBlock = () => (c.address ? `<p class="adr">${esc(c.address)}</p>${solo ? "" : `<p><a class="dir" href="${esc(maps(c.business_name + ", " + c.address))}">Get directions</a></p>`}` : "");
   const moreLink = (path: string, label: string, depth: number) => (solo ? "" : `<p class="more"><a href="${href(path, depth)}">${esc(label)}</a></p>`);
+  const allOffer = (shown: number, depth: number) => (allItems.length > shown ? moreLink(offerSlug + "/", "All " + offerTitle.toLowerCase(), depth) : "");
+  const offerIntro = () => (c.offer.intro ? `<p class="dek">${esc(c.offer.intro)}</p>` : "");
+  const paras = (xs: string[]) => xs.map((p) => `<p>${esc(p)}</p>`).join("");
 
   // Every photo we have, once each. Sections take what they need, so nothing repeats on a page.
   const pool = () => {
@@ -316,14 +321,14 @@ ${hours.length ? `<div class="today"><h2 class="vh">Hours</h2>${hoursDl()}</div>
 ${c.hero_image ? `<figure class="lead-fig">${img(c.hero_image, "", d, true)}</figure>` : ""}
 </div></section>
 ${allItems.length ? `<section class="sec carte" id="offer"><div class="wrap">
-<header class="sec-h"><h2 class="d">${esc(offerTitle)}</h2>${c.offer.intro ? `<p class="dek">${esc(c.offer.intro)}</p>` : ""}</header>
+<header class="sec-h"><h2 class="d">${esc(offerTitle)}</h2>${offerIntro()}</header>
 ${offerList(shown)}
 ${plates.length ? `<div class="plates n${plates.length}">${plates.map((p) => fig(p, d)).join("")}</div>` : ""}
 ${allItems.length > 9 ? moreLink(offerSlug + "/", "The full " + offerTitle.toLowerCase(), d) : ""}
 </div></section>` : ""}
 ${quoteBlock("sec pull")}
 ${c.about.paragraphs.length ? `<section class="sec story${storyImg ? "" : " noimg"}" id="story"><div class="wrap story-g">
-${storyImg ? fig(storyImg, d, "story-fig") : ""}<div class="prose"><h2 class="d">${esc(c.about.heading)}</h2>${c.about.paragraphs.slice(0, 2).map((p) => `<p>${esc(p)}</p>`).join("")}${moreLink("about/", "More about us", d)}</div>
+${storyImg ? fig(storyImg, d, "story-fig") : ""}<div class="prose"><h2 class="d">${esc(c.about.heading)}</h2>${paras(c.about.paragraphs.slice(0, 2))}${moreLink("about/", "More about us", d)}</div>
 </div></section>` : ""}
 ${visit(d, c.home.final_heading)}`;
     },
@@ -332,7 +337,7 @@ ${visit(d, c.home.final_heading)}`;
       const P = pool();
       const strip = P.take(4, ["gallery", "item", "about"]);
       const shown = firstItems(c.offer.groups, 6);
-      const story = c.about.paragraphs.length ? `<section class="sec how" id="story"><div class="wrap how-g"><h2 class="d">${esc(c.about.heading)}</h2><div class="prose">${c.about.paragraphs.slice(0, approach ? 1 : 2).map((p) => `<p>${esc(p)}</p>`).join("")}${moreLink("about/", "About the shop", d)}</div></div></section>` : "";
+      const story = c.about.paragraphs.length ? `<section class="sec how" id="story"><div class="wrap how-g"><h2 class="d">${esc(c.about.heading)}</h2><div class="prose">${paras(c.about.paragraphs.slice(0, approach ? 1 : 2))}${moreLink("about/", "About the shop", d)}</div></div></section>` : "";
       return `<section class="hero${c.hero_image ? "" : " noimg"}"><div class="wrap">
 ${c.tagline || city ? `<p class="kick">${esc([c.tagline, c.city_state].filter(Boolean).join(" · "))}</p>` : ""}
 <h1 class="d">${esc(c.home.headline)}</h1>
@@ -341,11 +346,11 @@ ${c.hero_image ? `<figure class="hero-fig">${img(c.hero_image, "", d, true)}</fi
 </div></section>
 ${specialties.length ? `<section class="makes-s" aria-label="Specialties"><div class="wrap"><p class="lbl">Specialists in</p><ul class="makes">${specialties.map((s) => `<li>${esc(s)}</li>`).join("")}</ul></div></section>` : ""}
 ${allItems.length ? `<section class="sec svc" id="offer"><div class="wrap">
-<header class="sec-h"><h2 class="d">${esc(offerTitle)}</h2>${c.offer.intro ? `<p class="dek">${esc(c.offer.intro)}</p>` : ""}</header>
+<header class="sec-h"><h2 class="d">${esc(offerTitle)}</h2>${offerIntro()}</header>
 ${offerList(shown)}
-${allItems.length > 6 ? moreLink(offerSlug + "/", "All " + offerTitle.toLowerCase(), d) : ""}
+${allOffer(6, d)}
 </div></section>` : ""}
-${approach ? `<section class="sec how"><div class="wrap how-g"><h2 class="d">${esc(approach.heading)}</h2><div class="prose">${approach.paragraphs.map((p) => `<p>${esc(p)}</p>`).join("")}</div></div></section>` : ""}
+${approach ? `<section class="sec how"><div class="wrap how-g"><h2 class="d">${esc(approach.heading)}</h2><div class="prose">${paras(approach.paragraphs)}</div></div></section>` : ""}
 ${strip.length ? `<section class="sec shop" aria-label="Photos"><div class="wrap"><div class="film n${strip.length}">${strip.map((p, i) => `<figure>${img(p.src, p.caption, d)}${p.caption ? `<figcaption><span>${pad2(i + 1)}</span>${esc(p.caption)}</figcaption>` : ""}</figure>`).join("")}</div></div></section>` : ""}
 ${quoteBlock("sec say")}
 ${story}
@@ -361,7 +366,6 @@ ${hours.length ? `<div class="vh-col"><h3 class="lbl">Hours</h3>${hoursDl()}</di
       if (!work.length) work = P.take(4, ["about"]);
       const appImg = P.take(1, ["about", "gallery", "item"])[0];
       const shown = firstItems(c.offer.groups, 6);
-      const words = approach || (c.about.paragraphs.length ? { heading: c.about.heading, paragraphs: c.about.paragraphs.slice(0, 2) } : null);
       return `<section class="hero${c.hero_image ? "" : " noimg"}">
 <div class="wrap"><h1 class="d">${esc(c.home.headline)}</h1></div>
 <div class="hero-b"><div class="hero-copy"><p class="dek">${esc(c.home.subheadline)}</p><div class="ctas">${btn(d)}${c.phone && !ctaIsCall ? callLink("tel", "or call ") : ""}</div></div>
@@ -369,8 +373,8 @@ ${c.hero_image ? `<figure class="hero-fig">${img(c.hero_image, "", d, true)}</fi
 </section>
 ${specialties.length ? `<section class="sec make"><div class="wrap"><p class="lbl">What we make</p><p class="makes">${esc(list(specialties))}.</p></div></section>` : ""}
 ${work.length ? `<section class="sec work-s" aria-labelledby="work-h"><div class="wrap"><h2 class="lbl" id="work-h">Recent work</h2><div class="work n${work.length}">${work.map((p) => fig(p, d)).join("")}</div></div></section>` : ""}
-${allItems.length ? `<section class="sec svc" id="offer"><div class="wrap svc-g"><header><h2 class="d">${esc(offerTitle)}</h2>${c.offer.intro ? `<p class="dek">${esc(c.offer.intro)}</p>` : ""}${allItems.length > 6 ? moreLink(offerSlug + "/", "All " + offerTitle.toLowerCase(), d) : ""}</header><div>${offerList(shown)}</div></div></section>` : ""}
-${words ? `<section class="sec appr${appImg ? "" : " noimg"}" id="story"><div class="wrap appr-g">${appImg ? fig(appImg, d, "appr-fig") : ""}<div class="prose"><h2 class="d">${esc(words.heading)}</h2>${words.paragraphs.map((p) => `<p>${esc(p)}</p>`).join("")}${moreLink("about/", "About us", d)}</div></div></section>` : ""}
+${allItems.length ? `<section class="sec svc" id="offer"><div class="wrap svc-g"><header><h2 class="d">${esc(offerTitle)}</h2>${offerIntro()}${allOffer(6, d)}</header><div>${offerList(shown)}</div></div></section>` : ""}
+${words ? `<section class="sec appr${appImg ? "" : " noimg"}" id="story"><div class="wrap appr-g">${appImg ? fig(appImg, d, "appr-fig") : ""}<div class="prose"><h2 class="d">${esc(words.heading)}</h2>${paras(words.paragraphs)}${moreLink("about/", "About us", d)}</div></div></section>` : ""}
 ${quoteBlock("sec say")}
 ${visit(d, c.home.final_heading)}`;
     },
@@ -383,10 +387,10 @@ ${visit(d, c.home.final_heading)}`;
 <h1 class="d">${esc(c.home.headline)}</h1><p class="dek">${esc(c.home.subheadline)}</p>
 <div class="ctas">${btn(d)}</div>
 </div>${c.hero_image ? `<figure class="hero-fig">${img(c.hero_image, "", d, true)}</figure>` : ""}</section>
-${allItems.length ? `<section class="sec svc" id="offer"><div class="wrap"><h2 class="lbl">${esc(offerTitle)}</h2>${c.offer.intro ? `<p class="dek">${esc(c.offer.intro)}</p>` : ""}${offerList(shown)}${allItems.length > 4 ? moreLink(offerSlug + "/", "All " + offerTitle.toLowerCase(), d) : ""}</div></section>` : ""}
+${allItems.length ? `<section class="sec svc" id="offer"><div class="wrap"><h2 class="lbl">${esc(offerTitle)}</h2>${offerIntro()}${offerList(shown)}${allOffer(4, d)}</div></section>` : ""}
 ${duo.length ? `<section class="sec duo-s" aria-label="Photos"><div class="wrap duo n${duo.length}">${duo.map((p) => fig(p, d)).join("")}</div></section>` : ""}
 ${quoteBlock("sec say")}
-${c.about.paragraphs.length ? `<section class="sec story" id="story"><div class="wrap"><h2 class="d">${esc(c.about.heading)}</h2>${c.about.paragraphs.slice(0, 2).map((p) => `<p>${esc(p)}</p>`).join("")}${moreLink("about/", "Our story", d)}</div></section>` : ""}
+${c.about.paragraphs.length ? `<section class="sec story" id="story"><div class="wrap"><h2 class="d">${esc(c.about.heading)}</h2>${paras(c.about.paragraphs.slice(0, 2))}${moreLink("about/", "Our story", d)}</div></section>` : ""}
 ${visit(d, c.home.final_heading)}`;
     },
 
@@ -395,13 +399,12 @@ ${visit(d, c.home.final_heading)}`;
       const mosaic = P.take(3, ["gallery", "about", "item"]);
       const appImg = P.take(1, ["about", "gallery", "item"])[0];
       const shown = firstItems(c.offer.groups, 6);
-      const words = approach || (c.about.paragraphs.length ? { heading: c.about.heading, paragraphs: c.about.paragraphs.slice(0, 2) } : null);
       return `<section class="hero${c.hero_image ? "" : " noimg"}">${c.hero_image ? `<figure class="hero-fig">${img(c.hero_image, "", d, true)}</figure>` : ""}
 <div class="wrap hero-t"><h1 class="d">${esc(c.home.headline)}</h1><div><p class="dek">${esc(c.home.subheadline)}</p><div class="ctas">${btn(d)}${c.phone && !ctaIsCall ? callLink("tel", "or call ") : ""}</div></div></div></section>
 ${mosaic.length ? `<section class="sec mos-s" aria-label="Recent work"><div class="wrap"><div class="mosaic n${mosaic.length}">${mosaic.map((p) => fig(p, d)).join("")}</div></div></section>` : ""}
 ${specialties.length ? `<section class="sec make" aria-label="Specialties"><div class="wrap"><p class="makes">${specialties.map((s) => `<span>${esc(s)}</span>`).join("")}</p></div></section>` : ""}
-${allItems.length ? `<section class="sec svc" id="offer"><div class="wrap svc-g"><header><h2 class="d">${esc(offerTitle)}</h2>${c.offer.intro ? `<p class="dek">${esc(c.offer.intro)}</p>` : ""}${allItems.length > 6 ? moreLink(offerSlug + "/", "All " + offerTitle.toLowerCase(), d) : ""}</header><div>${offerList(shown)}</div></div></section>` : ""}
-${words ? `<section class="sec appr${appImg ? "" : " noimg"}" id="story"><div class="wrap appr-g"><div class="prose"><h2 class="d">${esc(words.heading)}</h2>${words.paragraphs.map((p) => `<p>${esc(p)}</p>`).join("")}${moreLink("about/", "About us", d)}</div>${appImg ? fig(appImg, d, "appr-fig") : ""}</div></section>` : ""}
+${allItems.length ? `<section class="sec svc" id="offer"><div class="wrap svc-g"><header><h2 class="d">${esc(offerTitle)}</h2>${offerIntro()}${allOffer(6, d)}</header><div>${offerList(shown)}</div></div></section>` : ""}
+${words ? `<section class="sec appr${appImg ? "" : " noimg"}" id="story"><div class="wrap appr-g"><div class="prose"><h2 class="d">${esc(words.heading)}</h2>${paras(words.paragraphs)}${moreLink("about/", "About us", d)}</div>${appImg ? fig(appImg, d, "appr-fig") : ""}</div></section>` : ""}
 ${quoteBlock("sec say")}
 ${visit(d, c.home.final_heading)}`;
     },
@@ -431,8 +434,8 @@ ${visit(d, c.home.final_heading)}`;
       const photos = pool().take(6, ["about", "gallery", "item"]);
       const [first, ...rest] = photos;
       return `${pageHead(c.year_founded ? `Est. ${c.year_founded}` : c.business_name, c.about.heading, "")}
-<section class="sec about${first ? "" : " noimg"}"><div class="wrap about-g">${first ? fig(first, d, "about-fig") : ""}<div class="prose">${c.about.paragraphs.map((x) => `<p>${esc(x)}</p>`).join("")}</div></div></section>
-${approach ? `<section class="sec about2"><div class="wrap about-g noimg"><div class="prose"><h2 class="d">${esc(approach.heading)}</h2>${approach.paragraphs.map((p) => `<p>${esc(p)}</p>`).join("")}</div></div></section>` : ""}
+<section class="sec about${first ? "" : " noimg"}"><div class="wrap about-g">${first ? fig(first, d, "about-fig") : ""}<div class="prose">${paras(c.about.paragraphs)}</div></div></section>
+${approach ? `<section class="sec about2"><div class="wrap about-g noimg"><div class="prose"><h2 class="d">${esc(approach.heading)}</h2>${paras(approach.paragraphs)}</div></div></section>` : ""}
 ${rest.length ? `<section class="sec figs-s" aria-label="Photos"><div class="wrap figs">${rest.map((p) => fig(p, d)).join("")}</div></section>` : ""}
 ${quotes.length ? `<section class="sec quotes-s" aria-labelledby="q-h"><div class="wrap"><h2 class="lbl" id="q-h">In our customers' words</h2><div class="quotes">${quotes.map((q) => `<figure><blockquote><p>${esc(q.quote)}</p></blockquote><figcaption>${by(q)}</figcaption></figure>`).join("")}</div>${reviewsLine()}</div></section>` : ""}
 ${visit(d, c.home.final_heading)}`;
@@ -683,7 +686,6 @@ body{font-size:19px;line-height:1.55}
 .more-q{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:48px;max-width:960px;margin:72px auto 0;padding-top:40px;border-top:1px solid var(--line);text-align:left}
 .more-q blockquote p{font-size:21px;line-height:1.45}.more-q blockquote p::before{content:"“"}.more-q blockquote p::after{content:"”"}
 .pull .rv{color:var(--muted)}
-.only-rv{padding:40px 0;text-align:center}
 .story{background:var(--alt)}
 .story-g{display:grid;grid-template-columns:5fr 6fr;gap:72px;align-items:center}
 .story.noimg .story-g{grid-template-columns:minmax(0,38em);justify-content:center}
@@ -776,7 +778,6 @@ body{font-size:18px}
 .more-q{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:40px;margin-top:64px;padding-top:36px;border-top:1px solid rgba(255,255,255,.18)}
 .more-q blockquote p{font-size:19px;line-height:1.5;color:var(--on-dark)}.more-q blockquote p::before{content:"“"}.more-q blockquote p::after{content:"”"}
 .say .rv{color:var(--muted-d);font-family:var(--fl)}
-.only-rv{padding:36px 0;background:var(--alt)}
 .visit-g{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:72px;align-items:start}
 .visit h2{font-size:clamp(34px,4.4vw,60px);max-width:16ch}
 .bigtel{margin:28px 0 20px}.bigtel a{font-family:var(--fd);font-weight:800;font-stretch:112%;font-size:clamp(38px,5.4vw,72px);letter-spacing:-.03em;line-height:1;text-decoration:underline;text-decoration-color:var(--acc-t);text-decoration-thickness:4px;text-underline-offset:.16em}
@@ -864,7 +865,6 @@ body{font-size:19px;line-height:1.6}
 .pq figcaption,.more-q figcaption{margin-top:26px}.by{font-weight:600}
 .more-q{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:40px;margin-top:64px}
 .more-q blockquote p{font-size:19px;font-style:italic}
-.only-rv{padding:40px 0}
 .visit{background:var(--dark);color:var(--on-dark)}
 .visit h2{font-size:clamp(40px,5.6vw,80px);max-width:14ch}
 .visit .vgrid{border-top:1px solid rgba(255,255,255,.2);padding-top:32px;margin-top:56px}
@@ -931,7 +931,6 @@ body{font-size:17.5px;line-height:1.75;letter-spacing:.005em}
 .more-q{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:56px;max-width:900px;margin:80px auto 0}
 .more-q blockquote p{font-family:var(--fd);font-style:italic;font-size:23px;line-height:1.4}
 .say .rv{font-size:12.5px;letter-spacing:.2em;text-transform:uppercase}
-.only-rv{text-align:center;padding:48px 0}
 .story{text-align:center;background:var(--alt)}
 .story .wrap{max-width:820px}
 .story h2{font-size:clamp(34px,4vw,54px);margin-bottom:28px}
@@ -1005,7 +1004,6 @@ body{font-size:18px;line-height:1.6}
 .pq figcaption,.more-q figcaption{margin-top:24px}.by{font-weight:600}
 .more-q{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:48px;max-width:960px;margin:72px auto 0;text-align:left}
 .more-q blockquote p{font-family:var(--fd);font-size:25px;line-height:1.3}
-.only-rv{text-align:center;padding:48px 0}
 .visit{background:var(--dark);color:var(--on-dark)}
 .visit h2{font-size:clamp(42px,5.6vw,80px);max-width:14ch}
 .visit .vgrid{margin-top:56px;padding-top:32px;border-top:1px solid rgba(255,255,255,.2)}

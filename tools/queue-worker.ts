@@ -5,17 +5,20 @@
 //   node tools/queue-worker.ts fail <id> "<why>"    mark a request as failed
 //   node tools/queue-worker.ts emailed <id>         record that the visitor was emailed
 //   node tools/queue-worker.ts outreach <slug> <dir> publish <dir>/concept.json as a cold-email prospect's private
-//                                                   preview (bringsup.com/try/?id=...&ref=<slug>); <dir>/meta.json may
+//                                                   preview (bringsup.com/for/<slug>-<code>); <dir>/meta.json may
 //                                                   hold {url, email, images: [https urls]}; a hand-built <dir>/index.html
 //                                                   (self-contained) is published as is
+//   node tools/queue-worker.ts views                opens and start clicks for every /for/ preview
+//   node tools/queue-worker.ts delete <short|id>    delete a preview and its pictures
 //
+// pull claims what it saves for 90 minutes and also lists finished requests nobody emailed yet.
 // Needs BRINGSUP_WORKER_TOKEN (the function's WORKER_TOKEN secret). Node 22.6+ runs this file directly.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { SCHEMA } from "../supabase/functions/redesign/prompt.ts";
+import { functionApi, requireWorkerToken } from "./function-api.ts";
 
-const API = process.env.BRINGSUP_API || "https://rgeeynodxvusivfbaxfu.supabase.co/functions/v1/redesign";
-const TOKEN = process.env.BRINGSUP_WORKER_TOKEN || "";
+const call = functionApi(process.env.BRINGSUP_API || "https://rgeeynodxvusivfbaxfu.supabase.co/functions/v1/redesign");
 const WORK = join(import.meta.dirname, "..", "work");
 
 interface Schema {
@@ -30,17 +33,6 @@ interface QueueItem {
   created_at: string;
   link: string;
   prompt: string;
-}
-
-async function call(method: "GET" | "POST", query: string, body?: unknown): Promise<any> {
-  const res = await fetch(API + query, {
-    method,
-    headers: { "x-worker-token": TOKEN, "content-type": "application/json" },
-    body: body === undefined ? undefined : JSON.stringify(body),
-  });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(`${res.status}: ${data.error || "request failed"}`);
-  return data;
 }
 
 function typeOf(v: unknown): string {
@@ -66,7 +58,10 @@ function validate(concept: Record<string, unknown>, schema: Schema): string[] {
 }
 
 async function pull(): Promise<void> {
-  const { system, schema, items } = await call("GET", "?queue=1") as { system: string; schema: Schema; items: QueueItem[] };
+  const { system, schema, items, not_emailed } = await call("GET", "?queue=1") as
+    { system: string; schema: Schema; items: QueueItem[]; not_emailed?: { id: string; email: string; business_name: string; link: string }[] };
+  // Finished but never emailed (a run stopped between "complete" and the email): send these first, then mark them emailed.
+  for (const r of not_emailed || []) console.log(`NOT EMAILED  ${r.id}  ${r.email}  ${r.business_name}  ${r.link}`);
   if (!items.length) return console.log("Queue is empty.");
   for (const item of items) {
     const dir = join(WORK, item.id);
@@ -174,16 +169,15 @@ async function outreach(slug: string, dir: string): Promise<void> {
 }
 
 const [cmd, id, reason] = process.argv.slice(2);
-if (!TOKEN) {
-  console.error("Set BRINGSUP_WORKER_TOKEN first.");
-  process.exit(1);
-}
+requireWorkerToken();
 if (cmd === "pull") await pull();
 else if (cmd === "complete" && id) await complete(id);
 else if (cmd === "fail" && id) console.log(await call("POST", "", { action: "fail", id, error: reason || "failed" }));
 else if (cmd === "emailed" && id) console.log(await call("POST", "", { action: "emailed", id }));
 else if (cmd === "outreach" && id && reason) await outreach(id, reason);
+else if (cmd === "views") console.log(JSON.stringify(await call("GET", "?views=1"), null, 2));
+else if (cmd === "delete" && id) console.log(JSON.stringify(await call("POST", "", /^[0-9a-f-]{36}$/i.test(id) ? { action: "delete", id } : { action: "delete", short: id })));
 else {
-  console.error("Usage: node tools/queue-worker.ts pull | complete <id> | fail <id> \"<why>\" | emailed <id> | outreach <slug> <dir>");
+  console.error("Usage: node tools/queue-worker.ts pull | complete <id> | fail <id> \"<why>\" | emailed <id> | outreach <slug> <dir> | views | delete <short|id>");
   process.exit(1);
 }

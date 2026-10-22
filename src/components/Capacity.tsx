@@ -5,7 +5,7 @@ import "./capacity.css";
 interface Cap { month: string; next_month: string; cap: number; taken: number; left: number }
 
 /** This month's real count of new sites against our monthly cap (projects ?capacity=1). Shows nothing until it loads or if it fails. */
-export function Capacity({ className = "" }: { className?: string }) {
+export function Capacity() {
   const [c, setC] = useState<Cap | null>(null);
   useEffect(() => {
     const ctrl = new AbortController();
@@ -19,7 +19,7 @@ export function Capacity({ className = "" }: { className?: string }) {
   const full = c.left === 0;
   const pct = Math.min(100, Math.round((c.taken / c.cap) * 100));
   return (
-    <div className={`capacity ${full ? "full" : ""} ${className}`.trim()}>
+    <div className={full ? "capacity full" : "capacity"}>
       <p className="cap-line">
         {full
           ? <><b>{c.month} is full.</b> Start now and yours is first in line for {c.next_month}.</>

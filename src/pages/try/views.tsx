@@ -55,7 +55,7 @@ export function AskView({ hidden, soon, fields, onField, error, fixed, onSubmit,
     <section className="wrap ask" id="ask" hidden={hidden}>
       <div>
         <h1 className="t1">See your website, redone.</h1>
-        <p className="lead">Type in your web address. The same day, usually within the hour, I'll email you your homepage, rebuilt from your own photos, services and story, so you can see exactly what you'd get.</p>
+        <p className="lead">Type in your web address. Usually within a few hours, I'll email you your homepage, rebuilt from your own photos, services and story, so you can see exactly what you'd get.</p>
         <p className="ask-more">It's free, there's no call and nothing to install. If you love it, I build the whole site for a flat $1,000, paid only when you approve it.</p>
       </div>
       <div className="card">
@@ -151,7 +151,7 @@ interface ResultProps {
 type Size = "desktop" | "phone";
 
 function SizeButton({ size, current, onPick, children }: { size: Size; current: Size; onPick: (s: Size) => void; children: ReactNode }) {
-  return <button type="button" data-view={size} aria-pressed={current === size} onClick={() => onPick(size)}>{children}</button>;
+  return <button type="button" aria-pressed={current === size} onClick={() => onPick(size)}>{children}</button>;
 }
 
 /** The desktop design is always laid out at this width and scaled to fit; the phone at this one. */
@@ -175,9 +175,9 @@ function useWidth(el: RefObject<HTMLElement | null>, active: boolean): number {
   return w;
 }
 
-/** One live, scaled copy of the page: laid out at `layoutWidth`, shrunk to `width`, `height` tall on screen. Fades in once loaded. */
 type RevealPhase = "wait" | "today" | "wipe" | "new" | "done";
 
+/** One live, scaled copy of the page: laid out at `layoutWidth`, shrunk to `width`, `height` tall on screen. Fades in once loaded. */
 function Screen({ html, scripts, layoutWidth, width, height, title, hint, reveal, onRevealReady, onRevealFail }: {
   html: string; scripts: boolean; layoutWidth: number; width: number; height: number; title: string; hint?: boolean;
   /** Their site today, laid over the new one, and where the shared reveal is (ResultView runs one timeline for every frame).
@@ -237,7 +237,7 @@ const LinkIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="non
 const CheckIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>;
 
 /** A copy-link button that confirms in place: the link icon turns into a check and the label into "Copied". */
-export function CopyButton({ className, id, label, onCopy }: { className: string; id: string; label: string; onCopy: () => Promise<boolean> }) {
+function CopyButton({ className, id, label, onCopy }: { className: string; id: string; label: string; onCopy: () => Promise<boolean> }) {
   const [copied, setCopied] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
   useEffect(() => () => clearTimeout(timer.current), []);
@@ -355,7 +355,7 @@ export function ResultView({ hidden, data, onCopy, onFullScreen, onAgain }: Resu
   const frameReady = (k: string) => { readyFrames.current.add(k); setReadyTick((n) => n + 1); };
   const stopReveal = () => setPhase("done");
   // Switching between Desktop and Phone mid-reveal just ends it.
-  useEffect(() => { if (choice) setPhase((p) => (p === "done" ? p : "done")); }, [choice]);
+  useEffect(() => { if (choice) setPhase("done"); }, [choice]);
   const name = data?.name || "your business";
   // Outreach concepts carry the prospect's tracker slug, so the start form lands on their row.
   const startHref = data ? "/start/?ref=" + encodeURIComponent(data.ref || "redesign-" + data.id) : "/start/";
@@ -388,7 +388,7 @@ export function ResultView({ hidden, data, onCopy, onFullScreen, onAgain }: Resu
               <button className="ghost" type="button" id="full" onClick={onFullScreen}><svg className="full-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><g><path d="M15 3h6v6" /><path d="M21 3l-7 7" /></g><g><path d="M9 21H3v-6" /><path d="M3 21l7-7" /></g></svg>Full screen</button>
             </div>
           </div>
-          <div className={["stage", L?.overlap && "showcase", `view-${size}`, morphing && "morphing"].filter(Boolean).join(" ")} id="stage" ref={stage}
+          <div className={morphing ? "stage morphing" : "stage"} id="stage" ref={stage}
             style={L ? { height: L.stageH } : undefined}>
             {L && html && (
               <>
@@ -436,7 +436,7 @@ export function ResultView({ hidden, data, onCopy, onFullScreen, onAgain }: Resu
         </section>
       )}
 
-      <BrandCard name={data?.name || "your business"} brand={data?.brand} />
+      <BrandCard name={name} brand={data?.brand} />
 
       <div className="wrap r-next" id="r-next">
         <h2 className="t2">Love it? I'll build the whole site.</h2>
@@ -473,7 +473,7 @@ export function QueuedView({ hidden, data, onCopy }: { hidden: boolean; data: Qu
         <div className="q-draft" aria-hidden="true"><iframe id="q-frame" tabIndex={-1} title="" sandbox="" srcDoc={draft || undefined}></iframe></div>
         <div className="q-card">
           <h1 className="t2">I'm redesigning <span id="q-host">{data?.host || "your website"}</span>.</h1>
-          <p className="lead">A careful homepage takes a little longer than a minute. I'll email it to <span id="q-email">{data?.email ? <b>{data.email}</b> : "you"}</span> the same day, usually within the hour. This page updates on its own if you keep it open, or you can close it and watch your inbox.</p>
+          <p className="lead">A careful homepage takes a little longer than a minute. I'll email it to <span id="q-email">{data?.email ? <b>{data.email}</b> : "you"}</span>, usually within a few hours. This page updates on its own if you keep it open, or you can close it and watch your inbox.</p>
           <div className="acts">
             <CopyButton className="btn btn-line" id="q-copy" label="Copy this page's link" onCopy={onCopy} />
             <a className="btn btn-primary" href="/try/?demo">See a sample while you wait</a>

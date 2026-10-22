@@ -6,7 +6,7 @@ Visitors at bringsup.com/try/ (or the homepage form) submit their website and em
 
 1. `export BRINGSUP_WORKER_TOKEN=...` (given in the scheduled task's prompt), then from the repo root:
    `node tools/queue-worker.ts pull`
-   If it prints "Queue is empty.", stop. You're done.
+   It first prints `NOT EMAILED <id> <email> <name> <link>` lines: requests already published whose email never went out. Email those (step 3), then run `emailed <id>`. It then claims new requests for 90 minutes, so another run won't take them. If it prints "Queue is empty." and no `NOT EMAILED` lines, stop. You're done.
 
 2. For each `work/<id>/` it printed:
    - Read `system.md`. These are your design rules. Follow them exactly, especially: use only facts in the website content, and never invent reviews, ratings, prices or hours.
@@ -17,7 +17,11 @@ Visitors at bringsup.com/try/ (or the homepage form) submit their website and em
    - Run `node tools/queue-worker.ts complete <id>`. If it lists schema problems, fix `concept.json` and run it again.
    - If the site truly can't be redesigned, run `node tools/queue-worker.ts fail <id> "<short reason>"` and skip the email.
 
-3. Email each visitor whose redesign published (not skipped or failed). Use the Composio Gmail tool `GMAIL_SEND_EMAIL` from **jake@bringsup.com** (Composio account `gmail_gariba-preach`). Never send from any other account. Plain text, `include_signature: true`:
+3. Email each visitor whose redesign published (not skipped or failed). Use the Composio Gmail tool `GMAIL_SEND_EMAIL` from **jake@bringsup.com** (Composio account `gmail_gariba-preach`). Never send from any other account. Plain text, `include_signature: false` (the body has the sign-off). These come from the same mailbox as cold email, so:
+   - Send only when RUNBOOK.md step 1's sender, pause and health gates pass. Their bounces count in its health check.
+   - At most 10 a day (count today's sent "Your new homepage for" emails in Gmail). The rest wait for tomorrow.
+   - Only 7:00 AM–8:00 PM the visitor's time (use the state in their site's address; if unknown, US Eastern). Otherwise wait for a run in the window.
+   - Skip any address, or business, that's `dnc` in the tracker or has bounced before; run `fail <id> "do not contact"` or `"bounced before"`.
 
    - To: the `email` in `work/<id>/request.json`
    - Subject: `Your new homepage for <business_name>`

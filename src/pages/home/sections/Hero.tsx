@@ -1,4 +1,3 @@
-import type { Ref } from "react";
 import { Arrow } from "../../../components/icons.tsx";
 import { BeforeAfter } from "../BeforeAfter.tsx";
 
@@ -7,9 +6,9 @@ import { BeforeAfter } from "../BeforeAfter.tsx";
  * With the redesign tool on (live), the main button goes straight to /try/. `start` is set for owners
  * arriving from an outreach reply (?ref=): they already have a homepage, so the button starts their site.
  */
-export function Hero({ live, start, ref }: { live: boolean; start?: string; ref?: Ref<HTMLElement> }) {
+export function Hero({ live, start }: { live: boolean; start?: string }) {
   return (
-    <section ref={ref} className="hero" aria-labelledby="hero-h">
+    <section className="hero" aria-labelledby="hero-h">
       <div className="wrap">
         <h1 className="t1" id="hero-h">Your reviews say you're <span className="key">the best in town</span>. Your website <span className="key">should&nbsp;too</span>.</h1>
         <div className="hero-sub">

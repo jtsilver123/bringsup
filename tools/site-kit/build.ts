@@ -8,7 +8,7 @@ import { render, type SiteContent } from "./render.ts";
 
 const REQUIRED: (keyof SiteContent)[] = ["business_name", "theme", "phone", "address", "hours", "primary_cta", "home", "offer", "about", "testimonials", "social", "domain"];
 
-export function check(c: SiteContent): string[] {
+function check(c: SiteContent): string[] {
   const errors = REQUIRED.filter((k) => c[k] === undefined).map((k) => `missing "${k}"`);
   if (!c.home?.headline) errors.push("home.headline is empty");
   if (!c.offer?.groups?.some((g) => g.items.length)) errors.push("offer has no items");

@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { BrandMark } from "../../../components/icons.tsx";
 import { NAV } from "../data.ts";
+import { prefersReducedMotion } from "../hooks.ts";
 
 /** Sticky header (its button starts the site for ?ref= visitors): marks the section you're reading, and on phones opens a short menu under the bar. */
 export function Header({ active, start }: { active: string; start?: string }) {
   const [open, setOpen] = useState(false);
   const menuBtn = useRef<HTMLButtonElement>(null);
   const firstLink = useRef<HTMLAnchorElement>(null);
-
   const head = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -34,8 +34,7 @@ export function Header({ active, start }: { active: string; start?: string }) {
   const toTop = (e: React.MouseEvent) => {
     e.preventDefault();
     setOpen(false);
-    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+    scrollTo({ top: 0, behavior: prefersReducedMotion() ? "auto" : "smooth" });
     history.replaceState(null, "", location.pathname + location.search);
   };
 

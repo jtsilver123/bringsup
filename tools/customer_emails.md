@@ -35,7 +35,7 @@ If you skipped the photos or the logo, or think of anything to add, just reply t
 Jake
 
 ## 1b. Start received, this month is full
-Instead of email 1 when the project has `starts_on` after today (the month's cap of new sites was reached when they started). It counts as email 1: log it as "Sent email 1".
+Instead of email 1 when the project has `starts_on` after today (the month's cap of new sites was reached when they started). It counts as email 1: log it as `Sent email 1: ...`.
 
 **Subject:** We're building the {business} website
 
@@ -43,7 +43,7 @@ Hi {first name},
 
 Thanks, your form came through. There's nothing you need to do or pay right now.
 
-We take on a set number of new sites each month so each one gets real attention. {this month} is full, so yours is first in line for {next month}. We start on {starts_on, e.g. "Monday, November 2"}, and by {starts_on + 14 days} we'll email you a private link to see your new site.
+We take on a set number of new sites each month so each one gets real attention. {this month} is full, so we've saved you the first open spot. We start on {starts_on, e.g. "Monday, November 2"}, and by {starts_on + 14 days} we'll email you a private link to see your new site.
 
 If you think of anything to add, just reply to this email. Changed your mind? Reply and we'll stop, and you owe nothing.
 
@@ -97,6 +97,7 @@ What we changed:
 
 {If rounds are left:} You have {rounds_left} round{s} of changes left. Anything you send before {weekday and time 48 hours from now, e.g. "Thursday at 2pm"} is still part of this round, so don't hold back: {changes link}
 {If none are left:} That was your last included round, but anything you send before {weekday and time 48 hours from now} is still part of it: {changes link}. After that, you can approve it as it is, or ask for one more round for $150.
+{The two-day window is once per round. If this update already included changes sent in that window, leave out the "still part of this round" sentence.}
 
 Happy with it? Approve it and pay the flat $1,000 here, and it goes live: {approve link}
 

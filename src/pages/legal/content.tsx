@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 // Plain-English terms and privacy policy. Bump UPDATED when either changes.
 export const UPDATED = "October 22, 2026";
 
-export interface LegalDoc {
+interface LegalDoc {
   title: string;
   summary: string[];
   sections: { title: string; body: ReactNode }[];

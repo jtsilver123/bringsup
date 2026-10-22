@@ -6,12 +6,6 @@ import "./beforeafter.css";
 
 const clamp = (v: number) => Math.round(Math.max(0, Math.min(100, v)) * 10) / 10;
 
-/**
- * Before/after slider: the new homepage on the left, the old one on the right. Drag anywhere on the
- * image, or use the arrow keys on the visually hidden range input (Shift moves further). A click or a
- * key press glides the handle to its new spot; a drag follows the pointer exactly, and the handle grows
- * while held. The first time it's seen it sways once to show it can be dragged (not with reduced motion).
- */
 interface Shot { src: string; width: number; height: number; alt: string }
 interface Props {
   /** The new site, on the left. */
@@ -29,6 +23,12 @@ const BAKERY: Required<Props> = {
   caption: "Drag the handle to compare. Marigold Bakery is made up and the photos are stock, so I can show the work without using anyone's real site.",
 };
 
+/**
+ * Before/after slider: the new homepage on the left, the old one on the right. Drag anywhere on the
+ * image, or use the arrow keys on the visually hidden range input (Shift moves further). A click or a
+ * key press glides the handle to its new spot; a drag follows the pointer exactly, and the handle grows
+ * while held. The first time it's seen it sways once to show it can be dragged (not with reduced motion).
+ */
 export function BeforeAfter(props: Props = {}) {
   const { after, before, labels, caption } = { ...BAKERY, ...props };
   const stage = useRef<HTMLDivElement>(null);

@@ -1,6 +1,6 @@
 // Homepage copy that repeats or runs long, kept as data. Markup lives in ./sections.
 
-export type NavLink = { href: string; label: string };
+type NavLink = { href: string; label: string };
 export const NAV: NavLink[] = [
   { href: "#work", label: "Work" },
   { href: "#how", label: "How it works" },
@@ -8,15 +8,15 @@ export const NAV: NavLink[] = [
   { href: "#faq", label: "Questions" },
 ];
 
-export type WorkSample = { slug: string; name: string; ariaName: string; kind: string; text: string; height: number };
+export type WorkSample = { slug: string; name: string; kind: string; text: string; height: number };
 export const WORK: WorkSample[] = [
-  { slug: "bakery", name: "Marigold Bakery", ariaName: "Marigold Bakery", kind: "Bakery · Westbrook, CT", text: "Looks like a printed menu: the name in classic lettering, real prices joined by dotted lines, and the hours right under the headline.", height: 4044 },
-  { slug: "auto", name: "Linde Motorwerk", ariaName: "Linde Motorwerk", kind: "Porsche & BMW specialist · Boulder, CO", text: "Bold and technical, like a spec sheet: numbered services with prices, and the phone number big enough to tap from across the room.", height: 4468 },
-  { slug: "carpentry", name: "Hartwell Joinery", ariaName: "Hartwell Joinery", kind: "Custom carpentry · Hudson, NY", text: "Quiet and led by the work: big project photos with captions, and how a job runs, told in plain words.", height: 4748 },
+  { slug: "bakery", name: "Marigold Bakery", kind: "Bakery · Westbrook, CT", text: "Looks like a printed menu: the name in classic lettering, real prices joined by dotted lines, and the hours right under the headline.", height: 4044 },
+  { slug: "auto", name: "Linde Motorwerk", kind: "Porsche & BMW specialist · Boulder, CO", text: "Bold and technical, like a spec sheet: numbered services with prices, and the phone number big enough to tap from across the room.", height: 4468 },
+  { slug: "carpentry", name: "Hartwell Joinery", kind: "Custom carpentry · Hudson, NY", text: "Quiet and led by the work: big project photos with captions, and how a job runs, told in plain words.", height: 4748 },
 ];
 
 /** How it works, as a timeline: when, what happens, and what it costs at that point. */
-export type Step = { when: string; title: string; text: string; cost: string };
+type Step = { when: string; title: string; text: string; cost: string };
 export const STEPS: Step[] = [
   { when: "Same day", title: "I make your homepage", text: "From your real menu or services, your hours, and the things your reviews keep mentioning. You get a private link to open on your phone.", cost: "Free" },
   { when: "10 minutes", title: "You fill in one form", text: "Hours, services, a few photos, and your logo if you have one. Skip anything you don't have. No call.", cost: "Free" },
@@ -38,7 +38,7 @@ export const INCLUDED = [
   "The site and every file, yours to keep",
 ];
 
-export type FaqItem = { q: string; a: string };
+type FaqItem = { q: string; a: string };
 export const FAQ: FaqItem[] = [
   { q: "Is the homepage really free?", a: "Yes. I make it before we ever talk money. If it's not for you, that's the end of it. No follow-up calls, no invoice." },
   { q: "How did you find my business?", a: "Your reviews. I look for family-owned businesses with a great reputation on Google and a website that hasn't caught up yet. Your email address came from your own website or Google listing. I never buy lists. Anything I make for you is built from what you've already published, and if you reply \"no thanks\", I delete it and never write again." },

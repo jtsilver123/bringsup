@@ -32,7 +32,7 @@ export interface ApiError {
   code?: string;
 }
 
-export interface ApiResponse<T> {
+interface ApiResponse<T> {
   ok: boolean;
   status: number;
   body: T;
