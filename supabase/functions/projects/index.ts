@@ -326,7 +326,15 @@ async function work(req: Request): Promise<Response> {
     if (p.attempts >= 5) await alert("builder", p.ref, `Job "${p.todo}" failed 5 times: ${String(body.error).slice(0, 300)}`);
     return json(200, { ok: true });
   }
-  if (body.action !== "update") return json(400, { error: 'Use {action: "update" | "fail", ref, ...}' });
+  if (body.action === "delete") {
+    // Only for tools/simulate-flow.ts test projects.
+    if (!p.ref.startsWith("test-")) return json(403, { error: "Only test- projects can be deleted" });
+    await db.from("webhook_receipts").delete().eq("ref", p.ref);
+    await db.from("alerts").delete().eq("ref", p.ref);
+    await db.from("projects").delete().eq("id", p.id);
+    return json(200, { ok: true, deleted: p.ref });
+  }
+  if (body.action !== "update") return json(400, { error: 'Use {action: "update" | "fail" | "delete", ref, ...}' });
 
   const set = Object.fromEntries(Object.entries(body.set || {}).filter(([k]) => SETTABLE.has(k)));
   if (typeof set.status === "string" && set.status !== p.status && !TRANSITIONS[p.status]?.includes(set.status)) {
