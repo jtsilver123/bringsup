@@ -11,7 +11,7 @@ export function Hero({ live, start, ref }: { live: boolean; start?: string; ref?
   return (
     <section ref={ref} className="hero" aria-labelledby="hero-h">
       <div className="wrap">
-        <h1 className="t1" id="hero-h">Your reviews say you're the best in town. Your website should&nbsp;too.</h1>
+        <h1 className="t1" id="hero-h">Your reviews say you're <span className="key">the best in town</span>. Your website <span className="key">should&nbsp;too</span>.</h1>
         <div className="hero-sub">
           <p className="lead">
             {start

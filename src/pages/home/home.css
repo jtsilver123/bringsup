@@ -222,3 +222,6 @@ dialog.viewer[open]::backdrop{background:rgba(22,24,29,.75)}
   .faq details:not([open]) p{opacity:1;transform:none}
 }
 
+
+/* Key phrases in a headline: a straight Ember underline that sits just under the letters (wraps with them, never animates). */
+.key{background:linear-gradient(var(--ember),var(--ember)) no-repeat 0 92%/100% .09em;-webkit-box-decoration-break:clone;box-decoration-break:clone;padding-bottom:.04em}
