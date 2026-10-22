@@ -102,6 +102,7 @@ Functional colors are allowed only for form feedback: Error `#B42318` (border + 
 - Reassurance sits right under the action: "Free, no strings · No contract · You own everything".
 
 ## Email signature
+Cold emails and replies to prospects sign off with just "Jake" and `bringsup.com` on the next line, like a person, not a company (tools/email_template.md). The full block below is for customer emails after they've started.
 ```
 Jake Silver
 BringsUp, websites as good as your reviews

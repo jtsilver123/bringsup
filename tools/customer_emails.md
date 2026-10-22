@@ -2,7 +2,7 @@
 
 Sent by the operator task from **jake@bringsup.com** only (Composio `GMAIL_SEND_EMAIL`, account `gmail_gariba-preach`, plain text, `include_signature: true`). Voice rules from `brand.md` apply: plain, warm, specific, no hype, no exclamation marks, never insult their old site.
 
-Fill every `{field}` from the project (`node tools/projects-worker.ts show <ref>`). If a field is missing, rewrite the sentence so it reads naturally. Never leave a placeholder or a gap. Reply in the customer's existing thread when one exists (`GMAIL_REPLY_TO_THREAD`), so each customer has a single conversation.
+Fill every `{field}` from the project (`node tools/projects-worker.ts show <ref>`). If a field is missing, rewrite the sentence so it reads naturally. Never leave a placeholder or a gap. **One thread per owner, from the first cold email to launch and after.** Always reply with `GMAIL_REPLY_TO_THREAD`, never a new email: if the project's `ref` matches a tracker prospect, use that row's `threadId` (the cold-email thread where they said yes); otherwise use the thread of their latest email to us. Only if there's no thread at all (a /try/ visitor who has never written) send a new email, then keep using that thread. Never change the subject line.
 
 **Write for someone who isn't technical.** Most owners run a shop all day and read email on their phone. Every email:
 - Short sentences, everyday words. Say "your web address", not "domain"; "your email keeps working", not "MX records"; "the padlock", not "SSL". Use a technical word only when it's the exact label they'll see on their screen, and then say what it is ("a box called **Points to**").
