@@ -10,7 +10,7 @@ export function Footer() {
         <div className="foot-top">
           <div>
             <a className="brand" href="#top" aria-label="BringsUp, back to top"><BrandMark /><span>BringsUp</span></a>
-            <p className="foot-tag">Websites as good as your reviews. Made in Highland Park, Illinois.</p>
+            <p className="foot-tag">Websites as good as your reviews. Made in New York City.</p>
           </div>
           <nav className="foot-links" aria-label="Footer">
             {NAV.map((l) => <a key={l.href} href={l.href}>{l.label}</a>)}
@@ -19,7 +19,7 @@ export function Footer() {
             <a href="/privacy/">Privacy</a>
           </nav>
         </div>
-        <p className="foot-bot">© <span id="yr">{year}</span> BringsUp, 2195 Kipling Lane, Highland Park, IL 60035. Homepages I send are ideas, not live sites, and aren't affiliated with the businesses shown.</p>
+        <p className="foot-bot">© <span id="yr">{year}</span> BringsUp, 109 Saint Marks Place, New York, NY 10009. Homepages I send are ideas, not live sites, and aren't affiliated with the businesses shown.</p>
       </div>
     </footer>
   );

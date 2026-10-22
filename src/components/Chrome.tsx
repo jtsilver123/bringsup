@@ -28,7 +28,7 @@ export function SubFooter({ note }: { note?: ReactNode }) {
   return (
     <footer className="sub-foot">
       <div className="wrap">
-        <span>© {year} BringsUp · 2195 Kipling Lane, Highland Park, IL 60035</span>
+        <span>© {year} BringsUp · 109 Saint Marks Place, New York, NY 10009</span>
         <span>{note}{note ? " " : ""}<a href="/terms/">Terms</a> · <a href="/privacy/">Privacy</a> · <a href={`mailto:${EMAIL}`}>{EMAIL}</a></span>
       </div>
     </footer>

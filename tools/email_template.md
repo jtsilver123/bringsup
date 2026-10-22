@@ -57,7 +57,7 @@ Every cold email exists to get one word back: **yes**. Not a click (there are no
 > bringsup.com
 >
 > Not for you? Just say so and I won't write again.
-> BringsUp, 2195 Kipling Lane, Highland Park, IL 60035
+> BringsUp, 109 Saint Marks Place, New York, NY 10009
 
 Example (Marigold Bakery, Westbrook CT):
 
@@ -73,7 +73,7 @@ Example (Marigold Bakery, Westbrook CT):
 > bringsup.com
 >
 > Not for you? Just say so and I won't write again.
-> BringsUp, 2195 Kipling Lane, Highland Park, IL 60035
+> BringsUp, 109 Saint Marks Place, New York, NY 10009
 
 ## Email 2 (step 2, 3 business days later)
 One or two sentences, like a quick second thought: one new, true detail, then the same offer. Never "just following up", "bumping this" or "did you see my email". Pick the first angle that's true, and only one:
@@ -86,7 +86,7 @@ One or two sentences, like a quick second thought: one new, true detail, then th
 > Jake
 >
 > Not for you? Just say so and I won't write again.
-> BringsUp, 2195 Kipling Lane, Highland Park, IL 60035
+> BringsUp, 109 Saint Marks Place, New York, NY 10009
 
 ## Email 3 (step 3, 7 business days after Email 2)
 One sentence. Warm, no guilt.
@@ -96,7 +96,7 @@ One sentence. Warm, no guilt.
 > Jake
 >
 > Last email either way. Reply "no" and you won't hear from BringsUp again.
-> BringsUp, 2195 Kipling Lane, Highland Park, IL 60035
+> BringsUp, 109 Saint Marks Place, New York, NY 10009
 
 ## Building their homepage (only after a yes)
 This is the first thing of ours they'll really look at, so it has to be clearly better than their current site and feel made for them. Take the time.
