@@ -9,6 +9,15 @@ These go out under Jake's name, so each one has to read like Jake sat down and w
 
 Building only on a yes keeps the effort on the people who asked, and the "yes" reply is the best signal a new mailbox can get.
 
+## The one goal: a reply that says "yes"
+Every cold email exists to get one word back: **yes**. Not a click (there are no links), not a call, not the price, not the start form. Write every email so saying yes is the easiest thing to do:
+- **One ask, at the end, answerable with "yes".** "Want me to make it?" works; "What do you think?" or "Would you be open to a conversation?" doesn't.
+- **Say how small the yes is.** Make clear a one-word reply is all it takes and that it costs nothing: "Just reply yes and I'll make it."
+- **Remove reasons to hesitate before they appear.** It's free to look at, nothing to fill in yet, no call. Mention the price only as "you'd only pay if you love the finished site", never a number.
+- **Nothing that competes with the yes.** No second question, no "let me know if you have questions", no options to choose between.
+- **Every follow-up asks for the same yes**, Email 3 included, in fresh words.
+- A yes in any form counts: "sure", "ok", "go ahead", "send it", a thumbs-up. Treat it as yes (OPERATOR step 1).
+
 ## The sequence (a 3-step drip)
 | Step | When | What | Attachment | Links |
 |---|---|---|---|---|
@@ -34,7 +43,7 @@ Building only on a yes keeps the effort on the people who asked, and the "yes" r
 2. `{business} homepage`
 3. `{business} website`
 
-**Body** (60–90 words before the sign-off, exactly one question, and it's the last sentence before the sign-off):
+**Body** (60–90 words before the sign-off, exactly one question, and the ask (that question plus how small the yes is) ends the email):
 
 > Hi {first name},   ← if the first name isn't known, just "Hi," (never "Hi there")
 >
@@ -45,7 +54,7 @@ Building only on a yes keeps the effort on the people who asked, and the "yes" r
 >
 > {Bridge, one or two sentences: "Your website doesn't really show that yet. I'd like to make you a new homepage, built from your actual {menu / services / work} and hours, with {the thing they're known for} front and center and {calling / ordering / booking} one tap away on a phone."}
 >
-> {Close: "It's free to look at, and if you like it I can build the whole site, and you'd only pay once it's finished and you're happy with it." Then one of: 1. "Want me to put one together?" 2. "Should I make you one?" 3. "Want to see what it could look like?"}
+> {Close: "It's free to look at, and if you like it I can build the whole site, and you'd only pay once it's finished and you're happy with it." Then the ask, which is always a yes-question plus how small the yes is. One of: 1. "Want me to make it? Just reply yes." 2. "Should I put one together for you? A quick yes is all I need." 3. "Want to see it? Reply yes and I'll send it over this week."}
 >
 > Jake
 > bringsup.com
@@ -65,7 +74,7 @@ Example (Marigold Bakery, Westbrook CT):
 >
 > Your website doesn't really show it yet. I'd like to make you a new homepage, built from your actual menu and hours, with the bakery front and center and ordering one tap away on a phone.
 >
-> It's free to look at, and if you like it I can build the whole site, and you'd only pay once it's finished and you're happy with it. Want me to put one together?
+> It's free to look at, and if you like it I can build the whole site, and you'd only pay once it's finished and you're happy with it. Want me to make it? Just reply yes.
 >
 > Jake
 > bringsup.com
@@ -84,7 +93,7 @@ Two or three short sentences with one new, useful observation. It never just nud
 >
 > One more thing I noticed: your site still lists the hours as 7 to 3, and Google has you open until 4 now. On the new homepage the hours and menu would live in one place, so they stay right.
 >
-> Want me to put one together?
+> Want me to make it for you? A one-word yes is all it takes.
 >
 > Jake
 >
@@ -96,7 +105,7 @@ The last note. It's short and warm, gives them a graceful way to say "later", an
 
 > Hi Rosa,
 >
-> Last note from me, so I'm not cluttering your inbox. If a new site makes sense down the road, even months from now, reply here and I'll make you that homepage then.
+> Last note from me, so I'm not cluttering your inbox. The offer stands: reply yes, today or months from now, and I'll make you that homepage.
 >
 > Jake
 >
