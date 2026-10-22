@@ -26,7 +26,7 @@ Search jake@bringsup.com for messages newer than the last run (`in:inbox newer_t
 - Log every handled email: `update <ref>` with `event: {kind: "email", summary: "<what they asked, what we did>"}`.
 
 **Prospects (outreach replies):**
-- **Interested or asking a question:** answer it from the FAQ in a few warm sentences, and give the start link `https://bringsup.com/start/?ref=<slug>`. Then set the tracker `status: replied`, `repliedAt`.
+- **Interested or asking a question:** answer what they asked first, in a couple of plain sentences. Then send what's in "When they reply interested" in `tools/email_template.md`: the full concept PDF attached, the flat $1,000 paid only after they approve the finished site, hosting included, and the start link `https://bringsup.com/start/?ref=<slug>`. Write it like a person would, with no template blocks and none of that file's banned phrases. Then set the tracker `status: replied`, `repliedAt`.
 - **Asking for a call:** say we keep everything on email so it fits around their day. Offer to answer anything here, and include the start link.
 - **"No", "stop", "unsubscribe" or similar:** one short gracious line ("Understood, I won't email again. Best of luck."), `status: dnc`. Never email them again.
 - **Bounces:** `status: lost`, set `notes` to "Email bounced" if empty, archive the bounce.
