@@ -140,7 +140,7 @@ footer a{color:var(--subtle)}
 .q-tag{display:inline-flex;align-items:center;gap:8px;position:absolute;top:18px;left:18px;z-index:1;background:var(--ink);color:#fff;font-size:14px;font-weight:700;padding:8px 14px;border-radius:999px}
 .q-tag i{width:8px;height:8px;border-radius:50%;background:var(--glow);animation:pulse 1.4s ease-in-out infinite}
 @keyframes pulse{50%{opacity:.3}}
-@media (max-width:640px){.q-stage.has-draft{min-height:560px}.q-stage.has-draft .q-card{padding:28px 20px;margin:14px}}
+@media (max-width:640px){.q-stage.has-draft{min-height:560px}.q-stage.has-draft .q-card{padding:28px 20px;margin:64px 14px 14px}}
 .q-card .lead{margin-left:auto;margin-right:auto}
 .q-card .acts{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:32px}
 .q-icon{width:72px;height:72px;border-radius:50%;background:var(--tint);color:var(--ember);display:flex;align-items:center;justify-content:center;margin:0 auto 22px;animation:bob 2.4s var(--ease) infinite}
@@ -232,7 +232,7 @@ footer a{color:var(--subtle)}
       <div class="q-icon" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></div>
       <p class="eyebrow">You're in line</p>
       <h2>We're redesigning <span id="q-host">your website</span>.</h2>
-      <p class="lead">A designer-quality homepage takes a little longer than a minute. We'll email it to <b id="q-email">you</b> within the hour. This page updates on its own if you keep it open.</p>
+      <p class="lead">A designer-quality homepage takes a little longer than a minute. We'll email it to <span id="q-email">you</span> within the hour. This page updates on its own if you keep it open.</p>
       <div class="acts">
         <button class="btn btn-outline" type="button" id="q-copy">Copy this page's link</button>
         <a class="btn btn-ember" href="/try/?demo">See a sample while you wait</a>
@@ -305,7 +305,7 @@ footer a{color:var(--subtle)}
     stopSteps();
     drawDraft(data.preview);
     $('q-host').textContent = (data.url || '').replace(/^https?:\/\/(www\.)?/, '').replace(/\/.*$/, '') || 'your website';
-    $('q-email').textContent = email || 'you';
+    $('q-email').innerHTML = email ? '<b>' + esc(email) + '</b>' : 'you';
     history.replaceState(null, '', '/try/?id=' + encodeURIComponent(data.id));
     show('queued');
     clearTimeout(pollT);
