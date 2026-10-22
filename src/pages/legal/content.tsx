@@ -15,7 +15,7 @@ export const TERMS: LegalDoc = {
     "The homepage concept we send you is free. You never owe anything for it.",
     "Nothing to pay while we build. You pay the flat $1,000 only if you approve the finished site.",
     "Once you pay, the site, its files and its design are yours.",
-    "Hosting is included with no monthly fee. The Care Plan for edits is optional, and you can cancel anytime.",
+    "Hosting is included with no monthly fee. After launch, we fix anything we got wrong for free, and other changes are $150 a round.",
     "Two rounds of changes are included. Extra rounds are $150, and we always ask first.",
   ],
   sections: [
@@ -40,8 +40,8 @@ export const TERMS: LegalDoc = {
       body: <><p>Once you've paid, you own the finished website, its design and its files, and we'll hand over everything if you ask. Your domain always stays in your name. We may show your site in our portfolio unless you ask us not to.</p><p>You keep ownership of everything you send us, like your logo, photos and text. You give us permission to use it to build and run your site, and you confirm you have the right to share it. Stock photos we add are licensed for use on your website.</p></>,
     },
     {
-      title: "The Care Plan",
-      body: <><p>Hosting is included with your website at no monthly cost, so your site stays up whether or not you choose the Care Plan. If we ever stop hosting sites, we'll give you at least 60 days' notice and move your site to a host of your choice, or hand you the files.</p><p>The Care Plan is optional. It covers small edits (things like new hours, specials, photos or text changes), requested by email, for the monthly fee shown on our pricing section, billed by Stripe. It renews monthly until you cancel. You can cancel anytime by emailing us, and it stops at the end of that month.</p></>,
+      title: "Hosting and changes after launch",
+      body: <><p>Hosting is included with your website at no monthly cost. If we ever stop hosting sites, we'll give you at least 60 days' notice and move your site to a host of your choice, or hand you the files.</p><p>After launch, we fix anything we got wrong (something that doesn't match your approved preview, or details that were right on your start form) for free. Other changes, like new hours, specials, photos or text, are $150 a round, requested by email, and we always tell you before charging. The files are yours, so your own web person can edit them too.</p></>,
     },
     {
       title: "Your domain and email",

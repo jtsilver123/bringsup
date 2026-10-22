@@ -135,9 +135,7 @@ It's live: https://www.{domain}
 
 We checked it on phones and computers, and your email still works the way it did. Hosting is included, so there's no monthly bill. If you were paying for your old site, you can cancel that plan now. Keep your domain and email with whoever provides them.
 
-{If they asked for the Care Plan and a Care Plan link is configured:} Here's the Care Plan link you asked for ($79/mo, cancel anytime): {care_plan_link}. Once it's set up, just email us changes, like new hours, specials or photos.
-{If they asked for the Care Plan and no link is configured yet:} You asked about the Care Plan ($79/mo). It isn't open for sign-ups yet, so nothing is being billed, and we'll send the link when it's ready. Until then, if anything on the site is wrong, reply and we'll fix it free; other updates are $150 a round.
-{Otherwise:} If anything on the site is wrong, reply and we'll fix it free. For other updates later on, like new hours, specials or photos, you can reply anytime: a round of changes is $150, or the Care Plan covers unlimited small edits for $79 a month. Your own web person can also edit the files, since they're yours.
+If anything on the site is wrong, reply and we'll fix it free. For other updates later on, like new hours, specials or photos, just reply anytime: a round of changes is $150. Your own web person can also edit the files, since they're yours.
 
 Thanks for trusting us with it. If a customer says something nice about the new site, we'd love to hear it.
 
@@ -167,7 +165,7 @@ If you'd like to pick it back up, just reply before then.
 
 Jake
 
-## 11. A change after launch, without the Care Plan
+## 11. A change after launch
 Sent for the `reply_out_of_scope` job.
 
 **Subject:** Re: {their subject}
@@ -178,7 +176,6 @@ Thanks, happy to do this. Just so there are no surprises: changes after launch a
 
 - A round of changes is $150, and it covers everything you sent in this email. Pay here and we'll get on it; you don't need to type it again: {extra link}
 - If this is something we got wrong, like a typo or details that were right on your start form, ignore the above. We'll fix it free and email you when it's done.
-{If a Care Plan link is configured, add:} Or, if you expect to make updates often, the Care Plan covers unlimited small edits for $79/mo: {care_plan_link}
 
 {If it's only a small fix to something we got wrong (a typo, a wrong phone number or wrong hours that were right in their start form), skip this email: fix it for free, redeploy, and send a one-line "Fixed" reply.}
 

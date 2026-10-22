@@ -15,7 +15,7 @@ Anything else that lands in that Stripe account (InstateMe's own sales) is not o
 ## 0. Setup (every run)
 1. Clone `jtsilver123/bringsup` (public) and work from its root: `git clone --depth 1 https://github.com/jtsilver123/bringsup.git && cd bringsup && npm ci --silent`.
 2. Set `BRINGSUP_WORKER_TOKEN` from the task prompt. `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` come from the environment. If they're missing, skip the deploy steps and record a blocker (step 7).
-3. The outreach tracker is the artifact in the task prompt (ArtifactData): `prospects/*` and `meta/pipeline`. Optional settings live in `meta/pipeline`: `carePlanLink` (the Care Plan payment link; empty means don't offer it) and `lastOutreachDate`.
+3. The outreach tracker is the artifact in the task prompt (ArtifactData): `prospects/*` and `meta/pipeline`. Settings live in `meta/pipeline`. There's no Care Plan for now: never offer or mention one. Changes after launch are $150 a round (the /extra/ link), and fixes to our mistakes are free.
 
 Order every run: **1 inbox → 1b payments → 2 customer jobs → 3 reminders → 4 redesign queue → 5 outreach (once per weekday) → 6 health → 7 finish.** If time runs short, finish what you started, then stop. The next run picks up the rest.
 
@@ -95,10 +95,10 @@ Run `node tools/projects-worker.ts dns <ref>`.
 - **`www.<domain>` is serving the new site:** if `pending_changes` has anything (sent after approval), apply it and run `launch <ref>` again first. Check the email records are intact: run the same `resolveMx` command (`dig` isn't installed). If the list differs from the `launch_steps_sent` payload, or is empty when it wasn't, don't send email 8 yet: email the owner (CC the helper) that a mail setting changed, give the exact MX values to put back, and check again in 6 hours. Then send email 8 (You're live), with its "without www" note if the bare domain doesn't redirect to www yet. `update`: `set: {status: "live", todo: null, live_url: "https://www.<domain>", pending_changes: null}`, `event: {kind: "live"}`. Then set the matching tracker prospect row (same slug as `ref`, or by email) to `status: won`, `lastTouchAt`.
 - **Not yet:** `update` with `set: {next_check_at: <now + 6h>}` (todo stays). On day 2 and day 5 after `launch_steps_sent` (whole days since that event), send email 7 once: skip it if events already have `{kind: "domain_reminder", payload: {day: N}}` for that day, and log exactly that after sending. On day 10, send the steps again to anyone they've named (log `{kind: "domain_reminder", payload: {day: 10}}`) and offer to walk them through by email. After 14 days, keep checking daily, and flag it in the daily digest (it's waiting on them, not broken).
 
-### care_edit: change after launch (Care Plan, or a paid $150 round)
+### care_edit: a paid $150 round after launch
 Apply `pending_changes` to `site.json`, run `launch <ref>` (production deploy), reply "Done" in their thread with what changed. `update`: `applied_seq`, `set: {todo: null, pending_changes: null}`, `event: {kind: "care_edit_done"}`.
 
-### reply_out_of_scope: change after launch, no Care Plan
+### reply_out_of_scope: a change after launch
 If it's only fixing something we got wrong (a typo, or wrong details that were right in their start form), fix it free like a care_edit. Otherwise send email 11. `update`: `set: {todo: null}`.
 
 ### Domain steps
