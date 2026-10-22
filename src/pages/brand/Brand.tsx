@@ -131,7 +131,7 @@ export function Brand() {
           </div>
         </section>
       </main>
-      <footer><div className="wrap">© BringsUp · Questions about the brand: <a href="mailto:hello@bringsup.com">hello@bringsup.com</a></div></footer>
+      <footer><div className="wrap">© BringsUp · Questions about the brand: <a href="mailto:jake@bringsup.com">jake@bringsup.com</a></div></footer>
     </>
   );
 }

@@ -25,7 +25,7 @@ export const TERMS: LegalDoc = {
     },
     {
       title: "Free concepts",
-      body: <><p>We sometimes design a sample homepage for a business before being asked, using information that is already public, like your current website and reviews. Concepts are ideas, not live websites. They aren't published anywhere except a private link we send you, and they don't mean you're affiliated with us or have agreed to anything.</p><p>Don't want one? Reply to our email or write to <a href="mailto:hello@bringsup.com">hello@bringsup.com</a> and we'll delete it and won't contact you again.</p></>,
+      body: <><p>We sometimes design a sample homepage for a business before being asked, using information that is already public, like your current website and reviews. Concepts are ideas, not live websites. They aren't published anywhere except a private link we send you, and they don't mean you're affiliated with us or have agreed to anything.</p><p>Don't want one? Reply to our email or write to <a href="mailto:jake@bringsup.com">jake@bringsup.com</a> and we'll delete it and won't contact you again.</p></>,
     },
     {
       title: "Building your website",
@@ -65,7 +65,7 @@ export const TERMS: LegalDoc = {
     },
     {
       title: "Contact",
-      body: <><p>Questions about these terms? Email <a href="mailto:hello@bringsup.com">hello@bringsup.com</a>.</p></>,
+      body: <><p>Questions about these terms? Email <a href="mailto:jake@bringsup.com">jake@bringsup.com</a>.</p></>,
     },
   ],
 };
@@ -101,7 +101,7 @@ export const PRIVACY: LegalDoc = {
     },
     {
       title: "Your choices",
-      body: <><p>You can ask to see, correct or delete your information, or to stop hearing from us, at any time. Email <a href="mailto:hello@bringsup.com">hello@bringsup.com</a> and we'll take care of it within 30 days. Depending on where you live, you may have extra rights under laws like the CCPA or GDPR, and we'll honor those too.</p></>,
+      body: <><p>You can ask to see, correct or delete your information, or to stop hearing from us, at any time. Email <a href="mailto:jake@bringsup.com">jake@bringsup.com</a> and we'll take care of it within 30 days. Depending on where you live, you may have extra rights under laws like the CCPA or GDPR, and we'll honor those too.</p></>,
     },
     {
       title: "Children",
@@ -117,7 +117,7 @@ export const PRIVACY: LegalDoc = {
     },
     {
       title: "Contact",
-      body: <><p>Questions about privacy? Email <a href="mailto:hello@bringsup.com">hello@bringsup.com</a>.</p></>,
+      body: <><p>Questions about privacy? Email <a href="mailto:jake@bringsup.com">jake@bringsup.com</a>.</p></>,
     },
   ],
 };

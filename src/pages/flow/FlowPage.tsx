@@ -104,7 +104,7 @@ export function FlowPage({ kind }: { kind: FlowKind }) {
       <header>
         <div className="wrap">
           <a className="brand" href="/" aria-label="BringsUp home"><BrandMark /><span>BringsUp</span></a>
-          <span className="help">Questions? <a href="mailto:hello@bringsup.com">hello@bringsup.com</a></span>
+          <span className="help">Questions? <a href="mailto:jake@bringsup.com">jake@bringsup.com</a></span>
         </div>
       </header>
       <main>

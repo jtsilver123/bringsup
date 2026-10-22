@@ -199,9 +199,9 @@ async function onChanges(sub: Submission, paidExtra: boolean): Promise<Project> 
     case "approved":
     case "launching":
     case "live": {
-      if (p.care_plan) {
+      if (p.care_plan || paidExtra) {
         p = await save(p, { ...touch, pending_changes: join(p.pending_changes, request), changes_seq: p.changes_seq + 1, todo: "care_edit" });
-        await log(p, "care_edit", "Care Plan edit requested", { request });
+        await log(p, "care_edit", paidExtra ? "Paid $150 for a round of changes after launch" : "Care Plan edit requested", { request });
       } else {
         p = await save(p, { ...touch, held_changes: join(p.held_changes, request), todo: "reply_out_of_scope" });
         await log(p, "out_of_scope", "Change requested after approval without the Care Plan", { request });

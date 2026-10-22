@@ -36,7 +36,7 @@ export function copyText(text: string, msg: string, say: (msg: string) => void):
       document.execCommand("copy");
       say(msg);
     } catch {
-      say("Couldn’t copy. Email hello@bringsup.com");
+      say("Couldn’t copy. Email jake@bringsup.com");
     }
     t.remove();
   };

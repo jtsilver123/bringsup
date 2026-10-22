@@ -8,7 +8,7 @@ import { CopyIcon } from "../icons.tsx";
 import { Reveal } from "../Reveal.tsx";
 import { copyText } from "../Toast.tsx";
 
-const EMAIL = "hello@bringsup.com";
+const EMAIL = "jake@bringsup.com";
 const REQUEST_FOOT = "We only use this to send your concept. Never shared, never sold.";
 
 /**

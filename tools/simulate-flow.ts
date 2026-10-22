@@ -94,6 +94,10 @@ try {
     console.log("skip  extra round (TALLY_EXTRA_FORM not set)");
   }
 
+  const found = await worker("GET", `?email=${encodeURIComponent(email)}`);
+  console.log(`${found.projects?.[0]?.ref === ref ? "ok  " : "FAIL"}  sender lookup finds the project`);
+  if (found.projects?.[0]?.ref !== ref) failures++;
+
   const status = await (await fetch(`${API}?status=${ref}`)).json();
   console.log(`${typeof status.rounds_left === "number" ? "ok  " : "FAIL"}  public status: ${JSON.stringify(status)}`);
 
