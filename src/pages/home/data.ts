@@ -32,7 +32,7 @@ export type IconItem = TitledItem & { icon: ListIcon };
 export const PAINS: IconItem[] = [
   { icon: "phone", title: "Hard to use on a phone", text: "Tiny text and pinch-to-zoom menus send people to the next result." },
   { icon: "clock", title: "Hours and info out of date", text: "Wrong hours or a dead link make people wonder if you're still open." },
-  { icon: "star", title: "Your best asset is hidden", text: "Hundreds of glowing reviews, and not one of them on your site." },
+  { icon: "star", title: "Your best asset is hidden", text: "Years of glowing reviews, and not one of them on your site." },
 ];
 
 export type WorkSample = { slug: string; name: string; ariaName: string; kind: string; text: string; height: number };

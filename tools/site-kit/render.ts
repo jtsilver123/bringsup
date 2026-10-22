@@ -1,6 +1,6 @@
 // Renders a customer's full website from one SiteContent object: home, menu or services, about, contact, 404,
 // plus sitemap, robots, favicon and social preview tags. Pure function: content in, { path: html } out.
-// The site builder (tools/SITE_BUILDER.md) writes the content; tools/site-kit/build.ts downloads images and writes files.
+// The operator (tools/OPERATOR.md) writes the content; tools/site-kit/build.ts downloads images and writes files.
 
 /** Match the concept the owner was sent (tools/make_concept.py theme_for): "home" for remodelers, carpenters, upholsterers,
  * framers and furniture restorers; "boutique" for jewelers, watch repair, tailors and bridal. */

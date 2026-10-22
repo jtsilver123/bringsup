@@ -13,7 +13,7 @@ export const TERMS: LegalDoc = {
   title: "Terms of Service",
   summary: [
     "The homepage concept we send you is free. You never owe anything for it.",
-    "We build your full site for free. You pay the flat $1,000 only if you approve it.",
+    "Nothing to pay while we build. You pay the flat $1,000 only if you approve the finished site.",
     "Once you pay, the site, its files and its design are yours.",
     "Hosting is included with no monthly fee. The Care Plan for edits is optional, and you can cancel anytime.",
     "Two rounds of changes are included. Extra rounds are $150, and we always ask first.",
@@ -85,7 +85,7 @@ export const PRIVACY: LegalDoc = {
     },
     {
       title: "How we use it",
-      body: <><p>To design, build, launch and look after your website; to send you previews, receipts and project emails; to answer your questions; and to keep our site and tools safe from abuse. We may send a business a short email about a free concept. Every one of those emails says how to opt out, and we honor it right away.</p></>,
+      body: <><p>To design, build, launch and look after your website; to send you previews, receipts and project emails; to answer your questions; and to keep our site and tools safe from abuse. We may send a business up to three short emails about a free concept, then we stop. Every one of those emails says how to opt out, and we honor it right away.</p></>,
     },
     {
       title: "Who helps us",

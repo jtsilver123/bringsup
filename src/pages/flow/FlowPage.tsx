@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 import { BrandMark, Check } from "../../components/icons.tsx";
 import { Lift } from "../../components/Lift.tsx";
 import { TallyEmbed } from "../../components/TallyEmbed.tsx";
-import { PROJECTS_API, TALLY } from "../../lib/config.ts";
+import { PROJECTS_API, STRIPE_LINKS, TALLY } from "../../lib/config.ts";
 import "./flow.css";
 
 export type FlowKind = "start" | "changes" | "approve" | "extra";
@@ -66,8 +66,8 @@ const FLOWS: Record<FlowKind, Flow> = {
       ["You check the result", "Before launch, you get an updated preview to approve. After launch, the change goes straight onto your live site and we email you when it's done."],
     ],
     promise: "Only if you want it. Nothing else is charged.",
-    doneTitle: "Got it.",
-    doneText: "We're on your changes. You'll hear from us within about 3 days.",
+    doneTitle: "Paid. We're on it.",
+    doneText: "Your receipt is on its way from Stripe. We're on your changes, and you'll hear from us within about 3 days.",
   },
   approve: {
     form: TALLY.approve,
@@ -81,8 +81,8 @@ const FLOWS: Record<FlowKind, Flow> = {
       ["You're live", "We check your email still works, then send your launch note. Hosting is included with no monthly fee, and you own the site and every file."],
     ],
     promise: "Secure card payment through Stripe. You own everything.",
-    doneTitle: "You're approved.",
-    doneText: "Your receipt is on its way. Next, we'll email the steps to connect your domain.",
+    doneTitle: "Paid and approved.",
+    doneText: "Your receipt is on its way from Stripe. Next, we'll email the steps to connect your domain.",
   },
 };
 
@@ -120,7 +120,8 @@ function RoundsNote({ kind, rounds }: { kind: FlowKind; rounds: Rounds | null })
 /** The customer flow pages (/start, /changes, /approve): the steps on the left, the Tally form on the right. */
 export function FlowPage({ kind }: { kind: FlowKind }) {
   const f = FLOWS[kind];
-  const [sent, setSent] = useState(false);
+  // The approve and extra pages come back from Stripe with ?paid=1; that's their "done" state.
+  const [sent, setSent] = useState(() => kind in STRIPE_LINKS && typeof location !== "undefined" && new URLSearchParams(location.search).get("paid") === "1");
   const card = useRef<HTMLDivElement>(null);
   const done = useRef<HTMLDivElement>(null);
   const [year, setYear] = useState(2026);
@@ -132,7 +133,16 @@ export function FlowPage({ kind }: { kind: FlowKind }) {
     done.current?.focus({ preventScroll: true });
     card.current?.scrollIntoView({ block: "center" });
   }, [sent]);
-  const onSubmit = useCallback(() => setSent(true), []);
+  const onSubmit = useCallback(() => {
+    if (kind === "approve" || kind === "extra") {
+      // The form only collects answers; the money changes hands on Stripe, which sends them back here with ?paid=1.
+      const q = new URLSearchParams(location.search);
+      const ref = q.get("ref");
+      location.assign(`${STRIPE_LINKS[kind]}${ref ? `?client_reference_id=${encodeURIComponent(ref)}` : ""}`);
+      return;
+    }
+    setSent(true);
+  }, [kind]);
 
   return (
     <>
@@ -157,6 +167,7 @@ export function FlowPage({ kind }: { kind: FlowKind }) {
           </div>
           <div className={sent ? "card sent" : "card"} id="card" ref={card}>
             <TallyEmbed formId={f.form} title={f.title} height={560} onSubmit={onSubmit} />
+            {!sent && <p className="form-help">Form not loading? <a href={`https://tally.so/r/${f.form}`}>Open it here</a> or email <a href="mailto:jake@bringsup.com">jake@bringsup.com</a>.</p>}
             <div className="done" role="status" aria-live="polite" tabIndex={-1} ref={done}>
               <div className="tick"><Check size={32} /></div>
               <h2>{f.doneTitle}</h2>

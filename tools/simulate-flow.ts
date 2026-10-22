@@ -6,19 +6,12 @@ import { createHmac, randomUUID } from "node:crypto";
 const API = process.env.BRINGSUP_PROJECTS_API || "https://rgeeynodxvusivfbaxfu.supabase.co/functions/v1/projects";
 const TOKEN = process.env.BRINGSUP_WORKER_TOKEN || "";
 const SECRET = process.env.TALLY_SIGNING_SECRET || "";
-const FORMS = { start: "Ar7yBl", changes: "EqkMlA", approve: "VpLDP6", extra: process.env.TALLY_EXTRA_FORM || "" };
+const FORMS = { start: "Ar7yBl", changes: "EqkMlA", approve: "VpLDP6", extra: process.env.TALLY_EXTRA_FORM || "5XBMpd" };
 const ref = `test-${randomUUID().slice(0, 8)}`;
 const email = `${ref}@example.com`;
 
 type Field = { key: string; label: string; type: string; value: unknown; options?: { id: string; text: string }[] };
 const text = (label: string, value: string): Field => ({ key: label, label, type: "INPUT_TEXT", value });
-/** A payment exactly as Tally's webhook sends it: separate PAYMENT fields per property, the price as a number. */
-const payment = (price: number): Field[] => [
-  { key: "question_pay_price", label: "Payment (price)", type: "PAYMENT", value: price },
-  { key: "question_pay_currency", label: "Payment (currency)", type: "PAYMENT", value: "USD" },
-  { key: "question_pay_name", label: "Payment (name)", type: "PAYMENT", value: "Rosa Test" },
-];
-
 async function submit(formId: string, fields: Field[], responseId = randomUUID()): Promise<any> {
   const body = JSON.stringify({
     eventId: randomUUID(), eventType: "FORM_RESPONSE", createdAt: new Date().toISOString(),
@@ -92,13 +85,15 @@ try {
   await submit(FORMS.changes, [text("Your email", email), text("What would you like changed?", "Round 3: different font")]);
   await expect("a third request is held and an extra round offered", { status: "awaiting_extra", rounds_used: 2, todo: "offer_extra", held_changes: "Round 3: different font" });
 
-  if (FORMS.extra) {
-    await submit(FORMS.extra, [text("Your email", email), text("What would you like changed?", ""), ...payment(150)]);
-    await expect("paying for the extra round applies the held request", { status: "changes_requested", rounds_extra: 1, rounds_used: 3, held_changes: null, paid_cents: 15000 });
-    await worker("POST", "", { action: "update", ref, applied_seq: 5, set: { status: "preview_sent", todo: null, pending_changes: null } });
-  } else {
-    console.log("skip  extra round (TALLY_EXTRA_FORM not set)");
-  }
+  // The extra-round form carries no payment (the page sends them to Stripe); the builder then posts the payment it finds.
+  await submit(FORMS.extra, [text("Your email", email), text("What would you like changed?", "And a bigger map")]);
+  await expect("the extra form without a payment only adds to the held request", { status: "awaiting_extra", todo: "offer_extra", rounds_extra: 0, held_changes: "Round 3: different font\n\nAnd a bigger map" });
+  await worker("POST", "", { action: "payment", ref, stripe_id: `cs_test_${ref}_extra`, kind: "extra", cents: 15000 });
+  await expect("paying for the extra round applies the held request", { status: "changes_requested", rounds_extra: 1, rounds_used: 3, held_changes: null, paid_cents: 15000 });
+  const dupPay = await worker("POST", "", { action: "payment", ref, stripe_id: `cs_test_${ref}_extra`, kind: "extra", cents: 15000 });
+  console.log(`${dupPay.duplicate ? "ok  " : "FAIL"}  the same Stripe payment posted twice counts once`);
+  if (!dupPay.duplicate) failures++;
+  await worker("POST", "", { action: "update", ref, applied_seq: 6, set: { status: "preview_sent", todo: null, pending_changes: null } });
 
   const found = await worker("GET", `?email=${encodeURIComponent(email)}`);
   console.log(`${found.projects?.[0]?.ref === ref ? "ok  " : "FAIL"}  sender lookup finds the project`);
@@ -107,11 +102,13 @@ try {
   const status = await (await fetch(`${API}?status=${ref}`)).json();
   console.log(`${typeof status.rounds_left === "number" ? "ok  " : "FAIL"}  public status: ${JSON.stringify(status)}`);
 
-  await submit(FORMS.approve, [text("Your email", email), text("Want us to handle updates later?", "Yes, send me the Care Plan link ($79/mo)"), ...payment(1000)]);
-  await expect("approve and pay", { status: "approved", todo: "launch", care_plan_requested: true, care_plan: false });
+  await submit(FORMS.approve, [text("Your email", email), text("Want us to handle updates later?", "Yes, send me the Care Plan link ($79/mo)")]);
+  await expect("the approve form alone records the answers and waits for payment", { status: "preview_sent", care_plan_requested: true, care_plan: false });
+  await worker("POST", "", { action: "payment", ref, stripe_id: `cs_test_${ref}_approve`, kind: "approve", cents: 100000 });
+  await expect("the $1,000 payment approves and queues the launch", { status: "approved", todo: "launch", care_plan_requested: true, paid_cents: 115000 });
 
-  await submit(FORMS.approve, [text("Your email", email), ...payment(1000)]);
-  await expect("a second approval doesn't double count", { status: "approved", paid_cents: FORMS.extra ? 115000 : 100000 });
+  await worker("POST", "", { action: "payment", ref, stripe_id: `cs_test_${ref}_approve2`, kind: "approve", cents: 100000 });
+  await expect("a second payment doesn't double count (it's flagged for a refund)", { status: "approved", paid_cents: 115000 });
 
   await submit(FORMS.changes, [text("Your email", email), text("What would you like changed?", "Spotted a typo after paying")]);
   await expect("a change after approval is applied at launch, free", { status: "approved", todo: "launch", pending_changes: "Spotted a typo after paying" });

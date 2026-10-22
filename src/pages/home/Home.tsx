@@ -78,7 +78,7 @@ export function Home() {
       <a className="skip" href="#main">Skip to content</a>
       {fromEmail && (
         <div className="welcome" role="region" aria-label="Welcome">
-          <div className="wrap"><span>Welcome. The homepage concept Jake sent you was made for you, free.</span><a href={startHref}>Start my website <Arrow size={16} /></a></div>
+          <div className="wrap"><span>The homepage concept in Jake's email was made just for you, free. Like it?</span><a href={startHref}>Start my website <Arrow size={16} /></a></div>
         </div>
       )}
       <Header active={active} />

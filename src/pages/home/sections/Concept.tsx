@@ -50,7 +50,7 @@ function InstantForm() {
       <label>Your website<input ref={urlInput} name="url" type="text" inputMode="url" autoComplete="url" autoCapitalize="off" spellCheck={false} placeholder="rosasbakery.com" required /></label>
       <label>Your email<input ref={emailInput} name="email" type="email" autoComplete="email" autoCapitalize="off" spellCheck={false} placeholder="you@rosasbakery.com" required /></label>
       <p className="instant-err" role="alert" hidden={!error}>{error}</p>
-      <button className="btn btn-ink" type="submit">Redesign my website now <Arrow /></button>
+      <button className="btn btn-ink" type="submit">Send me my new homepage <Arrow /></button>
       <p className="form-foot">We'll email your new homepage the same day, usually within the hour. Never shared, never sold.</p>
     </form>
   );
@@ -111,7 +111,7 @@ export function Concept({ live, search, say, ref }: { live: boolean; search: str
               {CTA_LIST.map((c) => <li key={c}><Check size={20} />{c}</li>)}
             </ul>
             <p className="alt">
-              <a className="btn btn-glow" href={`/start/${search}`} data-keep-ref="">Start my website</a>
+              <a className="btn btn-ink" href={`/start/${search}`} data-keep-ref="">Start my website</a>
             </p>
             <p className="alt">
               Questions first? Write to <a href={`mailto:${EMAIL}`}>{EMAIL}</a>{" "}
@@ -129,13 +129,13 @@ export function Concept({ live, search, say, ref }: { live: boolean; search: str
           <p className="eyebrow">Free homepage concept</p>
           <h2 className="display" id="cta-h">{live ? "See your business, redone. Today." : "See your business, redone."}</h2>
           <p className="lead">{live
-            ? "Paste your website and see your new homepage right here, built from your own photos, services and story."
+            ? "Paste your website and we'll email you your new homepage, built from your own photos, services and story. Same day, usually within the hour."
             : "Tell us where to find you online. Your free homepage concept lands in your inbox within 48 hours."}</p>
           <ul className="cta-list">
             {CTA_LIST.map((c) => <li key={c}><Check size={20} />{c}</li>)}
           </ul>
           <p className="alt">
-            Already have one from us? <a href={`/start/${search}`} data-keep-ref="">Start your website</a>, no call needed. Or write to <a href={`mailto:${EMAIL}`}>{EMAIL}</a>{" "}
+            Already have one from us? <a href={`/start/${search}`} data-keep-ref="">Start your website</a> (no call needed), or write to <a href={`mailto:${EMAIL}`}>{EMAIL}</a>{" "}
             <button className="copy" type="button" data-copy={EMAIL} aria-label={`Copy ${EMAIL}`} onClick={() => copyText(EMAIL, "Email address copied", say)}><CopyIcon />Copy</button>
           </p>
         </Reveal>

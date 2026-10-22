@@ -67,6 +67,7 @@ alter table public.projects add column if not exists claimed_until timestamptz; 
 alter table public.projects add column if not exists attempts integer not null default 0;     -- failed tries at the current job
 alter table public.projects add column if not exists last_error text;
 alter table public.projects add column if not exists last_customer_touch_at timestamptz;     -- for reminders and stuck-project checks
+alter table public.projects add column if not exists care_plan_requested boolean not null default false; -- "Yes" on the approve form; care_plan is set only once a subscription exists
 alter table public.projects add column if not exists domain_helper text not null default ''; -- "I'll do it" or "My web person will"
 
 create table if not exists public.alerts (

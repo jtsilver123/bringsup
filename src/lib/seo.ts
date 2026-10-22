@@ -57,7 +57,7 @@ export const META: Record<string, PageMeta> = {
     path: "/extra/",
     title: "One more round of changes · BringsUp",
     description: "Pay for one more round of changes to your BringsUp website preview.",
-    ...START_IMAGE,
+    ...HOME_IMAGE,
     noindex: true,
   },
   terms: {

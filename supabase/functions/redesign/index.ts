@@ -4,7 +4,8 @@
 // Redesigns run on the Claude subscription, never an API key: an hourly scheduled Claude Code task
 // pulls the queue (GET ?queue=1), designs each homepage with the prompt and schema in prompt.ts,
 // posts it back ({action: "complete"}) and emails the visitor their link. See tools/QUEUE_WORKER.md.
-// Worker calls need the x-worker-token header.
+// Worker calls need the x-worker-token header. {action: "create", url, email, concept, images?, ref?} saves a finished
+// homepage for a cold-email prospect who said "send it over" and returns its private link (tools/email_template.md).
 //
 // Secrets (Supabase dashboard -> Edge Functions -> Secrets): IP_SALT, WORKER_TOKEN.
 // Optional: ALLOWED_ORIGINS (comma-separated), DAILY_CAP (default 150), PER_VISITOR_DAILY (default 3).
@@ -80,6 +81,17 @@ async function queue(req: Request): Promise<Response> {
 
 // deno-lint-ignore no-explicit-any
 async function work(req: Request, body: any): Promise<Response> {
+  if (body.action === "create") {
+    // An outreach concept: already designed by the operator, so it's saved done. The ref ties /start/ back to the tracker row.
+    const concept = body.concept;
+    if (!concept || typeof concept !== "object" || !concept.business_name || !concept.headline) return json(req, 400, { error: "Missing concept (business_name, headline, ...)." });
+    if (body.ref) concept.ref = String(body.ref);
+    const images = Array.isArray(body.images) ? body.images.filter((u: unknown) => typeof u === "string" && /^https:\/\//.test(u)).slice(0, 12) : [];
+    const { data: made, error } = await db.from("redesigns").insert({ url: String(body.url || ""), email: String(body.email || "").toLowerCase(), ip_hash: "outreach",
+      status: "done", business_name: concept.business_name, content: concept, images }).select("id").single();
+    if (error || !made) return json(req, 500, { error: String(error?.message || "insert failed") });
+    return json(req, 200, { ok: true, id: made.id, link: link(made.id) + (body.ref ? `&ref=${encodeURIComponent(String(body.ref))}` : "") });
+  }
   const id = String(body.id || "");
   const { data: row } = await db.from("redesigns").select("id, site, status").eq("id", id).maybeSingle();
   if (!row) return json(req, 404, { error: "No such redesign." });

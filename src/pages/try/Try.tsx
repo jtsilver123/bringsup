@@ -83,6 +83,7 @@ export function Try() {
       address: addressOf(data.url || ""),
       html: renderConcept(concept, images),
       improvements: concept.improvements || [],
+      ref: (concept as { ref?: string }).ref,
     });
     if (data.id && data.id !== "demo") setAddress("/try/?id=" + encodeURIComponent(data.id));
     go("result");

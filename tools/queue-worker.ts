@@ -4,10 +4,14 @@
 //   node tools/queue-worker.ts complete <id>        validate work/<id>/concept.json and publish it
 //   node tools/queue-worker.ts fail <id> "<why>"    mark a request as failed
 //   node tools/queue-worker.ts emailed <id>         record that the visitor was emailed
+//   node tools/queue-worker.ts outreach <slug> <dir> publish <dir>/concept.json as a cold-email prospect's private
+//                                                   preview (bringsup.com/try/?id=...&ref=<slug>); <dir>/meta.json may
+//                                                   hold {url, email, images: [https urls]}
 //
 // Needs BRINGSUP_WORKER_TOKEN (the function's WORKER_TOKEN secret). Node 22.6+ runs this file directly.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { SCHEMA } from "../supabase/functions/redesign/prompt.ts";
 
 const API = process.env.BRINGSUP_API || "https://rgeeynodxvusivfbaxfu.supabase.co/functions/v1/redesign";
 const TOKEN = process.env.BRINGSUP_WORKER_TOKEN || "";
@@ -86,6 +90,20 @@ async function complete(id: string): Promise<void> {
   console.log(res.status === "skipped" ? "Skipped (not a business)." : `Published: ${res.link}`);
 }
 
+async function outreach(slug: string, dir: string): Promise<void> {
+  const concept = JSON.parse(readFileSync(join(dir, "concept.json"), "utf8"));
+  const errors = validate(concept, SCHEMA as unknown as Schema);
+  if (errors.length) {
+    console.error("concept.json doesn't match the schema:\n- " + errors.join("\n- "));
+    process.exit(1);
+  }
+  let meta: { url?: string; email?: string; images?: string[] } = {};
+  try { meta = JSON.parse(readFileSync(join(dir, "meta.json"), "utf8")); } catch { /* optional */ }
+  const res = await call("POST", "", { action: "create", ref: slug, concept, ...meta });
+  if (!res.link) { console.error(JSON.stringify(res)); process.exit(1); }
+  console.log(res.link);
+}
+
 const [cmd, id, reason] = process.argv.slice(2);
 if (!TOKEN) {
   console.error("Set BRINGSUP_WORKER_TOKEN first.");
@@ -95,7 +113,8 @@ if (cmd === "pull") await pull();
 else if (cmd === "complete" && id) await complete(id);
 else if (cmd === "fail" && id) console.log(await call("POST", "", { action: "fail", id, error: reason || "failed" }));
 else if (cmd === "emailed" && id) console.log(await call("POST", "", { action: "emailed", id }));
+else if (cmd === "outreach" && id && reason) await outreach(id, reason);
 else {
-  console.error("Usage: node tools/queue-worker.ts pull | complete <id> | fail <id> \"<why>\" | emailed <id>");
+  console.error("Usage: node tools/queue-worker.ts pull | complete <id> | fail <id> \"<why>\" | emailed <id> | outreach <slug> <dir>");
   process.exit(1);
 }

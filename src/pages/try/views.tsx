@@ -64,13 +64,13 @@ export function AskView({ hidden, soon, fields, onField, error, onSubmit, urlRef
   return (
     <section className="wrap ask" id="ask" hidden={hidden}>
       <div>
-        <p className="eyebrow">Instant redesign</p>
+        <p className="eyebrow">Free homepage redesign</p>
         <h1>See your website, <span className="lift">redone.<svg viewBox="0 0 300 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 16 C 70 11, 170 10, 250 12 C 268 12, 282 9, 296 3" /></svg></span></h1>
-        <p className="lead">Paste your website. Within the hour, we'll email you your homepage, rebuilt from your own photos, services and story, so you can see exactly what you'd get.</p>
+        <p className="lead">Paste your website. The same day, usually within the hour, we'll email you your homepage, rebuilt from your own photos, services and story, so you can see exactly what you'd get.</p>
         <ul className="points">
           <li><Check />Free, no call, nothing to install</li>
           <li><Check />Built from what's already on your site</li>
-          <li><Check />Love it? We build the whole site. $0 until you approve.</li>
+          <li><Check />Love it? We build the whole site for a flat $1,000, paid only when you approve it.</li>
         </ul>
       </div>
       <div className="card">
@@ -120,7 +120,7 @@ export function WorkingView({ hidden, host }: { hidden: boolean; host: string })
     <section className="wrap working" id="working" hidden={hidden} aria-live="polite">
       <p className="eyebrow">Working on it</p>
       <h2>Redesigning <span id="w-host">{host}</span></h2>
-      <p className="lead">This usually takes a minute or two. If it takes longer, we email it to you.</p>
+      <p className="lead">Give us a minute. If it takes longer, we'll email it to you the same day.</p>
       <ol className="steps" id="steps">
         {STEPS.map((s, i) => (
           <li key={s} className={i < step ? "done" : i === step ? "now" : undefined}><span className="dot"></span>{s}</li>
@@ -145,6 +145,8 @@ export interface ResultData {
   address: string;
   html: string;
   improvements: string[];
+  /** A cold-email prospect's tracker slug, so "Start my website" lands on their row. */
+  ref?: string;
 }
 
 interface ResultProps {
@@ -163,7 +165,8 @@ function SizeButton({ size, current, onPick, children }: { size: Size; current: 
 
 export function ResultView({ hidden, data, onCopy, onFullScreen, onAgain }: ResultProps) {
   const [size, setSize] = useState<Size>("desktop");
-  const startHref = data ? "/start/?ref=" + encodeURIComponent("redesign-" + data.id) : "/start/";
+  // Outreach concepts carry the prospect's tracker slug, so the start form lands on their row.
+  const startHref = data ? "/start/?ref=" + encodeURIComponent(data.ref || "redesign-" + data.id) : "/start/";
   return (
     <section className="wrap result" id="result" hidden={hidden}>
       <div className="result-head">
@@ -247,7 +250,7 @@ export function FailedView({ hidden, failure, onRetry }: { hidden: boolean; fail
       <h2 id="f-title">{failure?.title || "We couldn't redesign that one automatically."}</h2>
       <p className="lead" id="f-msg">{failure?.message}</p>
       <div className="acts">
-        <a className="btn btn-ember" href="/#concept">Have us make it by hand</a>
+        <a className="btn btn-ember" href="mailto:jake@bringsup.com?subject=Free%20concept%20by%20hand&body=My%20website%3A%20">Email Jake to make it by hand</a>
         <button className="btn btn-outline" type="button" id="retry" onClick={onRetry}>Try another website</button>
       </div>
     </section>
