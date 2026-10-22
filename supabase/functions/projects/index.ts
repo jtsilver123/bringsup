@@ -3,6 +3,7 @@
 // POST /projects                    Tally webhook (signed). Start, changes, extra-round and approve submissions update
 //                                   the project, count rounds and set the builder's next job (`todo`).
 // GET  /projects?status=<ref>       Public: rounds used and left, for the /changes/ and /extra/ pages.
+// GET  /projects?pulse=1            Public: when the operator last ran, for the outside watchdog.
 // GET  /projects?jobs=1             Builder: claim up to 5 projects with work to do (leased 45 min).  (x-worker-token)
 // GET  /projects?ref=<ref>          Builder: one project and its history.                            (x-worker-token)
 // GET  /projects?health=1           Health check: alerts, stuck projects, failing jobs.               (x-worker-token)
@@ -364,6 +365,13 @@ async function work(req: Request): Promise<Response> {
     applied_seq?: number;
     event?: { kind: string; summary?: string; payload?: unknown; round?: number };
   };
+  if (body.action === "heartbeat") {
+    // The operator's last step every run; the watchdog reads it through ?pulse=1.
+    const { error } = await db.from("operator_runs").insert({ summary: String(body.text || "").slice(0, 500) });
+    if (error) return json(500, { error: error.message });
+    await db.from("operator_runs").delete().lt("at", new Date(Date.now() - 90 * 864e5).toISOString());
+    return json(200, { ok: true });
+  }
   const p0 = await byRef(body.ref || "");
   if (!p0) return json(404, { error: "No such project" });
   let p = p0;
@@ -447,6 +455,12 @@ Deno.serve(async (req) => {
   const url = new URL(req.url);
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: { "access-control-allow-origin": "*", "access-control-allow-methods": "GET" } });
   if (req.method === "POST" && req.headers.has("tally-signature")) return webhook(req);
+
+  if (req.method === "GET" && url.searchParams.has("pulse")) {
+    const { data } = await db.from("operator_runs").select("at").order("at", { ascending: false }).limit(1);
+    const last = data?.[0]?.at ?? null;
+    return json(200, { last_run_at: last, minutes_since: last ? Math.round((Date.now() - Date.parse(last)) / 60000) : null });
+  }
 
   const status = url.searchParams.get("status");
   if (req.method === "GET" && status) {

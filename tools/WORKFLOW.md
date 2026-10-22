@@ -25,8 +25,21 @@ The one map of the business: every step, who or what does it, which system it to
 | 9 | Launch: production deploy, domain steps sent, DNS checks and reminders, "you're live" | Operator, step 2 `launch` and `check_dns`. The owner or their web person changes two DNS settings | Cloudflare Pages, customer_emails.md 6–8 | OPERATOR.md "launch", "Domain steps" |
 | 10 | After launch: our mistakes fixed free, other changes $150 a round | Operator, step 2 `care_edit` and `reply_out_of_scope` | Stripe extra link | customer_emails.md 11 |
 | 11 | Quiet customers: reminder at 10 days, closing notice at 45, takedown at 60 | Operator, step 3 | | customer_emails.md 9–10 |
-| 12 | Health, alerts and stuck jobs | Operator, step 6. Push to Jake only for real problems | `projects-worker health` | OPERATOR.md steps 6–7 |
-| 13 | Refunds, chargebacks, legal, bookkeeping and taxes | **Jake** | Stripe (InstateMe account), Mercury | |
+| 12 | Health, alerts and stuck jobs | Operator, step 6. Push to Jake only for what's in step 7 | `projects-worker health` | OPERATOR.md steps 6–7 |
+| 12b | Is the operator itself running, and are the site, forms and payment links up? | Watchdog, every 2 hours. A failure emails Jake | GitHub Actions, `?pulse=1` heartbeat | `tools/watchdog.sh` |
+| 13 | Bookkeeping: monthly ledger and statement | Operator prepares (step 1b), Jake reads | Stripe read-only, tracker `books/<YYYY-MM>` | OPERATOR.md step 1b |
+| 14 | Disputes and refunds: evidence packet or refund details prepared | Operator prepares, **Jake** files or refunds in Stripe | tracker `disputes/<id>` | OPERATOR.md steps 1, 1b, 7 |
+| 15 | Warm leads (people Jake knows): homepage built, Gmail draft saved | Operator prepares, **Jake** hits send | Gmail drafts, tracker `warm: true` | OPERATOR.md step 5 |
+
+## What still needs Jake, and why
+Each is prepared so it takes minutes, and each reaches him as a push (OPERATOR.md step 7):
+- **Filing a dispute response and issuing refunds:** both are money moves on InstateMe's Stripe account, which the operator only reads.
+- **Legal threats** and anything asking to move money or share credentials.
+- **Reconnecting an account** when Gmail, Stripe or Cloudflare access lapses (sign-ins need a person). The push names the exact fix.
+- **Sending warm-lead drafts**, so a note to someone he knows comes from him.
+- **Buying a second sending domain and mailbox** when outreach hits the 30-a-day ceiling with healthy numbers.
+- **Taxes and the books themselves:** the monthly ledger is automatic; filing and moving BringsUp's money out of InstateMe's books is his or his accountant's.
+- **One-time:** a separate Stripe account for BringsUp, a lawyer's review of the terms.
 
 ## Accuracy (applies to everything we send or publish)
 - Every fact on a site, homepage, brand guide or email comes from a source we can point to: the owner's start form, their own website or menu, their Google listing, or their uploads. Keep the list in `work/.../sources.md` while building.
@@ -45,6 +58,7 @@ The one map of the business: every step, who or what does it, which system it to
 - **Backend (Supabase `rgeeynodxvusivfbaxfu`):** functions `projects` (state machine, webhooks, worker API) and `redesign` (/try/ and outreach previews). Deploy with tools/bundle_function.sh, then switch JWT verification off again.
 - **Payments:** Stripe Payment Links on the InstateMe account (Jake's other company, for now): $1,000 `plink_1UTR1oB5nImYYaicDgVP1GNc`, $150 `plink_1UTR1oB5nImYYaicoE1lqGy6`. Pages, terms and receipts say so.
 - **Hosting:** Cloudflare Pages, account `10b43838f31b9959c8eb61aafdd200f3`, with one project per customer.
+- **Watchdog:** `.github/workflows/watchdog.yml` runs `tools/watchdog.sh` every 2 hours: bringsup.com pages, the projects function, the four Tally forms, both Stripe links, and the operator's heartbeat (`?pulse=1`, from `projects-worker heartbeat` at the end of every run; 5 hours without one fails). A failed run makes GitHub email Jake. It also re-enables itself each run, since GitHub turns off scheduled workflows in repos without commits for 60 days.
 - **Tests:** `node tools/simulate-flow.ts` (signed fake submissions against production; it cleans up after itself).
 
 ## Keeping it in sync

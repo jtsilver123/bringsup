@@ -1,0 +1,24 @@
+name: Watchdog
+
+# Every 2 hours: is the site up, are the forms and payment links live, and is the hourly operator still running?
+# A failed run makes GitHub email the repo owner. See tools/WORKFLOW.md "Watchdog".
+on:
+  schedule:
+    - cron: "17 */2 * * *"
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sh tools/watchdog.sh
+      # GitHub turns off scheduled workflows in a repo with no commits for 60 days. Re-enabling keeps this one on.
+      - if: always()
+        run: gh api -X PUT "repos/${{ github.repository }}/actions/workflows/watchdog.yml/enable"
+        env:
+          GH_TOKEN: ${{ github.token }}

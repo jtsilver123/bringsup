@@ -12,6 +12,7 @@
 //   node tools/projects-worker.ts payment <ref> <approve|extra> <cents> <stripe-session-id>  record a completed Stripe payment (once per session)
 //   node tools/projects-worker.ts find <email>                 which project an email address belongs to
 //   node tools/projects-worker.ts health                       alerts, failing jobs, stuck projects, quiet customers
+//   node tools/projects-worker.ts heartbeat "<run summary>"    the last step of every run: tells the outside watchdog we're alive
 //
 // Env: BRINGSUP_WORKER_TOKEN, CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID.
 import { execFileSync } from "node:child_process";
@@ -168,7 +169,9 @@ else if (cmd === "update" && ref && file) {
 else if (cmd === "payment" && ref && process.argv[4] && process.argv[5] && process.argv[6]) console.log(JSON.stringify(await api("POST", "", { action: "payment", ref, kind: process.argv[4], cents: Number(process.argv[5]), stripe_id: process.argv[6] }), null, 2));
 else if (cmd === "email-changes" && ref && file) console.log(JSON.stringify(await api("POST", "", { action: "email_changes", ref, text: readFileSync(file, "utf8") }), null, 2));
 else if (cmd === "find" && ref) console.log(JSON.stringify(await api("GET", `?email=${encodeURIComponent(ref)}`), null, 2));
-else if (cmd === "health") console.log(JSON.stringify(await api("GET", "?health=1"), null, 2)); else {
-  console.error("Usage: node tools/projects-worker.ts jobs | show <ref> | preview <ref> | launch <ref> | dns <ref> | update <ref> <json-file> | fail <ref> <msg> | email-changes <ref> <txt-file> | payment <ref> <approve|extra> <cents> <stripe-session-id> | find <email> | health");
+else if (cmd === "health") console.log(JSON.stringify(await api("GET", "?health=1"), null, 2));
+else if (cmd === "heartbeat") console.log(JSON.stringify(await api("POST", "", { action: "heartbeat", text: ref || "" })));
+else {
+  console.error("Usage: node tools/projects-worker.ts jobs | show <ref> | preview <ref> | launch <ref> | dns <ref> | update <ref> <json-file> | fail <ref> <msg> | email-changes <ref> <txt-file> | payment <ref> <approve|extra> <cents> <stripe-session-id> | find <email> | health | heartbeat <summary>");
   process.exit(1);
 }
