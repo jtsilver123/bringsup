@@ -1,0 +1,21 @@
+/* Before/after slider (home hero and the /try/ "Today and new" compare). */
+.ba{margin-top:64px}
+@media (max-width:700px){.ba{margin-top:44px}}
+.ba-labels{display:flex;justify-content:space-between;font-size:16px;font-weight:700;color:var(--subtle);margin-bottom:10px}
+.ba-stage{position:relative;aspect-ratio:var(--ba-ratio,16/9);overflow:hidden;--pos:50%;user-select:none;-webkit-user-select:none;touch-action:pan-y;cursor:grab;background:var(--sand);border:1px solid var(--rule);border-radius:var(--r);-webkit-tap-highlight-color:transparent}
+.ba-stage.dragging{cursor:grabbing}
+.ba-stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:left top;pointer-events:none}
+.ba-after{clip-path:inset(0 calc(100% - var(--pos)) 0 0)}
+.ba-stage.glide .ba-after{transition:clip-path .22s var(--out)}
+.ba-stage.glide .ba-line,.ba-stage.glide .ba-knob{transition:left .22s var(--out),transform .18s var(--out),box-shadow .18s var(--out)}
+.ba-stage .ba-old{object-position:center top}
+.ba-line{position:absolute;top:0;bottom:0;left:var(--pos);width:2px;margin-left:-1px;background:#fff;box-shadow:0 0 0 1px rgba(22,24,29,.2);pointer-events:none}
+.ba-knob{position:absolute;top:50%;left:var(--pos);width:48px;height:48px;margin:-24px 0 0 -24px;border-radius:50%;background:var(--ink);color:var(--paper);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 3px #fff,0 2px 6px rgba(22,24,29,.25);pointer-events:none;transition:transform .18s var(--out),box-shadow .18s var(--out)}
+.ba-knob svg{transition:transform .18s var(--out)}
+.ba-stage:hover .ba-knob{transform:scale(1.06)}
+.ba-stage.dragging .ba-knob{transform:scale(1.16);box-shadow:0 0 0 3px #fff,0 6px 16px rgba(22,24,29,.3)}
+.ba-stage.dragging .ba-knob svg{transform:scale(.86)}
+.ba-stage.dragging .ba-line{width:3px;margin-left:-1.5px}
+.ba-range{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.ba-range:focus-visible ~ .ba-knob{outline:3px solid var(--ember-deep);outline-offset:4px;transform:scale(1.06)}
+.ba figcaption{margin-top:12px;max-width:44em}

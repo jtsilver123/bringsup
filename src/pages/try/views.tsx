@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent, type ReactNode, type Ref, type RefObject } from "react";
 import { SubFooter, SubHeader } from "../../components/Chrome.tsx";
 import { Arrow } from "../../components/icons.tsx";
+import { BeforeAfter } from "../home/BeforeAfter.tsx";
 import { BrandCard, type BrandPreview } from "./BrandCard.tsx";
 
 export type View = "ask" | "working" | "result" | "queued" | "failed";
@@ -134,6 +135,8 @@ export interface ResultData {
   handmade?: boolean;
   /** Only when we made a logo refresh: their logo now and refreshed, and the colors (concept.brand). */
   brand?: BrandPreview;
+  /** Their site today and the new one, as pictures (concept.compare): the first-visit reveal and the side-by-side slider. */
+  compare?: { before: { desktop?: string; phone?: string }; after: { desktop?: string; phone?: string } };
 }
 
 interface ResultProps {
@@ -173,8 +176,19 @@ function useWidth(el: RefObject<HTMLElement | null>, active: boolean): number {
 }
 
 /** One live, scaled copy of the page: laid out at `layoutWidth`, shrunk to `width`, `height` tall on screen. Fades in once loaded. */
-function Screen({ html, scripts, layoutWidth, width, height, title, hint }: { html: string; scripts: boolean; layoutWidth: number; width: number; height: number; title: string; hint?: boolean }) {
+type RevealPhase = "wait" | "today" | "wipe" | "new" | "done";
+
+function Screen({ html, scripts, layoutWidth, width, height, title, hint, reveal, onRevealReady, onRevealFail }: {
+  html: string; scripts: boolean; layoutWidth: number; width: number; height: number; title: string; hint?: boolean;
+  /** Their site today, laid over the new one, and where the shared reveal is (ResultView runs one timeline for every frame).
+   *  `label` puts "Your site today" / "Your new site" on this frame: only the main one, so the small phone stays clean. */
+  reveal?: { src: string; phase: RevealPhase; label: boolean };
+  onRevealReady?: () => void; onRevealFail?: () => void;
+}) {
   const [ready, setReady] = useState(false);
+  const [todayLoaded, setTodayLoaded] = useState(false);
+  useEffect(() => { if (reveal && ready && todayLoaded) onRevealReady?.(); }, [ready, todayLoaded]); // eslint-disable-line react-hooks/exhaustive-deps -- report once
+  const phase = reveal?.phase ?? "done";
   // "Scroll to explore" until they've been inside the preview a moment. Scrolling inside the frame can't be seen from here,
   // so a short stay with the pointer (or a finger) over it stands in for "they found it".
   const [explored, setExplored] = useState(false);
@@ -189,7 +203,14 @@ function Screen({ html, scripts, layoutWidth, width, height, title, hint }: { ht
       <iframe title={title} sandbox={scripts ? "allow-scripts allow-popups allow-popups-to-escape-sandbox" : "allow-popups"} srcDoc={html}
         onLoad={() => setReady(true)}
         style={{ width: layoutWidth, height: height / scale, transform: `scale(${scale})` }}></iframe>
-      {hint && ready && (
+      {reveal && (phase === "wait" || phase === "today" || phase === "wipe") && (
+        <div className={`rv rv-${phase}`} aria-hidden="true">
+          <img src={reveal.src} alt="" onLoad={() => setTodayLoaded(true)} onError={() => onRevealFail?.()} />
+          {reveal.label && <span className="rv-tag">Your site today</span>}
+        </div>
+      )}
+      {reveal?.label && phase === "new" && <span className="rv-tag rv-new" aria-hidden="true">Your new site</span>}
+      {hint && ready && (phase === "done" || phase === "new") && (
         <span className={explored ? "scroll-hint gone" : "scroll-hint"} aria-hidden="true">
           {touch ? "Swipe to explore" : "Scroll to explore"}
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M6 13l6 6 6-6" /></svg>
@@ -295,6 +316,46 @@ export function ResultView({ hidden, data, onCopy, onFullScreen, onAgain }: Resu
 
   const html = data?.html || "";
   const scripts = Boolean(data?.handmade);
+  // First visit to a prospect's preview: their site today wipes away to the new one. Once per preview, never with reduced motion.
+  const compare = data?.compare;
+  const revealKey = data ? "bu-revealed-" + data.id : "";
+  // One timeline for every visible frame, so the laptop and the phone beside it start on their site today and wipe together.
+  const [phase, setPhase] = useState<RevealPhase>("done");
+  const readyFrames = useRef(new Set<string>());
+  const [readyTick, setReadyTick] = useState(0);
+  useEffect(() => {
+    if (!compare || !revealKey) return;
+    let seenIt = false;
+    try { seenIt = localStorage.getItem(revealKey) === "1"; } catch { /* storage blocked */ }
+    if (!seenIt && !matchMedia("(prefers-reduced-motion: reduce)").matches) setPhase("wait");
+  }, [revealKey]); // eslint-disable-line react-hooks/exhaustive-deps -- once per preview
+  const revealFrames = [
+    L?.browser.shown && compare?.before.desktop ? "desktop" : "",
+    L?.phone.shown && compare?.before.phone ? "phone" : "",
+  ].filter(Boolean);
+  useEffect(() => {
+    if (phase === "wait" && revealFrames.length && revealFrames.every((k) => readyFrames.current.has(k))) setPhase("today");
+  }, [phase, readyTick, revealFrames.join()]); // eslint-disable-line react-hooks/exhaustive-deps -- revealFrames is derived
+  useEffect(() => {
+    const next = { today: ["wipe", 1500], wipe: ["new", 1100], new: ["done", 2600] } as const;
+    if (!(phase in next)) return;
+    const [to, ms] = next[phase as keyof typeof next];
+    const t = setTimeout(() => {
+      setPhase(to);
+      if (to === "done") try { localStorage.setItem(revealKey, "1"); } catch { /* storage blocked */ }
+    }, ms);
+    return () => clearTimeout(t);
+  }, [phase]); // eslint-disable-line react-hooks/exhaustive-deps -- the key is fixed for the preview
+  // Covered (blank) while their site today loads; if that takes over 6s, skip the reveal rather than keep them waiting.
+  useEffect(() => {
+    if (phase !== "wait") return;
+    const t = setTimeout(() => setPhase("done"), 6000);
+    return () => clearTimeout(t);
+  }, [phase]);
+  const frameReady = (k: string) => { readyFrames.current.add(k); setReadyTick((n) => n + 1); };
+  const stopReveal = () => setPhase("done");
+  // Switching between Desktop and Phone mid-reveal just ends it.
+  useEffect(() => { if (choice) setPhase((p) => (p === "done" ? p : "done")); }, [choice]);
   const name = data?.name || "your business";
   // Outreach concepts carry the prospect's tracker slug, so the start form lands on their row.
   const startHref = data ? "/start/?ref=" + encodeURIComponent(data.ref || "redesign-" + data.id) : "/start/";
@@ -336,7 +397,9 @@ export function ResultView({ hidden, data, onCopy, onFullScreen, onAgain }: Resu
                     style={{ width: L.browser.w, transform: place(L.browser, L.browser.h, L.stageH) }}>
                     <div className="browser">
                       <div className="chrome" aria-hidden="true"><i></i><i></i><i></i><span id="r-host">{data?.address}</span></div>
-                      <Screen html={html} scripts={scripts} layoutWidth={DESKTOP_WIDTH} width={L.deskW} height={L.deskH} title={`${name} homepage, desktop`} hint={size === "desktop"} />
+                      <Screen html={html} scripts={scripts} layoutWidth={DESKTOP_WIDTH} width={L.deskW} height={L.deskH} title={`${name} homepage, desktop`} hint={size === "desktop"}
+                        reveal={phase !== "done" && L.browser.shown && compare?.before.desktop ? { src: compare.before.desktop, phase, label: size === "desktop" } : undefined}
+                        onRevealReady={() => frameReady("desktop")} onRevealFail={stopReveal} />
                     </div>
                   </div>
                 )}
@@ -344,7 +407,9 @@ export function ResultView({ hidden, data, onCopy, onFullScreen, onAgain }: Resu
                   <div className={["frame f-phone", L.overlap && "overlap", !L.phone.shown && "off"].filter(Boolean).join(" ")} inert={!L.phone.shown}
                     style={{ width: L.phone.w + L.pad * 2, transform: place(L.phone, L.phone.h + L.pad * 2, L.stageH) }}>
                     <div className="phone">
-                      <Screen html={html} scripts={scripts} layoutWidth={PHONE_WIDTH} width={L.phone.w} height={L.phone.h} title={`${name} homepage, phone`} hint={size === "phone"} />
+                      <Screen html={html} scripts={scripts} layoutWidth={PHONE_WIDTH} width={L.phone.w} height={L.phone.h} title={`${name} homepage, phone`} hint={size === "phone"}
+                        reveal={phase !== "done" && L.phone.shown && compare?.before.phone ? { src: compare.before.phone, phase, label: size === "phone" } : undefined}
+                        onRevealReady={() => frameReady("phone")} onRevealFail={stopReveal} />
                     </div>
                   </div>
                 )}
@@ -355,6 +420,21 @@ export function ResultView({ hidden, data, onCopy, onFullScreen, onAgain }: Resu
       </div>
 
       <div className="wrap"><Better items={data?.improvements} where="narrow" /></div>
+
+      {compare?.before.desktop && compare.after.desktop && (
+        <section className="wrap r-compare" aria-labelledby="r-compare-h">
+          <h2 className="t3" id="r-compare-h">Today and new, side by side</h2>
+          <div className={small && compare.before.phone && compare.after.phone ? "rc-phone" : "rc-desktop"}>
+            {small && compare.before.phone && compare.after.phone
+              ? <BeforeAfter labels={["New", "Today"]} caption="Drag the handle to compare."
+                  after={{ src: compare.after.phone, width: 780, height: 1688, alt: `The new ${name} homepage on a phone` }}
+                  before={{ src: compare.before.phone, width: 780, height: 1688, alt: `The ${name} homepage today, on a phone` }} />
+              : <BeforeAfter labels={["New", "Today"]} caption="Drag the handle to compare."
+                  after={{ src: compare.after.desktop, width: 1664, height: 1040, alt: `The new ${name} homepage` }}
+                  before={{ src: compare.before.desktop, width: 1664, height: 1040, alt: `The ${name} homepage today` }} />}
+          </div>
+        </section>
+      )}
 
       <BrandCard name={data?.name || "your business"} brand={data?.brand} />
 

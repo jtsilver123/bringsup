@@ -91,31 +91,54 @@ async function complete(id: string): Promise<void> {
   console.log(res.status === "skipped" ? "Skipped (not a business)." : `Published: ${res.link}`);
 }
 
-/** The link preview card's picture (iMessage, Gmail, WhatsApp), 1200x630 base64 JPEG: their homepage in a browser frame
- *  beside "This could be your new website. Made for <name>" (tools/worker/og-card.html). */
-async function previewImage(file: string, name: string): Promise<string | undefined> {
+type Shots = { before: { desktop?: string; phone?: string }; after: { desktop?: string; phone?: string } };
+
+/** Pictures for the preview, all base64 JPEG, made in one browser run:
+ *  - og: the link preview card (iMessage, Gmail, WhatsApp), 1200x630: their homepage in a browser frame beside
+ *    "This could be your new website. Made for <name>" (tools/worker/og-card.html);
+ *  - shots: their site today (from `currentUrl`) and the new one, at desktop and phone size, for the /try/ reveal and compare.
+ *  Anything that fails is left out; the preview still publishes. */
+async function previewImages(file: string, name: string, currentUrl?: string): Promise<{ og?: string; shots?: Shots }> {
   let browser: any;
+  const out: { og?: string; shots?: Shots } = {};
   try {
     const { chromium } = await import("/opt/node-tools/node_modules/playwright/index.mjs" as string);
     browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" }).catch(() => chromium.launch());
-    const site = await browser.newPage({ viewport: { width: 1280, height: 860 } });
-    await site.goto("file://" + resolve(file), { waitUntil: "networkidle", timeout: 30_000 }).catch(() => {});
-    await site.waitForTimeout(800);
-    const top: Buffer = await site.screenshot({ type: "jpeg", quality: 85 });
-    const card = await browser.newPage({ viewport: { width: 1200, height: 630 } });
-    const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
-    const html = readFileSync(join(import.meta.dirname, "worker", "og-card.html"), "utf8")
-      .replaceAll("{{NAME}}", esc(name)).replaceAll("{{SHOT}}", "data:image/jpeg;base64," + top.toString("base64"));
-    await card.setContent(html, { waitUntil: "networkidle", timeout: 30_000 }).catch(() => {});
-    await card.evaluate(() => document.fonts.ready);
-    const shot: Buffer = await card.screenshot({ type: "jpeg", quality: 82 });
-    return shot.toString("base64");
+    const shoot = async (url: string, phone: boolean): Promise<Buffer | undefined> => {
+      const page = await browser.newPage(phone
+        ? { viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true }
+        : { viewport: { width: 1280, height: 800 }, deviceScaleFactor: 1.3 });
+      try {
+        // A page that didn't load (bad address, site down, error status) must never be shown as "Your site today".
+        const res = await page.goto(url, { waitUntil: "networkidle", timeout: 30_000 }).catch(() => null);
+        if (!url.startsWith("file:") && (!res || !res.ok())) return undefined;
+        await page.waitForTimeout(1200);
+        return await page.screenshot({ type: "jpeg", quality: 76 });
+      } catch { return undefined; } finally { await page.close().catch(() => {}); }
+    };
+    const page = "file://" + resolve(file);
+    const afterDesktop = await shoot(page, false);
+    const shots: Shots = { before: {}, after: { desktop: afterDesktop?.toString("base64"), phone: (await shoot(page, true))?.toString("base64") } };
+    if (currentUrl) {
+      shots.before.desktop = (await shoot(currentUrl, false))?.toString("base64");
+      shots.before.phone = (await shoot(currentUrl, true))?.toString("base64");
+    }
+    if (shots.before.desktop && shots.after.desktop) out.shots = shots;
+    if (afterDesktop) {
+      const card = await browser.newPage({ viewport: { width: 1200, height: 630 } });
+      const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+      const html = readFileSync(join(import.meta.dirname, "worker", "og-card.html"), "utf8")
+        .replaceAll("{{NAME}}", esc(name)).replaceAll("{{SHOT}}", "data:image/jpeg;base64," + afterDesktop.toString("base64"));
+      await card.setContent(html, { waitUntil: "networkidle", timeout: 30_000 }).catch(() => {});
+      await card.evaluate(() => document.fonts.ready);
+      out.og = (await card.screenshot({ type: "jpeg", quality: 82 })).toString("base64");
+    }
   } catch (e) {
-    console.error(`No link preview picture (the link still works): ${String(e).slice(0, 160)}`);
-    return undefined;
+    console.error(`Some preview pictures weren't made (the link still works): ${String(e).slice(0, 160)}`);
   } finally {
     await browser?.close().catch(() => {});
   }
+  return out;
 }
 
 async function outreach(slug: string, dir: string): Promise<void> {
@@ -143,8 +166,9 @@ async function outreach(slug: string, dir: string): Promise<void> {
       process.exit(1);
     }
   }
-  const og_image = html ? await previewImage(join(dir, "index.html"), String(concept.business_name)) : undefined;
-  const res = await call("POST", "", { action: "create", ref: slug, concept, ...(html ? { html } : {}), ...(og_image ? { og_image } : {}), ...meta });
+  const pics = html ? await previewImages(join(dir, "index.html"), String(concept.business_name), meta.url) : {};
+  if (html && !pics.shots) console.error("No Today/New pictures (is meta.json's url their current site?). The preview publishes without the reveal.");
+  const res = await call("POST", "", { action: "create", ref: slug, concept, ...(html ? { html } : {}), ...(pics.og ? { og_image: pics.og } : {}), ...(pics.shots ? { shots: pics.shots } : {}), ...meta });
   if (!res.link) { console.error(JSON.stringify(res)); process.exit(1); }
   console.log(res.link);
 }

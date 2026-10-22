@@ -156,3 +156,19 @@ form{display:flex;flex-direction:column;gap:18px}
 @media (prefers-reduced-motion:reduce){.scroll-hint,.scroll-hint svg{animation:none;transition:none}}
 /* On the phone frame, sit above a site's own sticky call bar instead of covering it. */
 .f-phone .scroll-hint{bottom:96px}
+
+/* The first-visit reveal: their site today on top, then a wipe uncovers the new one. */
+.rv{position:absolute;inset:0;z-index:3;background:#fff;overflow:hidden;clip-path:inset(0 0 0 0)}
+.rv img{display:block;width:100%;height:100%;object-fit:cover;object-position:top center}
+.rv-wait img,.rv-wait .rv-tag{opacity:0}
+.rv-today{opacity:1;transition:opacity .3s var(--out)}
+.rv-wipe{clip-path:inset(0 0 0 100%);transition:clip-path 1.05s cubic-bezier(.65,0,.35,1)}
+.rv-tag{position:absolute;left:14px;bottom:14px;z-index:4;padding:7px 12px;border-radius:999px;background:rgba(22,24,29,.86);color:#fff;font:700 13px/1 var(--body);pointer-events:none;box-shadow:0 6px 18px rgba(22,24,29,.22)}
+.rv-new{background:var(--ember);animation:rv-tag 2.6s var(--out) both}
+@keyframes rv-tag{0%{opacity:0;transform:translateY(-4px)}12%,80%{opacity:1;transform:none}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.rv,.rv-new{transition:none;animation:none}}
+
+/* Today and new, side by side */
+.r-compare{padding-top:56px}
+.r-compare .ba{margin-top:20px}
+.r-compare .rc-phone{max-width:340px}
