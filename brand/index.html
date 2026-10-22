@@ -5,156 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BringsUp brand guide</title>
 <meta name="robots" content="noindex">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
-/* BringsUp brand tokens — see brand.md. Use only these values. */
-:root{--ink:#16181D;--muted:#3D414B;--subtle:#5A5F6B;--paper:#FBFAF7;--sand:#F1EEE6;--line:#E4E1D9;--ember:#C2410C;--ember-deep:#9A3412;--glow:#FFB37A;--tint:#FFE8DC;--display:'Bricolage Grotesque',system-ui,sans-serif}
-*{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:'DM Sans',system-ui,sans-serif;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
-h1,h2,h3,p{margin:0}
-a{color:var(--ember-deep)}
-.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
-header{padding:28px 0;border-bottom:1px solid var(--line)}
-header .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
-header img{height:40px;width:auto}
-.eyebrow{color:var(--ember-deep);font-weight:700;font-size:15px;letter-spacing:.06em;text-transform:uppercase}
-.display{font-family:var(--display);font-weight:800;letter-spacing:-.03em}
-h1{font-size:clamp(40px,6vw,72px);line-height:1;margin-top:12px}
-h2{font-size:clamp(28px,3.4vw,40px);line-height:1.05;margin-top:10px}
-section{padding:72px 0;border-bottom:1px solid var(--line)}
-.lead{font-size:19px;color:var(--muted);margin-top:16px;max-width:680px}
-.grid{display:grid;gap:16px;margin-top:32px}
-.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
-.g5{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
-.tile{border:1px solid var(--line);border-radius:20px;overflow:hidden;background:#fff}
-.tile .show{height:200px;display:flex;align-items:center;justify-content:center;padding:24px}
-.tile .show img{max-height:64px;width:auto}
-.tile .cap{padding:14px 18px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;font-size:15px;flex-wrap:wrap}
-.tile .cap a{font-weight:700;text-decoration:none}
-.sw{border-radius:20px;overflow:hidden;border:1px solid var(--line);background:#fff}
-.sw .c{height:110px}
-.sw div.t{padding:12px 14px;font-size:14px;line-height:1.4}
-.sw b{display:block;font-size:16px}
-.sw code{color:var(--subtle)}
-.type{margin-top:32px;display:grid;gap:24px}
-.type .row{display:grid;grid-template-columns:200px 1fr;gap:24px;align-items:baseline;border-top:1px solid var(--line);padding-top:20px}
-@media (max-width:640px){.type .row{grid-template-columns:1fr;gap:6px}}
-.type small{color:var(--subtle);font-size:14px}
-.btns{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px;align-items:center}
-.btn{display:inline-flex;align-items:center;min-height:56px;padding:16px 26px;border-radius:999px;font-weight:700;font-size:18px;text-decoration:none}
-.dark{background:var(--ink);padding:24px;border-radius:20px;display:inline-flex}
-.dos{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:32px}
-.dos div{border-radius:20px;padding:24px;background:#fff;border:1px solid var(--line)}
-.dos h3{font-size:18px}
-.dos ul{margin:12px 0 0;padding-left:20px;color:var(--muted)}
-.dos li+li{margin-top:6px}
-footer{padding:40px 0;color:var(--subtle);font-size:15px}
-.lift{position:relative;white-space:nowrap;display:inline-block}
-.lift svg{position:absolute;left:-2%;bottom:-.12em;width:106%;height:.32em;overflow:visible}
-.lift path{fill:none;stroke:var(--ember);stroke-width:6;stroke-linecap:round;vector-effect:non-scaling-stroke}
-.sig-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:32px}
-.sig-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:28px}
-.sig-card .demo{min-height:110px;display:flex;align-items:center}
-.sig-card h3{font-size:18px;margin-top:16px}
-.sig-card p{color:var(--muted);font-size:16px;margin-top:6px}
-.stars{color:var(--ember);font-size:40px;letter-spacing:4px}
-.motion{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:32px}
-.motion div{background:#fff;border:1px solid var(--line);border-radius:20px;padding:22px}
-.motion b{display:block;font-family:var(--display);font-size:28px;letter-spacing:-.02em}
-.motion span{color:var(--muted);font-size:15px}
-</style>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/assets/brand/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#16181D">
 </head>
 <body>
-<header><div class="wrap"><a href="/"><img src="/assets/brand/logo.svg" alt="BringsUp" width="170" height="40"></a><a href="/">bringsup.com</a></div></header>
-<main class="wrap">
-  <section>
-    <p class="eyebrow">Brand guide</p>
-    <h1 class="display">Websites as good as <span class="lift">your reviews.<svg viewBox="0 0 300 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 16 C 70 11, 170 10, 250 12 C 268 12, 282 9, 296 3"/></svg></span></h1>
-    <p class="lead">Everything with the BringsUp name on it: the site, cold emails, concept boards. The source of truth is <code>brand.md</code> in the repo; this page is the visual version.</p>
-  </section>
-
-  <section>
-    <p class="eyebrow">Logo</p>
-    <h2 class="display">The review bubble.</h2>
-    <p class="lead">A speech bubble for what your customers say, with an arrow for what we do with it: bring it up. Ink and Glow on light backgrounds, the reverse on dark, and Glow on Ink for app icons and avatars. The tail always sits bottom left.</p>
-    <div class="grid g2">
-      <div class="tile"><div class="show"><img src="/assets/brand/logo.svg" alt="BringsUp logo" width="205" height="48"></div><div class="cap"><span>Primary lockup</span><a href="/assets/brand/logo.svg" download>logo.svg</a></div></div>
-      <div class="tile"><div class="show" style="background:var(--ink)"><img src="/assets/brand/logo-reverse.svg" alt="BringsUp logo, reverse" width="205" height="48"></div><div class="cap"><span>Reverse lockup</span><a href="/assets/brand/logo-reverse.svg" download>logo-reverse.svg</a></div></div>
-      <div class="tile"><div class="show"><img src="/assets/brand/mark.svg" alt="BringsUp mark" width="64" height="64"></div><div class="cap"><span>Mark</span><a href="/assets/brand/mark.svg" download>mark.svg</a></div></div>
-      <div class="tile"><div class="show" style="background:var(--ink)"><img src="/assets/brand/mark-reverse.svg" alt="BringsUp mark, reverse" width="64" height="64"></div><div class="cap"><span>Mark, reverse</span><a href="/assets/brand/mark-reverse.svg" download>mark-reverse.svg</a></div></div>
-      <div class="tile"><div class="show" style="background:var(--ink)"><img src="/assets/brand/avatar.png" alt="BringsUp app icon" width="96" height="96" style="max-height:96px;border-radius:22px"></div><div class="cap"><span>App icon and avatar</span><a href="/assets/brand/avatar.png" download>avatar.png</a></div></div>
-      <div class="tile"><div class="show"><img src="/assets/brand/wordmark.svg" alt="BringsUp wordmark" width="200" height="50" style="max-height:44px"></div><div class="cap"><span>Wordmark</span><a href="/assets/brand/wordmark.svg" download>wordmark.svg</a></div></div>
-      <div class="tile"><div class="show" style="background:var(--sand)"><img src="/assets/og.png" alt="Link preview image" width="1200" height="630" style="max-height:150px;border-radius:8px"></div><div class="cap"><span>Link preview</span><a href="/assets/og.png" download>og.png</a></div></div>
-    </div>
-  </section>
-
-  <section>
-    <p class="eyebrow">Signatures</p>
-    <h2 class="display">Two things that make it ours.</h2>
-    <p class="lead">Use each at most once per screen. They work because they're rare.</p>
-    <div class="sig-grid">
-      <div class="sig-card"><div class="demo"><span class="display lift" style="font-size:44px">should too.<svg viewBox="0 0 300 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 16 C 70 11, 170 10, 250 12 C 268 12, 282 9, 296 3"/></svg></span></div><h3>The lift</h3><p>A hand-drawn Ember underline that rises at the end, like the arrow in the mark. It goes under the one phrase that carries the promise, and draws itself in once.</p></div>
-      <div class="sig-card"><div class="demo"><span class="stars" aria-label="Five stars">★★★★★</span></div><h3>Five stars</h3><p>Our shorthand for "your reputation". Always about the customer's reviews, never a claim about us. They light up one by one when first seen.</p></div>
-    </div>
-  </section>
-
-  <section>
-    <p class="eyebrow">Motion</p>
-    <h2 class="display">Quick, warm, purposeful.</h2>
-    <p class="lead">Motion explains something or confirms an action. If it does neither, cut it. Everything respects reduced-motion settings.</p>
-    <div class="motion">
-      <div><b>150–250ms</b><span>Hovers and presses. Buttons press to 97%, arrows nudge 4px.</span></div>
-      <div><b>300–450ms</b><span>Menus, dialogs, FAQ answers opening.</span></div>
-      <div><b>600ms</b><span>Sections easing in on scroll, staggered 90ms.</span></div>
-      <div><b>900ms</b><span>The lift drawing itself under the promise.</span></div>
-    </div>
-  </section>
-
-  <section>
-    <p class="eyebrow">Color</p>
-    <h2 class="display">Warm neutrals and one accent.</h2>
-    <p class="lead">Ember is the only accent, once per screen. Glow appears only on Ink. No gradients, no other hues. Prospect concepts use the prospect's colors, never ours.</p>
-    <div class="grid g5">
-      <div class="sw"><div class="c" style="background:#16181D"></div><div class="t"><b>Ink</b><code>#16181D</code><br>Text, dark sections</div></div>
-      <div class="sw"><div class="c" style="background:#FBFAF7;border-bottom:1px solid var(--line)"></div><div class="t"><b>Paper</b><code>#FBFAF7</code><br>Page background</div></div>
-      <div class="sw"><div class="c" style="background:#F1EEE6"></div><div class="t"><b>Sand</b><code>#F1EEE6</code><br>Alternate sections</div></div>
-      <div class="sw"><div class="c" style="background:#E4E1D9"></div><div class="t"><b>Line</b><code>#E4E1D9</code><br>Borders</div></div>
-      <div class="sw"><div class="c" style="background:#C2410C"></div><div class="t"><b>Ember</b><code>#C2410C</code><br>Primary buttons, accents</div></div>
-      <div class="sw"><div class="c" style="background:#9A3412"></div><div class="t"><b>Ember Deep</b><code>#9A3412</code><br>Accent text, hover</div></div>
-      <div class="sw"><div class="c" style="background:#FFB37A"></div><div class="t"><b>Glow</b><code>#FFB37A</code><br>Accent on Ink only</div></div>
-      <div class="sw"><div class="c" style="background:#FFE8DC"></div><div class="t"><b>Tint</b><code>#FFE8DC</code><br>Icon tiles, pills</div></div>
-      <div class="sw"><div class="c" style="background:#3D414B"></div><div class="t"><b>Muted</b><code>#3D414B</code><br>Body copy</div></div>
-      <div class="sw"><div class="c" style="background:#5A5F6B"></div><div class="t"><b>Subtle</b><code>#5A5F6B</code><br>Captions</div></div>
-    </div>
-  </section>
-
-  <section>
-    <p class="eyebrow">Type and buttons</p>
-    <h2 class="display">Bold headlines, friendly body.</h2>
-    <div class="type">
-      <div class="row"><small>Display · Bricolage Grotesque 800, −0.03em</small><span class="display" style="font-size:52px;line-height:1">Your website should too.</span></div>
-      <div class="row"><small>Eyebrow · DM Sans 700, uppercase, +0.06em</small><span class="eyebrow">How it works</span></div>
-      <div class="row"><small>Body · DM Sans 400, 17–20px</small><span style="font-size:19px;color:var(--muted)">We redesign websites for local shops that customers already love.</span></div>
-    </div>
-    <div class="btns">
-      <a class="btn" style="background:var(--ember);color:#fff" href="/#concept">Primary</a>
-      <a class="btn" style="box-shadow:inset 0 0 0 2px var(--ink);color:var(--ink)" href="/#how">Secondary</a>
-      <span class="dark"><a class="btn" style="background:var(--glow);color:var(--ink)" href="/#concept">On dark</a></span>
-    </div>
-  </section>
-
-  <section style="border-bottom:0">
-    <p class="eyebrow">Voice</p>
-    <h2 class="display">Like a neighbor who happens to build websites.</h2>
-    <div class="dos">
-      <div><h3>Do</h3><ul><li>Lead with what's great: their reviews, their history.</li><li>Write buttons in the visitor's words: "Get my free concept".</li><li>Make errors helpful: "No website yet? Your Facebook page works too."</li><li>Say "flat $1,000" and "free concept".</li><li>Keep it plain, warm and specific.</li><li>Label sample work as fictional.</li></ul></div>
-      <div><h3>Don't</h3><ul><li>Mention or quote bad reviews.</li><li>Call a site bad or ugly. "Outdated" is the strongest word.</li><li>Use jargon (SEO, conversion, UX), hype words or emojis.</li><li>Invent stats, clients or results.</li></ul></div>
-    </div>
-  </section>
-</main>
-<footer><div class="wrap">© BringsUp · Questions about the brand: <a href="mailto:hello@bringsup.com">hello@bringsup.com</a></div></footer>
+<div id="root"><!--app--></div>
+<script type="module" src="/src/entries/brand.tsx"></script>
 </body>
 </html>
