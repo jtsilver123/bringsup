@@ -906,7 +906,9 @@ dialog.viewer::backdrop{background:rgba(22,24,29,.72);backdrop-filter:blur(4px)}
   if (window.BRINGSUP && window.BRINGSUP.api) {
     var heroBtn = $('.hero .ctas .btn-ember');
     heroBtn.href = '/try/'; heroBtn.firstChild.textContent = 'Redesign my website, free ';
-    $('#cta-h').textContent = 'See your business, redone. In a minute.';
+    var instant = !!window.BRINGSUP.instant;
+    $('#cta-h').textContent = instant ? 'See your business, redone. In a minute.' : 'See your business, redone. Today.';
+    if (!instant) $('#instant .form-foot').textContent = "We'll email your new homepage within the hour. Never shared, never sold.";
     $('#concept .lead').textContent = 'Paste your website and see your new homepage right here, built from your own photos, services and story.';
     $('#formcard').classList.add('live');
     var inst = $('#instant'); inst.hidden = false;

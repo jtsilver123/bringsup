@@ -79,6 +79,13 @@ function isWorker(req: Request): boolean {
 
 type SavedSite = Awaited<ReturnType<typeof readSite>>;
 
+/** Just enough of the site to draw a blurred "in progress" draft while a request waits in the queue. */
+function preview(site: SavedSite | null) {
+  if (!site) return null;
+  const name = (site.title || site.host).split(/\s[|\-–—:]\s/)[0].trim().slice(0, 60);
+  return { name, phone: site.phones[0] || "", colors: site.colors.slice(0, 3), images: site.images.filter((i) => !i.logo).slice(0, 4).map((i) => i.url) };
+}
+
 /** Queued requests with everything a designer needs: the same system prompt, schema and site summary instant mode uses. */
 async function queue(req: Request): Promise<Response> {
   const { data, error } = await db.from("redesigns").select("id, email, url, site, created_at")
@@ -130,10 +137,10 @@ Deno.serve(async (req) => {
     if (params.has("queue")) return isWorker(req) ? queue(req) : json(req, 401, { error: "Not allowed." });
     const id = params.get("id") || "";
     if (!/^[0-9a-f-]{36}$/i.test(id)) return json(req, 400, { error: "Missing id." });
-    const { data, error } = await db.from("redesigns").select("id, url, status, content, images").eq("id", id).maybeSingle();
+    const { data, error } = await db.from("redesigns").select("id, url, status, content, images, site").eq("id", id).maybeSingle();
     if (error) return json(req, 500, { error: "Something went wrong." });
     if (data?.status === "done") return json(req, 200, { id: data.id, status: "done", url: data.url, concept: data.content, images: data.images });
-    if (data?.status === "queued") return json(req, 202, { id: data.id, status: "queued", url: data.url });
+    if (data?.status === "queued") return json(req, 202, { id: data.id, status: "queued", url: data.url, preview: preview(data.site as SavedSite) });
     if (data?.status === "skipped") {
       return json(req, 422, { error: data.content?.not_a_business_reason || "That doesn't look like a local business website.", code: "not_a_business" });
     }
@@ -177,7 +184,7 @@ Deno.serve(async (req) => {
     const site = await readSite(body.url || "");
     if (!instant()) {
       await db.from("redesigns").update({ status: "queued", url: site.url, site }).eq("id", row.id);
-      return json(req, 202, { id: row.id, status: "queued", url: site.url });
+      return json(req, 202, { id: row.id, status: "queued", url: site.url, preview: preview(site) });
     }
     const { concept, usage } = await generate(site);
     if (concept.not_a_business) {
