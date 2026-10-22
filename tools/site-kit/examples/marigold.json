@@ -14,40 +14,50 @@
   "year_founded": "1984",
   "rating": "4.9",
   "review_count": "412",
-  "reviews_url": "",
+  "reviews_url": "https://www.google.com/maps/search/?api=1&query=Marigold+Bakery+Westbrook+CT",
   "brand_primary": "#3B2416",
-  "brand_accent": "#F2A65A",
+  "brand_accent": "#C8661E",
   "logo": "",
-  "hero_image": "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1800&q=80",
+  "hero_image": "https://images.unsplash.com/photo-1586444248902-2f64eddc13df?fm=jpg&fit=crop&w=1800&q=72",
   "primary_cta": { "label": "Order for pickup", "href": "contact/" },
   "home": {
-    "headline": "Westbrook's sourdough, since 1984.",
-    "subheadline": "A family bakery on Main Street baking bread, pastries and celebration cakes from scratch every morning. Order ahead and we'll have it boxed and ready.",
+    "headline": "Bread worth getting up early for.",
+    "subheadline": "Sourdough, croissants and celebration cakes, made by hand every morning on Main Street. Order by noon and it's boxed and waiting for you tomorrow.",
     "final_heading": "Come hungry. We'll have something warm."
   },
   "offer": {
     "title": "Menu",
-    "intro": "Everything is baked in-house, in small batches, every morning.",
+    "intro": "Baked in small batches before we open. When it's gone, it's gone.",
     "groups": [
-      { "name": "Breads", "items": [
-        { "name": "Country sourdough", "description": "Made with the starter we've kept going since we opened.", "price": "$9", "image": "https://images.unsplash.com/photo-1608198093002-ad4e005484ec?auto=format&fit=crop&w=900&q=80" },
-        { "name": "Seeded rye", "description": "Dense, nutty and great for sandwiches.", "price": "$8", "image": "" }
+      { "name": "Bread", "items": [
+        { "name": "Country sourdough", "description": "Made with the starter Rosa brought from Naples. Blistered crust, open crumb.", "price": "$9", "image": "" },
+        { "name": "Seeded rye", "description": "Dense and nutty, with sunflower and flax. Slices thin for sandwiches.", "price": "$8", "image": "https://images.unsplash.com/photo-1549931319-a545dcf3bc73?fm=jpg&fit=crop&w=1200&q=72" },
+        { "name": "Baguette", "description": "Out of the oven at 7 and again at 11.", "price": "$4", "image": "https://images.unsplash.com/photo-1568471173242-461f0a730452?fm=jpg&fit=crop&w=1200&q=72" }
       ]},
-      { "name": "Pastries", "items": [
-        { "name": "Cannoli", "description": "Filled to order so the shells stay crisp.", "price": "$4", "image": "https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=900&q=80" },
-        { "name": "Celebration cakes", "description": "Birthdays, weddings and everything in between. Give us three days.", "price": "From $45", "image": "https://images.unsplash.com/photo-1568254183919-78a4f43a2877?auto=format&fit=crop&w=900&q=80" }
+      { "name": "Pastry", "items": [
+        { "name": "Butter croissant", "description": "Three days from dough to case, laminated with cultured butter.", "price": "$4.25", "image": "https://images.unsplash.com/photo-1530610476181-d83430b64dcd?fm=jpg&fit=crop&w=1400&q=72" },
+        { "name": "Morning bun", "description": "Cinnamon, orange zest and a crackle of sugar.", "price": "$4.50", "image": "" },
+        { "name": "Pain au chocolat", "description": "Two batons of dark chocolate in every one.", "price": "$4.75", "image": "" }
+      ]},
+      { "name": "Cakes, to order", "items": [
+        { "name": "Celebration cakes", "description": "Birthdays, showers and anniversaries. Serves 8 to 40; give us three days.", "price": "from $48", "image": "" },
+        { "name": "Fruit tarts", "description": "Whatever is good at the farm stand that week, on almond cream.", "price": "$34", "image": "" }
       ]}
     ]
   },
   "about": {
     "heading": "Three generations of early mornings.",
     "paragraphs": [
-      "The Russo family opened Marigold in 1984 with one oven and a sourdough starter.",
-      "Forty years later we still bake everything by hand, before sunrise, right here in Westbrook."
+      "Sal and Rosa Russo opened Marigold in 1984 with one deck oven, a borrowed mixer and a sourdough starter Rosa brought from her mother's kitchen in Naples.",
+      "Their granddaughter Gia runs the ovens now. The starter is the same, the bread is still shaped by hand, and the first loaves come out at 5:30, before most of Westbrook is awake."
     ],
-    "images": ["https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=1200&q=80"]
+    "images": ["https://images.unsplash.com/photo-1517686469429-8bdb88b9f907?fm=jpg&fit=crop&w=1200&q=72"]
   },
-  "testimonials": [],
+  "testimonials": [
+    { "quote": "The sourdough is the real thing: a proper crust, a tangy open crumb, and it keeps for days. We drive in from Old Saybrook every Saturday for it.", "author": "Kate M." },
+    { "quote": "They made our daughter's birthday cake on two days' notice and it was the best thing on the table.", "author": "Luis A." },
+    { "quote": "Get there before 9 for the morning buns. Worth setting an alarm.", "author": "Priya D." }
+  ],
   "domain": "marigoldbakery.example",
-  "social": []
+  "social": [{ "label": "Instagram", "url": "https://instagram.com/" }]
 }

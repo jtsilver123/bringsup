@@ -1,7 +1,12 @@
 {
   "id": "demo",
   "url": "https://marigoldbakery.example/",
-  "images": [],
+  "images": [
+    "https://images.unsplash.com/photo-1586444248902-2f64eddc13df?fm=jpg&fit=crop&w=1800&q=72",
+    "https://images.unsplash.com/photo-1517686469429-8bdb88b9f907?fm=jpg&fit=crop&w=1200&q=72",
+    "https://images.unsplash.com/photo-1530610476181-d83430b64dcd?fm=jpg&fit=crop&w=1200&q=72",
+    "https://images.unsplash.com/photo-1549931319-a545dcf3bc73?fm=jpg&fit=crop&w=1200&q=72"
+  ],
   "concept": {
     "not_a_business": false,
     "not_a_business_reason": "",
@@ -13,31 +18,62 @@
     "email": "hello@marigoldbakery.example",
     "address": "12 Main Street, Westbrook, CT",
     "hours": [
-      { "days": "Tuesday to Friday", "time": "6am to 3pm" },
-      { "days": "Saturday and Sunday", "time": "7am to 2pm" },
-      { "days": "Monday", "time": "Closed" }
+      {
+        "days": "Tuesday to Friday",
+        "time": "6am to 3pm"
+      },
+      {
+        "days": "Saturday and Sunday",
+        "time": "7am to 2pm"
+      },
+      {
+        "days": "Monday",
+        "time": "Closed"
+      }
     ],
     "year_founded": "1984",
     "rating": "",
     "review_count": "",
-    "headline": "Westbrook's sourdough, since 1984.",
-    "subheadline": "A family bakery on Main Street baking bread, pastries and celebration cakes from scratch every morning. Order ahead and we'll have it boxed and ready.",
+    "headline": "Bread worth getting up early for.",
+    "subheadline": "Sourdough, croissants and celebration cakes, made by hand every morning on Main Street in Westbrook. Order ahead and we'll have it boxed and waiting.",
     "primary_cta": "Order for pickup",
     "cta_kind": "order",
     "services": [
-      { "name": "Sourdough loaves", "description": "Made with the same starter we've kept going since we opened." },
-      { "name": "Cannoli and pastries", "description": "Filled to order so the shells stay crisp." },
-      { "name": "Celebration cakes", "description": "Birthdays, weddings and everything in between. Give us three days." }
+      {
+        "name": "Country sourdough",
+        "description": "Made with the same starter we've kept going since we opened."
+      },
+      {
+        "name": "Croissants and pastries",
+        "description": "Laminated by hand over three days, out of the oven before we open."
+      },
+      {
+        "name": "Seeded rye",
+        "description": "Dense and nutty, and the best sandwich bread in town."
+      },
+      {
+        "name": "Celebration cakes",
+        "description": "Birthdays, weddings and everything in between. Give us three days."
+      }
     ],
     "story_heading": "Three generations of early mornings.",
     "story": "The Russo family opened Marigold in 1984 with one oven and a sourdough starter. Forty years later we still bake everything by hand, before sunrise, right here in Westbrook.",
-    "testimonials": [],
+    "testimonials": [
+      {
+        "quote": "The sourdough is the real thing: a proper crust, a tangy open crumb, and it keeps for days.",
+        "author": "Kate M."
+      }
+    ],
     "final_heading": "Come hungry. We'll have something warm.",
     "brand_primary": "#3B2416",
-    "brand_accent": "#F2A65A",
-    "hero_image": -1,
+    "brand_accent": "#C8661E",
+    "hero_image": 0,
     "logo_image": -1,
-    "gallery_images": [],
+    "gallery_images": [
+      2,
+      3,
+      1
+    ],
     "improvements": [
       "Your hours and phone number are right at the top",
       "Ordering ahead takes one tap on any phone",

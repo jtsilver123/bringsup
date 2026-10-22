@@ -1,0 +1,42 @@
+{
+  "business_name": "Fernwood Gardens",
+  "theme": "garden",
+  "tagline": "Landscape design & build",
+  "city_state": "Asheville, NC",
+  "phone": "(828) 555-0191",
+  "email": "",
+  "address": "",
+  "hours": [],
+  "year_founded": "",
+  "rating": "",
+  "review_count": "",
+  "reviews_url": "",
+  "brand_primary": "",
+  "brand_accent": "",
+  "logo": "",
+  "hero_image": "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?fm=jpg&fit=crop&w=1800&q=68",
+  "primary_cta": { "label": "Call for a site visit", "href": "tel:+18285550191" },
+  "specialties": ["Native planting", "Stone walls & paths", "Woodland gardens"],
+  "home": {
+    "headline": "Gardens that look like they were always there.",
+    "subheadline": "Design and installation for homes around Asheville, built from native plants and local stone.",
+    "final_heading": "Walk the property with us."
+  },
+  "offer": {
+    "title": "Services",
+    "intro": "",
+    "groups": [{ "name": "", "items": [
+      { "name": "Garden design", "description": "A planting plan drawn for your soil, light and slope.", "price": "", "image": "" },
+      { "name": "Installation", "description": "Planting, stonework and paths, done by our own crew.", "price": "", "image": "" }
+    ]}]
+  },
+  "about": { "heading": "Small crew, long seasons.", "paragraphs": ["We are a crew of four who design and build every garden ourselves."], "images": [] },
+  "gallery": [
+    { "image": "https://images.unsplash.com/photo-1557429287-b2e26467fc2b?fm=jpg&fit=crop&w=1600&q=72", "caption": "Cottage garden, Montford" },
+    { "image": "https://images.unsplash.com/photo-1598902108854-10e335adac99?fm=jpg&fit=crop&w=1200&q=72", "caption": "Woodland edge, Black Mountain" },
+    { "image": "https://images.unsplash.com/photo-1584479898061-15742e14f50d?fm=jpg&fit=crop&w=1200&q=72", "caption": "Kitchen garden beds" }
+  ],
+  "testimonials": [],
+  "domain": "",
+  "social": []
+}
