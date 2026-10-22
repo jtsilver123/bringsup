@@ -337,7 +337,9 @@ ${site.text}
 // posts it back ({action: "complete"}) and emails the visitor their link. See tools/QUEUE_WORKER.md.
 // Worker calls need the x-worker-token header. {action: "create", url, email, concept, images?, ref?, html?, og_image?} saves a
 // finished homepage for a cold-email prospect who said "send it over" and returns its private short link,
-// bringsup.com/for/<slug>-<8 random chars> (tools/email_template.md). og_image is a base64 JPEG for the link preview card.
+// bringsup.com/for/<slug>-<8 random chars> (tools/email_template.md). og_image is a base64 JPEG for the link preview card;
+// shots = {before: {desktop, phone}, after: {desktop, phone}} (base64 JPEGs of their site today and the new one) power the
+// /try/ reveal and the "Today / New" compare.
 // GET ?for=<short> loads it like ?id=; add &meta=1 for just the name, headline and preview image (the /for/ Cloudflare worker).
 //
 // Secrets (Supabase dashboard -> Edge Functions -> Secrets): IP_SALT, WORKER_TOKEN.
@@ -441,12 +443,21 @@ async function work(req: Request, body: any): Promise<Response> {
       if (!taken) break;
       short = `${base}-${code()}`;
     }
-    if (typeof body.og_image === "string" && body.og_image.length < 700_000) {
-      const bytes = Uint8Array.from(atob(body.og_image.replace(/^data:image\/\w+;base64,/, "")), (c) => c.charCodeAt(0));
-      const path = `previews/${short}.jpg`;
+    const store = async (b64: unknown, name: string): Promise<string | undefined> => {
+      if (typeof b64 !== "string" || b64.length > 1_400_000) return undefined;
+      const bytes = Uint8Array.from(atob(b64.replace(/^data:image\/\w+;base64,/, "")), (c) => c.charCodeAt(0));
+      const path = `previews/${short}${name}.jpg`;
       const up = await db.storage.from("project-files").upload(path, bytes, { contentType: "image/jpeg", upsert: true });
-      if (!up.error) concept.og_image = db.storage.from("project-files").getPublicUrl(path).data.publicUrl;
-    }
+      return up.error ? undefined : db.storage.from("project-files").getPublicUrl(path).data.publicUrl;
+    };
+    const og = await store(body.og_image, "");
+    if (og) concept.og_image = og;
+    const shots = body.shots || {};
+    const compare = {
+      before: { desktop: await store(shots.before?.desktop, "-before-desktop"), phone: await store(shots.before?.phone, "-before-phone") },
+      after: { desktop: await store(shots.after?.desktop, "-after-desktop"), phone: await store(shots.after?.phone, "-after-phone") },
+    };
+    if (compare.before.desktop && compare.after.desktop) concept.compare = compare;
     concept.short = short;
     const images = Array.isArray(body.images) ? body.images.filter((u: unknown) => typeof u === "string" && /^https:\/\//.test(u)).slice(0, 12) : [];
     const { data: made, error } = await db.from("redesigns").insert({ url: String(body.url || ""), email: String(body.email || "").toLowerCase(), ip_hash: "outreach",

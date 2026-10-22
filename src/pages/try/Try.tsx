@@ -98,6 +98,7 @@ export function Try() {
       ref: (concept as { ref?: string }).ref,
       handmade: Boolean(custom),
       brand: (concept as { brand?: ResultData["brand"] }).brand,
+      compare: (concept as { compare?: ResultData["compare"] }).compare,
     });
     // Previews made for a prospect have a short address (bringsup.com/for/<slug>-<code>); keep that in the bar.
     const short = (concept as { short?: string }).short;

@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
 import { FadeImg } from "../../components/FadeImg.tsx";
 import { hasIO, prefersReducedMotion } from "./hooks.ts";
 import { KnobIcon } from "./icons.tsx";
+import "./beforeafter.css";
 
 const clamp = (v: number) => Math.round(Math.max(0, Math.min(100, v)) * 10) / 10;
 
@@ -11,7 +12,25 @@ const clamp = (v: number) => Math.round(Math.max(0, Math.min(100, v)) * 10) / 10
  * key press glides the handle to its new spot; a drag follows the pointer exactly, and the handle grows
  * while held. The first time it's seen it sways once to show it can be dragged (not with reduced motion).
  */
-export function BeforeAfter() {
+interface Shot { src: string; width: number; height: number; alt: string }
+interface Props {
+  /** The new site, on the left. */
+  after?: Shot;
+  /** The old site, on the right. */
+  before?: Shot;
+  labels?: [string, string];
+  caption?: ReactNode;
+}
+
+const BAKERY: Required<Props> = {
+  after: { src: "/assets/work/bakery-hero.jpg", width: 1664, height: 1040, alt: "The same bakery redesigned: a printed-menu look with a serif nameplate, a big photo of the bread, the hours, and an Order for pickup button." },
+  before: { src: "/assets/work/bakery-before.jpg", width: 1664, height: 1040, alt: "An outdated bakery homepage: an old layout, a broken image, 'please call for hours' and no way to order online." },
+  labels: ["After", "Before"],
+  caption: "Drag the handle to compare. Marigold Bakery is made up and the photos are stock, so I can show the work without using anyone's real site.",
+};
+
+export function BeforeAfter(props: Props = {}) {
+  const { after, before, labels, caption } = { ...BAKERY, ...props };
   const stage = useRef<HTMLDivElement>(null);
   const range = useRef<HTMLInputElement>(null);
   const touched = useRef(false);
@@ -85,18 +104,18 @@ export function BeforeAfter() {
 
   return (
     <figure className="ba">
-      <div className="ba-labels" aria-hidden="true"><span>After</span><span>Before</span></div>
+      <div className="ba-labels" aria-hidden="true"><span>{labels[0]}</span><span>{labels[1]}</span></div>
       <div
         ref={stage}
         className={["ba-stage", dragging && "dragging", glide && "glide"].filter(Boolean).join(" ")}
-        style={{ "--pos": `${pos}%` } as CSSProperties}
+        style={{ "--pos": `${pos}%`, aspectRatio: `${after.width} / ${after.height}` } as CSSProperties}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={stop}
         onPointerCancel={stop}
       >
-        <FadeImg className="ba-old" src="/assets/work/bakery-before.jpg" width={1664} height={1040} alt="An outdated bakery homepage: an old layout, a broken image, 'please call for hours' and no way to order online." />
-        <FadeImg className="ba-after" src="/assets/work/bakery-hero.jpg" width={1664} height={1040} fetchPriority="high" alt="The same bakery redesigned: a printed-menu look with a serif nameplate, a big photo of the bread, the hours, and an Order for pickup button." />
+        <FadeImg className="ba-old" src={before.src} width={before.width} height={before.height} alt={before.alt} />
+        <FadeImg className="ba-after" src={after.src} width={after.width} height={after.height} fetchPriority="high" alt={after.alt} />
         <input
           ref={range}
           className="ba-range"
@@ -105,7 +124,7 @@ export function BeforeAfter() {
           max={100}
           step={1}
           value={pos}
-          aria-label="Compare the new homepage, on the left, with the old one, on the right. Higher shows more of the new site."
+          aria-label={`Compare the homepages: "${labels[0]}" on the left, "${labels[1]}" on the right. Higher shows more of "${labels[0]}".`}
           onKeyDown={onKeyDown}
           onChange={(e) => {
             touched.current = true;
@@ -115,7 +134,7 @@ export function BeforeAfter() {
         <span className="ba-line" aria-hidden="true"></span>
         <span className="ba-knob" aria-hidden="true"><KnobIcon /></span>
       </div>
-      <figcaption className="small">Drag the handle to compare. Marigold Bakery is made up and the photos are stock, so I can show the work without using anyone's real site.</figcaption>
+      {caption && <figcaption className="small">{caption}</figcaption>}
     </figure>
   );
 }
