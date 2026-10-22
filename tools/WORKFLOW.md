@@ -8,6 +8,7 @@ The one map of the business: every step, who or what does it, which system it to
 - If they want the whole site, one 10-minute form starts it. We build every page and send a private preview in about two weeks.
 - Two rounds of changes are included. Extra rounds, and changes after launch, are $150 each. Anything we got wrong is fixed free.
 - They pay a flat $1,000 only when they approve the finished site. Hosting is included. There's no Care Plan or monthly fee for now.
+- We start at most 8 new sites a month (`MONTHLY_CAP` in the projects function). The home page shows the real count from `?capacity=1`. Starts past the cap are welcomed with email 1b and begin on the first business day of next month (OPERATOR.md build step 0).
 - A logo and color refresh is included if they ask for one (start form question "Your logo and colors"). A one-page brand guide comes with it.
 
 ## The flow
