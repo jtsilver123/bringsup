@@ -15,7 +15,7 @@ const ORIGINS = (Deno.env.get("ALLOWED_ORIGINS") || "https://bringsup.com,https:
 const DAILY_CAP = Number(Deno.env.get("DAILY_CAP") || 150);
 const PER_VISITOR_DAILY = Number(Deno.env.get("PER_VISITOR_DAILY") || 3);
 
-const anthropic = new Anthropic();
+let anthropic: Anthropic | null = null; // created on first use so share links work before the key is set
 const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
 
 function cors(req: Request): Record<string, string> {
@@ -48,7 +48,7 @@ async function countSince(column: string | null, value: string | null): Promise<
 }
 
 async function generate(site: Awaited<ReturnType<typeof readSite>>) {
-  const response = await anthropic.beta.messages.create({
+  const response = await (anthropic ??= new Anthropic()).beta.messages.create({
     model: MODEL,
     max_tokens: 16000,
     betas: ["server-side-fallback-2026-07-01"],
