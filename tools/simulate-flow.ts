@@ -108,12 +108,16 @@ try {
   console.log(`${typeof status.rounds_left === "number" ? "ok  " : "FAIL"}  public status: ${JSON.stringify(status)}`);
 
   await submit(FORMS.approve, [text("Your email", email), text("Want us to handle updates later?", "Yes, send me the Care Plan link ($79/mo)"), ...payment(1000)]);
-  await expect("approve and pay", { status: "approved", todo: "launch", care_plan: true });
+  await expect("approve and pay", { status: "approved", todo: "launch", care_plan_requested: true, care_plan: false });
 
   await submit(FORMS.approve, [text("Your email", email), ...payment(1000)]);
   await expect("a second approval doesn't double count", { status: "approved", paid_cents: FORMS.extra ? 115000 : 100000 });
 
-  await worker("POST", "", { action: "update", ref, set: { status: "live", todo: null } });
+  await submit(FORMS.changes, [text("Your email", email), text("What would you like changed?", "Spotted a typo after paying")]);
+  await expect("a change after approval is applied at launch, free", { status: "approved", todo: "launch", pending_changes: "Spotted a typo after paying" });
+  await worker("POST", "", { action: "update", ref, set: { pending_changes: null } });
+
+  await worker("POST", "", { action: "update", ref, set: { status: "live", todo: null, care_plan: true } });
   await submit(FORMS.changes, [text("Your email", email), text("What would you like changed?", "New holiday hours")]);
   await expect("after launch, a Care Plan customer's change is a care edit", { status: "live", todo: "care_edit" });
 

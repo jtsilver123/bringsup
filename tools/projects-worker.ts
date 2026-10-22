@@ -30,7 +30,7 @@ interface Project {
   id: string; ref: string; status: string; todo: string | null; business_name: string; email: string; owner_name: string;
   rounds_included: number; rounds_extra: number; rounds_used: number; pending_changes: string | null; held_changes: string | null;
   preview_url: string | null; live_url: string | null; domain: string; domain_provider: string; domain_helper_email: string;
-  care_plan: boolean; brief: Record<string, string>; files: { name: string; url: string }[]; site: SiteContent | null; pages_project: string;
+  care_plan: boolean; care_plan_requested: boolean; brief: Record<string, string>; files: { name: string; url: string }[]; site: SiteContent | null; pages_project: string;
 }
 
 async function api(method: "GET" | "POST", query: string, body?: unknown): Promise<any> {

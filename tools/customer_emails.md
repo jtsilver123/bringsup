@@ -18,9 +18,9 @@ Send within the hour of a new project (`build` job, before building).
 
 Hi {first name},
 
-Thanks, we have everything we need. We're building your full website now, and your private preview will arrive by email by {date 14 days out, e.g. "Thursday, November 5"}.
+Thanks, your form came through and we've started. Your private preview will arrive by email by {date 14 days out, e.g. "Thursday, November 5"}.
 
-There's nothing to pay and nothing else to do until then. If you think of anything to add, like photos or a change to your hours, just reply to this email.
+There's nothing to pay and nothing else to do until then. If you skipped the photos or the logo, or think of anything to add, just reply to this email and we'll work it in. Changed your mind? Reply and we'll stop, and you owe nothing.
 
 Jake
 
@@ -33,11 +33,11 @@ Hi {first name},
 
 Here's the new {business} website: {preview_url}
 
-Look at it on your phone first, since that's where most of your customers will see it. It's private, so only people with this link can see it.
+Look at it on your phone first, since that's where most of your customers will see it. It's private, so only people with this link can see it. The address ends in pages.dev for now; that's just where the preview lives until it moves to {domain}.
 
 When you're ready, you have two options:
-- Want something different? List it here, or just reply: {changes link}. Two rounds of changes are included, and we keep count for you.
-- Love it? Approve it here, and it goes live on {domain}: {approve link}. That's when you pay the flat $1,000.
+- Want something different? List it here, or just reply: {changes link}. Two rounds of changes are included, and we keep count for you. A typo or a wrong number is a fix, not a round, so just tell us.
+- Love it? Approve it here and pay the flat $1,000: {approve link}. After that there's one 10-minute step at {provider} (we send the exact clicks, or send them to whoever manages your domain), and it's live on {domain}.
 
 No rush.
 
@@ -50,7 +50,7 @@ Sent when a round of changes comes in, before you apply it.
 
 Hi {first name},
 
-We have your changes and are working on them. Your updated preview arrives within 3 days. Anything else you think of in the next couple of days goes into this same round, so send it along.
+We have your changes and are working on them. Your updated preview arrives within 3 days. Anything else you think of before the updated preview arrives, and for two days after it, goes into this same round, so send it along.
 
 Jake
 
@@ -66,8 +66,8 @@ Your updated preview is ready: {preview_url}
 What we changed:
 {a short bullet list of the changes you made, in plain words}
 
-{If rounds are left:} You have {rounds_left} round{s} of changes left. Anything you send in the next two days counts as part of this round: {changes link}
-{If none are left:} That was your last included round. You can approve it as it is, or ask for one more round for $150.
+{If rounds are left:} You have {rounds_left} round{s} of changes left. Anything you send before {weekday and time 48 hours from now, e.g. "Thursday at 2pm"} is still part of this round, so don't hold back: {changes link}
+{If none are left:} That was your last included round, but anything you send before {weekday and time 48 hours from now} is still part of it: {changes link}. After that, you can approve it as it is, or ask for one more round for $150.
 
 Happy with it? Approve it here, and it goes live: {approve link}
 
@@ -97,20 +97,22 @@ Sent when the site is approved (`launch` job). Send it to the owner. If someone 
 
 Hi {first name},
 
-Thank you. Your site is approved and paid, and Stripe has emailed your receipt.
+Thank you. Your site is approved and paid, and Stripe has emailed your receipt. If you spot anything we got wrong, reply and we'll fix it before it goes live, at no charge.
 
 The last step is pointing {domain} at your new site. It takes about 10 minutes at {provider}. {If someone else has the login: "We've sent the steps to {helper email}, so there's nothing for you to do."}
 
 {Provider-specific steps. See tools/OPERATOR.md, "Domain steps".}
 
-Your email won't be affected. We only change the two settings that point your web address at the website, never the ones that run your email (called MX records).
+Your email won't be affected. The steps only touch the two settings that point your web address at the new site. Nothing about your email is changed, and we check it still works before we say it's live.
+
+Once this is done, your old site stops showing and the new one takes its place. You can cancel the old website plan whenever you like, but keep the domain registration and your email service, since those are often on the same bill. If you're not sure which is which, forward us the invoice and we'll tell you.
 
 Once it's connected, we'll check everything and let you know it's live. If you get stuck, reply with a screenshot and we'll tell you exactly what to click.
 
 Jake
 
 ## 7. Domain reminder
-Sent on day 2 and day 5 if DNS isn't pointed yet.
+Sent on day 2 and day 5 if DNS isn't pointed yet. If a helper email is set, send it to the helper with the owner in CC, and change "The steps are in the email above" to "The steps are in the email we sent {helper first name} on {date}."
 
 **Subject:** Re: the last step for {domain}
 
@@ -127,12 +129,15 @@ Sent when DNS is pointed and the site serves correctly (`check_dns` succeeds).
 
 Hi {first name},
 
-It's live: https://{domain}
+It's live: https://www.{domain}
 
-We checked it on phones and computers, and your email still works the way it did. Hosting is included, so there's no monthly bill.
+{If the bare domain isn't forwarding yet:} One small thing: typing {domain} without "www" still shows the old site, because the forwarding step at {provider} isn't done yet. It's step 2 in the email above; reply if you'd like us to walk you through it.
 
-{If they chose the Care Plan and a Care Plan link is configured:} Here's the Care Plan link you asked for ($79/mo, cancel anytime): {care_plan_link}. Once it's set up, just email us changes, like new hours, specials or photos.
-{Otherwise:} If you ever need an update, reply to this email.
+We checked it on phones and computers, and your email still works the way it did. Hosting is included, so there's no monthly bill. If you were paying for your old site, you can cancel that plan now. Keep your domain and email with whoever provides them.
+
+{If they asked for the Care Plan and a Care Plan link is configured:} Here's the Care Plan link you asked for ($79/mo, cancel anytime): {care_plan_link}. Once it's set up, just email us changes, like new hours, specials or photos.
+{If they asked for the Care Plan and no link is configured yet:} You asked about the Care Plan ($79/mo). It isn't open for sign-ups yet, so nothing is being billed, and we'll send the link when it's ready. Until then, if anything on the site is wrong, reply and we'll fix it free; other updates are $150 a round.
+{Otherwise:} If anything on the site is wrong, reply and we'll fix it free. For other updates later on, like new hours, specials or photos, you can reply anytime: a round of changes is $150, or the Care Plan covers unlimited small edits for $79 a month. Your own web person can also edit the files, since they're yours.
 
 Thanks for trusting us with it. If a customer says something nice about the new site, we'd love to hear it.
 
@@ -169,9 +174,10 @@ Sent for the `reply_out_of_scope` job.
 
 Hi {first name},
 
-Thanks for sending this. Your site is live and hosted, so nothing will break.
+Thanks, happy to do this. Just so there are no surprises: changes after launch aren't included in the $1,000, so here are the options.
 
-A round of changes after launch is $150. Pay here, and we'll make the change you just sent. You don't need to type it again: {extra link}
+- A round of changes is $150, and it covers everything you sent in this email. Pay here and we'll get on it; you don't need to type it again: {extra link}
+- If this is something we got wrong, like a typo or details that were right on your start form, ignore the above. We'll fix it free and email you when it's done.
 {If a Care Plan link is configured, add:} Or, if you expect to make updates often, the Care Plan covers unlimited small edits for $79/mo: {care_plan_link}
 
 {If it's only a small fix to something we got wrong (a typo, a wrong phone number or wrong hours that were right in their start form), skip this email: fix it for free, redeploy, and send a one-line "Fixed" reply.}

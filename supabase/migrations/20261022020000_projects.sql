@@ -32,6 +32,7 @@ create table if not exists public.projects (
   domain_provider text not null default '',
   domain_helper_email text not null default '',
   care_plan boolean not null default false,
+  care_plan_requested boolean not null default false,
   paid_cents integer not null default 0,
   brief jsonb not null default '{}'::jsonb,       -- the start form, by question
   site jsonb,                                     -- the site's content (tools/site-kit SiteContent); the builder edits and redeploys it

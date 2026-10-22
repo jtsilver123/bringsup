@@ -120,7 +120,7 @@ export function WorkingView({ hidden, host }: { hidden: boolean; host: string })
     <section className="wrap working" id="working" hidden={hidden} aria-live="polite">
       <p className="eyebrow">Working on it</p>
       <h2>Redesigning <span id="w-host">{host}</span></h2>
-      <p className="lead">This takes a few seconds.</p>
+      <p className="lead">This usually takes a minute or two. If it takes longer, we email it to you.</p>
       <ol className="steps" id="steps">
         {STEPS.map((s, i) => (
           <li key={s} className={i < step ? "done" : i === step ? "now" : undefined}><span className="dot"></span>{s}</li>
@@ -194,7 +194,7 @@ export function ResultView({ hidden, data, onCopy, onFullScreen, onAgain }: Resu
       <div className="next">
         <div>
           <h3>Love it? We'll build the whole site.</h3>
-          <p>Every page, your logo and colors refreshed, live on your own domain in about two weeks. No calls, and nothing to pay until you approve the finished site. Then one flat $1,000.</p>
+          <p>Every page, ready for you to review in about two weeks, then live on your own domain once you approve it. No calls, and nothing to pay until then. Then one flat $1,000.</p>
         </div>
         <div className="acts">
           <a className="btn btn-glow" id="start" href={startHref}>Start my website <Arrow /></a>
@@ -224,7 +224,7 @@ export function QueuedView({ hidden, data, onCopy }: { hidden: boolean; data: Qu
           <div className="q-icon" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 7l9 6 9-6" /></svg></div>
           <p className="eyebrow">You're in line</p>
           <h2>We're redesigning <span id="q-host">{data?.host || "your website"}</span>.</h2>
-          <p className="lead">A designer-quality homepage takes a little longer than a minute. We'll email it to <span id="q-email">{data?.email ? <b>{data.email}</b> : "you"}</span> within the hour. This page updates on its own if you keep it open.</p>
+          <p className="lead">A designer-quality homepage takes a little longer than a minute. We'll email it to <span id="q-email">{data?.email ? <b>{data.email}</b> : "you"}</span> the same day, usually within the hour. This page updates on its own if you keep it open.</p>
           <div className="acts">
             <button className="btn btn-outline" type="button" id="q-copy" onClick={onCopy}>Copy this page's link</button>
             <a className="btn btn-ember" href="/try/?demo">See a sample while you wait</a>

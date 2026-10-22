@@ -26,8 +26,12 @@ Search jake@bringsup.com for messages newer than the last run (`in:inbox newer_t
 - Log every handled email: `update <ref>` with `event: {kind: "email", summary: "<what they asked, what we did>"}`.
 
 **Prospects (outreach replies):**
-- **Interested or asking a question:** answer what they asked first, in a couple of plain sentences. Then send what's in "When they reply interested" in `tools/email_template.md`: the full concept PDF attached, the flat $1,000 paid only after they approve the finished site, hosting included, and the start link `https://bringsup.com/start/?ref=<slug>`. Write it like a person would, with no template blocks and none of that file's banned phrases. Then set the tracker `status: replied`, `repliedAt`.
-- **Asking for a call:** say we keep everything on email so it fits around their day. Offer to answer anything here, and include the start link.
+- **Interested or asking a question:** answer what they asked first, in a couple of plain sentences. Then send what's in "When they reply interested" in `tools/email_template.md` (the PDF, the price, what the form asks for, the two-week preview, the start link `https://bringsup.com/start/?ref=<slug>`). Write it like a person would, with no template blocks and none of that file's banned phrases. Then set the tracker `status: replied`, `repliedAt`.
+- **Asking for a call:** say everything happens by email so it fits around their day, answer their question in the same reply, and include the start link. Never offer or schedule a call.
+- **"Not now", "maybe later", "busy season":** one line ("No problem, I'll leave it with you. Reply here any time and I'll still have your homepage idea."), `status: lost`, append "later" to `notes` (set it if empty). Never email them again unless they write first.
+- **"How did you get my email?" or any privacy complaint:** one honest line ("It's listed on your website, and I'm sorry to bother you. I won't email again."), `status: dnc`.
+- **Auto-replies (out of office, vacation, "we'll get back to you"):** not a reply from a person. Don't answer. If it gives a return date, set `followUpAt` to the business day after it; if not, add 5 business days to `followUpAt`. Keep `status` and `dripStep` as they are, archive the thread.
+- **A reply from a different address in our thread** (an assistant, the owner's personal address): treat it as the prospect's reply, matched by `threadId`, and reply in that thread.
 - **"No", "stop", "unsubscribe" or similar:** one short gracious line ("Understood, I won't email again. Best of luck."), `status: dnc`. Never email them again.
 - **Bounces:** `status: lost`, set `notes` to "Email bounced" if empty, archive the bounce.
 - **Anyone else** (vendors, spam, other): archive spam, ignore anything that isn't a person writing to us, and answer real people briefly from the FAQ.
@@ -40,7 +44,7 @@ Run `node tools/projects-worker.ts jobs`. Each job is leased to you for 45 minut
 The files are in `work/projects/<ref>/`: `project.json` (brief, files, state), `events.json` (history) and `site.json` (once built).
 
 ### build: the first version
-1. Send email 1 (Start received) if `events.json` has no `email` event with that subject.
+1. Send email 1 (Start received) if `events.json` has no `email` event with that subject. Also find the prospect row in the tracker (`prospects/<slug>` matching the project's `ref`, or by email) and set `status: started`, `lastTouchAt`, `followUpAt: null`, so the cold drip stops.
 2. Write `work/projects/<ref>/site.json` (the `SiteContent` type in `tools/site-kit/render.ts`; `tools/site-kit/examples/marigold.json` is an example):
    - **Facts only from the start form (`brief`), their files, their current website (fetch it) and their Google listing.** Never invent hours, prices, years, awards or reviews. `rating`/`review_count` only from Google or Yelp, with `reviews_url` set.
    - **Testimonials:** up to 3 short, real quotes from their Google reviews, with the reviewer's first name and last initial. Use only what you can see on the page.
@@ -70,7 +74,7 @@ Send email 5 (One more round?). `update`: `set: {todo: null}`, `event: {kind: "e
 
 ### check_dns
 Run `node tools/projects-worker.ts dns <ref>`.
-- **`www.<domain>` is serving the new site:** check the email records are intact (`dig MX <domain>` returns the same mail servers as before, or at least some). Then send email 8 (You're live). `update`: `set: {status: "live", todo: null, live_url: "https://www.<domain>"}`, `event: {kind: "live"}`.
+- **`www.<domain>` is serving the new site:** if `pending_changes` has anything (sent after approval), apply it and run `launch <ref>` again first. Check the email records are intact (`dig MX <domain>` returns the same mail servers as before, or at least some). Then send email 8 (You're live), with its "without www" note if the bare domain doesn't redirect to www yet. `update`: `set: {status: "live", todo: null, live_url: "https://www.<domain>", pending_changes: null}`, `event: {kind: "live"}`. Then set the matching tracker prospect row (same slug as `ref`, or by email) to `status: won`, `lastTouchAt`.
 - **Not yet:** `update` with `set: {next_check_at: <now + 6h>}` (todo stays). On day 2 and day 5 after `launch_steps_sent`, send email 7. On day 10, send the steps again to anyone they've named and offer to walk them through by email. After 14 days, keep checking daily, and flag it in the daily digest (it's waiting on them, not broken).
 
 ### care_edit: change after launch (Care Plan, or a paid $150 round)
@@ -95,7 +99,7 @@ Point **www** at the site, and forward the bare domain to www. Never touch MX, T
 `node tools/projects-worker.ts health` lists `quiet_customers` (no activity for 7+ days while waiting on them). For each project in `preview_sent` or `awaiting_extra`, using `last_preview_at`, `last_customer_touch_at` and `events.json`:
 - 10 days quiet and no reminder sent yet: send email 9, log `event: {kind: "reminder"}`.
 - 45 days quiet: send email 10, log `event: {kind: "closing_notice"}`.
-- 60 days quiet after the closing notice: delete the preview deployment (Cloudflare API: DELETE the Pages project), and delete their uploads in Supabase Storage `project-files/<ref>/` (or note it for the health digest if you can't). `update`: `set: {status: "cancelled", todo: null}`, `event: {kind: "closed"}`.
+- 15 days after the closing notice (60 days quiet in total, matching the terms and email 10): delete the preview deployment (Cloudflare API: DELETE the Pages project), and delete their uploads in Supabase Storage `project-files/<ref>/` (or note it for the health digest if you can't). `update`: `set: {status: "cancelled", todo: null}`, `event: {kind: "closed"}`.
 
 ## 4. Redesign queue (every run)
 Follow `tools/QUEUE_WORKER.md`.

@@ -51,7 +51,7 @@ function InstantForm() {
       <label>Your email<input ref={emailInput} name="email" type="email" autoComplete="email" autoCapitalize="off" spellCheck={false} placeholder="you@rosasbakery.com" required /></label>
       <p className="instant-err" role="alert" hidden={!error}>{error}</p>
       <button className="btn btn-ink" type="submit">Redesign my website now <Arrow /></button>
-      <p className="form-foot">We'll email your new homepage within the hour. Never shared, never sold.</p>
+      <p className="form-foot">We'll email your new homepage the same day, usually within the hour. Never shared, never sold.</p>
     </form>
   );
 }
@@ -84,7 +84,7 @@ function ConceptRequest({ card, sent, setSent }: { card: RefObject<HTMLDivElemen
       <div className="done" role="status" aria-live="polite" tabIndex={-1} ref={done}>
         <div className="tick"><Check size={32} /></div>
         <h3>Got it. It's on its way.</h3>
-        <p>Thanks! We've got your details and we're already looking you up.</p>
+        <p>Thanks. We have your details and we're already looking you up.</p>
         <ol>{DONE_STEPS.map((s) => <li key={s}>{s}</li>)}</ol>
         <div className="row">
           <button className="ghost" type="button" id="again" onClick={() => { setSent(false); setRound((r) => r + 1); }}>Send another business</button>
@@ -97,6 +97,31 @@ function ConceptRequest({ card, sent, setSent }: { card: RefObject<HTMLDivElemen
 export function Concept({ live, search, say, ref }: { live: boolean; search: string; say: (msg: string) => void; ref?: Ref<HTMLElement> }) {
   const card = useRef<HTMLDivElement>(null);
   const [sent, setSent] = useState(false);
+  const fromEmail = new URLSearchParams(search).has("ref");
+  if (fromEmail) {
+    // They already have their concept (it came with Jake's email), so don't offer a second one.
+    return (
+      <section ref={ref} id="concept" className="cta" aria-labelledby="cta-h">
+        <div className="cta-box">
+          <Reveal>
+            <p className="eyebrow">Your concept is ready</p>
+            <h2 className="display" id="cta-h">Like where it's going?</h2>
+            <p className="lead">The homepage Jake sent you is the start. One 10-minute form and we build every page, then you see it finished before paying anything.</p>
+            <ul className="cta-list">
+              {CTA_LIST.map((c) => <li key={c}><Check size={20} />{c}</li>)}
+            </ul>
+            <p className="alt">
+              <a className="btn btn-glow" href={`/start/${search}`} data-keep-ref="">Start my website</a>
+            </p>
+            <p className="alt">
+              Questions first? Write to <a href={`mailto:${EMAIL}`}>{EMAIL}</a>{" "}
+              <button className="copy" type="button" data-copy={EMAIL} aria-label={`Copy ${EMAIL}`} onClick={() => copyText(EMAIL, "Email address copied", say)}><CopyIcon />Copy</button>
+            </p>
+          </Reveal>
+        </div>
+      </section>
+    );
+  }
   return (
     <section ref={ref} id="concept" className="cta" aria-labelledby="cta-h">
       <div className="cta-box">

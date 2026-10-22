@@ -132,7 +132,7 @@ const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SE
 export interface Project {
   id: string; ref: string; updated_at: string; status: string; todo: string | null; email: string; business_name: string; current_site: string;
   rounds_included: number; rounds_extra: number; rounds_used: number; changes_seq: number;
-  pending_changes: string | null; held_changes: string | null; care_plan: boolean; last_preview_at: string | null; paid_cents: number; attempts: number;
+  pending_changes: string | null; held_changes: string | null; care_plan: boolean; care_plan_requested: boolean; last_preview_at: string | null; paid_cents: number; attempts: number;
   brief: Record<string, string>; files: TallyFile[];
 }
 
@@ -318,6 +318,9 @@ async function onChanges(sub: Submission, paidExtra: boolean): Promise<Project> 
         "changes", "Arrived before the first preview; added to the brief (no round used)");
     case "approved":
     case "launching":
+      // Paid, not live yet: anything they spot now is applied at launch, free.
+      return write({ pending_changes: join(p.pending_changes, request), changes_seq: p.changes_seq + 1 },
+        "changes", "Arrived after approval, before launch; applied at launch (no charge)");
     case "live":
       if (p.care_plan || paidExtra) {
         return write({ pending_changes: join(p.pending_changes, request), changes_seq: p.changes_seq + 1, todo: "care_edit" },
@@ -364,7 +367,8 @@ async function onApprove(sub: Submission): Promise<Project> {
   const paid = sub.paidCents >= APPROVE_PRICE_CENTS;
   p = await save(p, {
     last_customer_touch_at: now(),
-    care_plan: /^yes/i.test(pick(a, "Want us to handle updates", "Want the Care Plan")),
+    // Interest only. care_plan itself is set by the builder once a Care Plan subscription exists.
+    care_plan_requested: /^yes/i.test(pick(a, "Want us to handle updates", "Want the Care Plan")),
     ...(pick(a, "Who should connect your domain") ? { domain_helper: pick(a, "Who should connect your domain") } : {}),
     ...(pick(a, "Your web person's email") ? { domain_helper_email: pick(a, "Your web person's email").toLowerCase() } : {}),
     paid_cents: p.paid_cents + sub.paidCents,
@@ -417,7 +421,7 @@ async function webhook(req: Request): Promise<Response> {
 
 const SETTABLE = new Set([
   "status", "todo", "preview_url", "live_url", "next_check_at", "pending_changes", "held_changes", "domain", "domain_provider",
-  "domain_helper", "domain_helper_email", "care_plan", "brief", "site", "pages_project", "last_customer_touch_at", "last_preview_at",
+  "domain_helper", "domain_helper_email", "care_plan", "care_plan_requested", "brief", "site", "pages_project", "last_customer_touch_at", "last_preview_at",
 ]);
 const TRANSITIONS: Record<string, string[]> = {
   started: ["preview_sent", "cancelled"],
