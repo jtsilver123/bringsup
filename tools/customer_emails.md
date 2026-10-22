@@ -20,7 +20,7 @@ Links (always with the project's ref):
 ---
 
 ## 1. Start received
-Send within the hour of a new project (`build` job, before building).
+Send it as soon as a new project comes in (`build` job, before building), inside their 7 AM–8 PM window.
 
 **Subject:** We're building the {business} website
 

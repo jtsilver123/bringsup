@@ -7,7 +7,7 @@ Two Supabase Edge Functions in `functions/`, with their tables in `migrations/`:
 
 ## Instant redesigns
 
-A visitor enters their website and email, and gets a redesigned homepage by email, usually within the hour.
+A visitor enters their website and email, and gets a redesigned homepage by email, usually within a few hours.
 
 ```
 /try/ (browser)  --POST {url, email}-->  functions/redesign  --> reads their site (extract.ts)
