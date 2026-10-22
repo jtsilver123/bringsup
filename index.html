@@ -336,6 +336,13 @@ td.us{color:var(--ink);font-weight:700}
 .copy:hover{background:rgba(255,255,255,.24)}
 .formcard{background:#fff;color:var(--ink);border-radius:var(--r-md);padding:28px;box-shadow:0 24px 60px rgba(60,20,4,.25)}
 #tally{display:block;width:100%;min-height:440px;border:0;margin:-8px 0 0}
+.instant{display:flex;flex-direction:column;gap:16px}
+.instant label{display:flex;flex-direction:column;gap:6px;font-size:15px;font-weight:700}
+.instant input{font:inherit;font-weight:400;font-size:17px;padding:13px 16px;border:1.5px solid #BDB8AD;border-radius:var(--r-sm);min-height:52px;width:100%;background:#fff;color:var(--ink);transition:border-color var(--fast),box-shadow var(--fast)}
+.instant input:hover{border-color:var(--subtle)}
+.instant input:focus{outline:0;border-color:var(--ink);box-shadow:0 0 0 4px rgba(255,179,122,.55)}
+.instant-err{color:#B42318;font-size:15px;font-weight:500}
+.live #tally,.live #formcard > .form-foot{display:none}
 .formcard.sent #tally,.formcard.sent .form-foot{display:none}
 .form-foot{font-size:14px;color:var(--subtle);text-align:center;margin-top:4px}
 .done{display:none;text-align:center;padding:12px 4px}
@@ -708,6 +715,13 @@ dialog.viewer::backdrop{background:rgba(22,24,29,.72);backdrop-filter:blur(4px)}
         <p class="alt">Already have one from us? <a href="/start/" data-keep-ref>Start your website</a>, no call needed. Or write to <a href="mailto:hello@bringsup.com">hello@bringsup.com</a> <button class="copy" type="button" data-copy="hello@bringsup.com" aria-label="Copy hello@bringsup.com"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>Copy</button></p>
       </div>
       <div class="formcard" id="formcard">
+        <form id="instant" class="instant" hidden novalidate>
+          <label>Your website<input name="url" type="text" inputmode="url" autocomplete="url" autocapitalize="off" spellcheck="false" placeholder="rosasbakery.com" required></label>
+          <label>Your email<input name="email" type="email" autocomplete="email" autocapitalize="off" spellcheck="false" placeholder="you@rosasbakery.com" required></label>
+          <p class="instant-err" role="alert" hidden></p>
+          <button class="btn btn-ink" type="submit">Redesign my website now <svg class="go" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></button>
+          <p class="form-foot">See your new homepage in about a minute. Never shared, never sold.</p>
+        </form>
         <iframe id="tally" data-tally-src="https://tally.so/embed/9NqoKQ?alignLeft=1&amp;hideTitle=1&amp;transparentBackground=1&amp;dynamicHeight=1&amp;source=website" loading="lazy" width="100%" height="520" frameborder="0" marginheight="0" marginwidth="0" title="Get your free homepage concept"></iframe>
         <p class="form-foot">We only use this to send your concept. Never shared, never sold.</p>
         <noscript><p class="form-foot"><a href="https://tally.so/r/9NqoKQ">Open the request form</a> or email <a href="mailto:hello@bringsup.com">hello@bringsup.com</a>.</p></noscript>
@@ -758,6 +772,7 @@ dialog.viewer::backdrop{background:rgba(22,24,29,.72);backdrop-filter:blur(4px)}
   </div>
 </footer>
 
+<script src="/assets/js/config.js"></script>
 <script>
 (function () {
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -884,6 +899,25 @@ dialog.viewer::backdrop{background:rgba(22,24,29,.72);backdrop-filter:blur(4px)}
     }, { rootMargin: '0px 0px -8% 0px' });
     els.forEach(function (el) { io.observe(el); });
   } else { els.forEach(function (el) { el.classList.add('in'); }); }
+
+  // Instant redesigns: when the backend is on, the hero and the final form go to /try/ instead of the hand-made request
+  if (window.BRINGSUP && window.BRINGSUP.api) {
+    var heroBtn = $('.hero .ctas .btn-ember');
+    heroBtn.href = '/try/'; heroBtn.firstChild.textContent = 'Redesign my website, free ';
+    $('#cta-h').textContent = 'See your business, redone. In a minute.';
+    $('#concept .lead').textContent = 'Paste your website and see your new homepage right here, built from your own photos, services and story.';
+    $('#formcard').classList.add('live');
+    var inst = $('#instant'); inst.hidden = false;
+    inst.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var url = inst.url.value.trim(), email = inst.email.value.trim(), err = $('.instant-err', inst);
+      err.hidden = true;
+      if (!/[^\s.]+\.[a-z]{2,}/i.test(url)) { err.textContent = 'Add your website address, like rosasbakery.com.'; err.hidden = false; inst.url.focus(); return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { err.textContent = 'Add your email so we can follow up about your redesign.'; err.hidden = false; inst.email.focus(); return; }
+      try { sessionStorage.setItem('bu-try', JSON.stringify({ url: url, email: email })); } catch (x) {}
+      location.href = '/try/' + (sessionStorage.getItem('bu-try') ? '' : '?url=' + encodeURIComponent(url));
+    });
+  }
 
   // Concept request form (Tally). Tally's script forwards page parameters such as ?ref= to the form's hidden fields.
   var card = $('#formcard'), done = $('.done', card), tally = $('#tally');

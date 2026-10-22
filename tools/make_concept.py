@@ -31,7 +31,7 @@ THEMES = {
         steps_eyebrow="Order ahead", steps_heading="Skip the line in three steps",
         steps=[["Pick your favorites", "Browse the full menu online, with photos and prices."], ["Choose a pickup time", "Same-day or schedule ahead for parties and holidays."], ["Grab it and go", "Your order is boxed and waiting at the counter."]],
         final_heading="Come hungry. We'll have something warm.",
-        photos=dict(hero=u("1517433670267-08bbd4be890f"), cards=[u("1608198093002-ad4e005484ec", 900), u("1555507036-ab1f4038808a", 900), u("1568254183919-78a4f43a2877", 900)], story=u("1509440159596-0249088772ff", 1200), cta=u("1608198093002-ad4e005484ec"))),
+        photos=dict(hero=u("1509440159596-0249088772ff"), cards=[u("1608198093002-ad4e005484ec", 900), u("1555507036-ab1f4038808a", 900), u("1568254183919-78a4f43a2877", 900)], story=u("1568254183919-78a4f43a2877", 1200), cta=u("1555507036-ab1f4038808a"))),
     "deli": dict(BASE, bg="#FAF7F2", ink="#24201B", muted="#625A50", hero="#1F3A2B", hero_ink="#F6F1E7", accent="#E8B64C", accent_ink="#24201B", card="#FFFFFF", line="#E8E0D2", star="#C88A12", eyebrow="#8A4B12",
         display_font="Fraunces", display_font_q="Fraunces:opsz,wght@9..144,600;9..144,700", body_font="Work Sans", body_font_q="Work+Sans:wght@400;500;600;700;800",
         tagline="Family deli", nav=["Menu", "Catering", "About", "Visit"], primary_cta="Order for pickup", list_eyebrow="On the menu", list_heading="Piled high, made to order",
