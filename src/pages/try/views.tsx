@@ -1,6 +1,6 @@
 // The /try/ page's sections. Each is always in the page and hidden unless it's the current view,
 // so the aria-live regions exist before their content changes.
-import { useEffect, useState, type ChangeEvent, type FormEvent, type ReactNode, type Ref } from "react";
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent, type ReactNode, type Ref, type RefObject } from "react";
 import { SubFooter, SubHeader } from "../../components/Chrome.tsx";
 import { Arrow } from "../../components/icons.tsx";
 
@@ -139,8 +139,29 @@ function SizeButton({ size, current, onPick, children }: { size: Size; current: 
   return <button type="button" data-view={size} aria-pressed={current === size} onClick={() => onPick(size)}>{children}</button>;
 }
 
+/** Desktop view always lays the page out at this width and scales it to fit, so a phone still sees the desktop design. */
+const DESKTOP_WIDTH = 1280;
+
+/** How much to shrink the desktop layout to fit the frame (1 when the frame is already wide enough). */
+function useDesktopScale(frame: RefObject<HTMLDivElement | null>, active: boolean): number {
+  const [scale, setScale] = useState(1);
+  useEffect(() => {
+    const el = frame.current;
+    if (!el || !active) return setScale(1);
+    const measure = () => setScale(Math.min(1, el.clientWidth / DESKTOP_WIDTH));
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [frame, active]);
+  return scale;
+}
+
 export function ResultView({ hidden, data, onCopy, onFullScreen, onAgain }: ResultProps) {
   const [size, setSize] = useState<Size>("desktop");
+  const frame = useRef<HTMLDivElement>(null);
+  const scale = useDesktopScale(frame, size === "desktop" && !hidden);
+  const scaled = size === "desktop" && scale < 1;
   // Outreach concepts carry the prospect's tracker slug, so the start form lands on their row.
   const startHref = data ? "/start/?ref=" + encodeURIComponent(data.ref || "redesign-" + data.id) : "/start/";
   return (
@@ -164,9 +185,9 @@ export function ResultView({ hidden, data, onCopy, onFullScreen, onAgain }: Resu
         </div>
       </div>
       <div className={size === "phone" ? "stage phone" : "stage"} id="stage">
-        <div className="frame">
+        <div className="frame" ref={frame}>
           <div className="chrome" aria-hidden="true"><i></i><i></i><i></i><span id="r-host">{data?.address}</span></div>
-          <iframe id="preview" title="Your redesigned homepage" sandbox={data?.handmade ? "allow-scripts allow-popups allow-popups-to-escape-sandbox" : "allow-popups"} srcDoc={data?.html || undefined}></iframe>
+          <div className="viewport" style={scaled ? { height: `var(--frame-h)` } : undefined}><iframe id="preview" title="Your redesigned homepage" style={scaled ? { width: DESKTOP_WIDTH, height: `calc(var(--frame-h) / ${scale})`, transform: `scale(${scale})`, transformOrigin: "0 0" } : undefined} sandbox={data?.handmade ? "allow-scripts allow-popups allow-popups-to-escape-sandbox" : "allow-popups"} srcDoc={data?.html || undefined}></iframe></div>
         </div>
       </div>
       <div className="next">
