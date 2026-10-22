@@ -12,9 +12,9 @@ I came across {Business} while looking at family-owned {industry, plural} in {Ci
 
 Your website doesn't show any of that yet, so I mocked up what a new homepage could look like, using your real {menu / services} and reviews. {If link: "Here it is: {Concept link}" | If attached: "It's attached."}
 
-If you like it, we'll build the whole site for a flat $1,000: refreshed logo and colors, works on any phone, with {online ordering / online booking / a quote form} built in. Live in about two weeks. If it's not for you, no hard feelings.
+If you like it, we'll build the whole site: refreshed logo and colors, works on any phone, with {online ordering / online booking / a quote form} built in. You only pay the flat $1,000 once you've seen the finished site and approved it. No calls needed. Getting started is a 10-minute form: https://bringsup.com/start/?ref={slug}
 
-Want me to send over a couple of ideas for the rest of the site?
+If it's not for you, no hard feelings. Questions? Just reply.
 
 Jake Silver
 BringsUp
@@ -37,6 +37,8 @@ Jake
 Reply "no thanks" and I won't follow up again.
 
 ## Rules
+- Link to the start page as `https://bringsup.com/start/?ref={slug}` (the tracker slug), so the start form submission matches the prospect's row. Never promise a call; offer one only if the owner asks.
+- Never ask for payment before the owner has approved their finished site.
 - Two emails maximum per business. Never a third.
 - Never mention bad reviews, never call their site "bad" or "ugly". "Outdated" is the strongest word allowed, and only if needed.
 - Never claim results, clients or stats we don't have.

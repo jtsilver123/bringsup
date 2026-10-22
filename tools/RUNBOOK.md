@@ -8,7 +8,7 @@ Read `brand.md` and `tools/email_template.md` first; their rules apply to everyt
 - `meta/pipeline`: `sender`, `dailyCap`, `firstSendDate`, `blocker`, `lastRunAt`, `lastRunSummary`
 
 Prospect fields: `name, industry, city, website, rating, reviews, ratingSource, email, owner, phone, issues[], praise, services[], hours, founded, conceptUrl, conceptFile, status, addedAt, emailedAt, followUpAt, followedUpAt, repliedAt, lastTouchAt, threadId, notes`.
-`status` is one of `found, concept, emailed, followed_up, replied, won, lost, dnc`. Only Jake sets `won` and `lost` (except bounces). Never overwrite `notes` except where this runbook says to add to an empty one.
+`status` is one of `found, concept, emailed, followed_up, replied, started, won, lost, dnc` (`started` = the owner submitted the start form; `won` = they approved and paid). Only Jake sets `won` and `lost` (except bounces). Never overwrite `notes` except where this runbook says to add to an empty one.
 
 ## 0. Setup
 1. Attach and clone `jtsilver123/bringsup` (read access is enough).
@@ -48,3 +48,11 @@ Each must be: US, family-owned or owner-run, independent, open now; 4.5+ stars w
 
 ## 7. Wrap up
 Set `meta.lastRunAt` and `meta.lastRunSummary` (e.g. "Sent 10 · 2 follow-ups · 1 reply · 12 new prospects ready"). End with a short summary for Jake: replies that need him first (business, what they said, thread link https://mail.google.com/mail/u/0/#all/<threadId>), then emails sent (business names), follow-ups, opt-outs, prospects added, and any blocker.
+
+## Customer flow (no calls)
+Everything after a yes runs through Tally forms wrapped in pages on bringsup.com. Each link carries `?ref=<slug>` so submissions match tracker rows.
+1. **Start** — `https://bringsup.com/start/?ref=<slug>` (Tally `o9bkWV`). Owner gives details, photos and domain info. Nothing is charged. On a new submission: set `status: started`, add a one-line summary to empty `notes`, and push-notify Jake that a site needs building.
+2. **Build** — Jake (or an agent) builds the full site and emails a private preview link plus `https://bringsup.com/changes/?ref=<slug>`.
+3. **Changes** — `https://bringsup.com/changes/?ref=<slug>` (Tally `0VQDN6`). Two rounds. Each submission goes to Jake to apply, then a new preview email.
+4. **Approve and pay** — `https://bringsup.com/approve/?ref=<slug>` (Tally `RWGVEJ`, $1,000 through Stripe). Paid submission: Jake sets `won`, sends domain steps, and the Care Plan link if they asked for it.
+Never charge, or ask for payment, before the owner approves the finished site.

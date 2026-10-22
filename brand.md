@@ -7,7 +7,8 @@ One source of truth for the website, cold emails, prospect concept mockups and a
 - **Tagline:** Websites as good as your reviews. (The whole business in five words. Use it in the footer, social bios, email signature and link previews.)
 - **Descriptor:** For the businesses your town already loves. (Supporting line, never the headline.)
 - **Promise:** Your reviews say you're the best in town. Your website should too.
-- **Offer:** Free homepage concept first. Then one flat $1,000 for a new website and brand refresh: $500 to start, $500 at launch, live in about two weeks. Optional Care Plan $79/mo.
+- **Offer:** Free homepage concept first. Then the owner fills in one 10-minute form (no calls), we build the full site and brand refresh, and they pay one flat $1,000 only when they approve the finished site. Preview in about two weeks, two rounds of changes. Optional Care Plan $79/mo.
+- **The promise behind it:** See it first. Pay only if you love it. Nothing is charged before approval, and there are no calls unless the owner asks for one.
 - **Who we serve:** family-owned local businesses with strong reviews and an outdated website (bakeries, diners and delis, auto shops, florists, plumbers and HVAC, hardware stores).
 
 ## Logo
@@ -98,9 +99,10 @@ bringsup.com
 ## Website
 - One page at `index.html`, deployed by GitHub Pages to bringsup.com. Order: hero with before/after slider → "Got an email from Jake?" (for prospects arriving from outreach) → why it matters → sample concepts → how it works → included, pricing, comparison → who we are and our promises → FAQ → concept request form.
 - Sample concepts on the site (`assets/work/`) are **fictional businesses**, generated with `tools/make_concept.py`, and must always be labeled as fictional with stock photos. Never show a real prospect's concept on the site without their written OK.
-- The site's promises must stay true to the runbook: two emails maximum, flat $1,000 split $500/$500, the owner keeps everything.
+- The site's promises must stay true to the runbook: two emails maximum, flat $1,000 paid only on approval, no calls, the owner keeps everything.
 - Contact: `hello@bringsup.com` for general mail, `jake@bringsup.com` for outreach replies.
 - The concept request form is the Tally form "Get your free homepage concept" (`9NqoKQ`, https://tally.so/r/9NqoKQ), embedded in the last section. Hidden fields: `source` (always `website`) and `ref` (copied from the page URL, e.g. `bringsup.com/?ref=marigold-bakery`). Submissions are emailed to the Tally account owner. Edit questions in Tally, not in `index.html`.
+- Customer flow pages: `/start/` (Tally `o9bkWV`), `/changes/` (`0VQDN6`), `/approve/` (`RWGVEJ`, takes the $1,000 through Stripe). Rebuild them with `python3 tools/make_flow_pages.py`. They're `noindex`; reach them from emails with `?ref=<slug>`.
 
 ## Concept mockup labeling
 Every prospect concept carries a small footer: "Concept by BringsUp · Not affiliated with [Business] · Not a live site".
