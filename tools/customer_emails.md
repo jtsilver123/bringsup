@@ -33,6 +33,8 @@ Hi {first name},
 
 Here's the new {business} website: {preview_url}
 
+{If we refreshed their logo and colors:} Your refreshed logo and a one-page brand guide are here too, with your colors and fonts, so signs, menus and posts can match: {preview_url}/brand/
+
 Look at it on your phone first, since that's where most of your customers will see it. It's private, so only people with this link can see it. The address ends in pages.dev for now; that's just where the preview lives until it moves to {domain}.
 
 When you're ready, you have two options:
