@@ -19,3 +19,14 @@
 .ba-range{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
 .ba-range:focus-visible ~ .ba-knob{outline:3px solid var(--ember-deep);outline-offset:4px;transform:scale(1.06)}
 .ba figcaption{margin-top:12px;max-width:44em}
+
+/* Whole-page compare (/try/): a fixed window that scrolls; the two pictures share one tall canvas. */
+.ba-stage.tall{aspect-ratio:auto;height:min(72vh,760px);cursor:default}
+.ba-stage.tall .ba-scroll{position:absolute;inset:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;touch-action:pan-y}
+.ba-stage.tall .ba-scroll:focus-visible{outline:3px solid var(--ember-deep);outline-offset:-3px}
+.ba-stage.tall .ba-canvas{position:relative;width:100%}
+.ba-stage.tall img{bottom:auto;height:auto;object-fit:fill}
+.ba-stage.tall .ba-line,.ba-stage.tall .ba-knob{z-index:1}
+.ba-stage.tall .ba-knob{pointer-events:none}
+@media (pointer:fine){.ba-stage.tall{cursor:ew-resize}}
+.ba-end{position:absolute;right:24px;margin-top:20px;font-size:14px;font-weight:700;color:var(--subtle);pointer-events:none}
