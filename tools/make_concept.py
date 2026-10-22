@@ -100,7 +100,13 @@ THEMES["default"] = THEMES["trades"]
 
 def theme_for(industry: str) -> dict:
     s = (industry or "").lower()
-    if any(k in s for k in ("jewel", "watch", "tailor", "alteration", "bridal")): return THEMES["boutique"]
+    if "watch" in s:
+        return dict(THEMES["boutique"], tagline="Watchmaker", list_heading="Serviced by hand, built to keep time for decades", blurbs=["Full service on mechanical movements.", "Original parts and character, carefully kept.", "Honest checks before any work is done."],
+                    photos=dict(hero=u("1587836374828-4dbafa94cf0e"), cards=[u("1523170335258-f5ed11844a49", 900), u("1547996160-81dfa63595aa", 900), u("1542496658-e33a6d0d50f6", 900)], story=u("1612817159949-195b6eb9e31a", 1200), cta=u("1587836374828-4dbafa94cf0e")))
+    if any(k in s for k in ("tailor", "alteration", "bespoke", "suit")):
+        return dict(THEMES["boutique"], tagline="Bespoke tailoring", list_heading="Cut for you, fitted by hand", blurbs=["Measured, cut and fitted in-house.", "Cloth chosen with you, swatch by swatch.", "Alterations that look like they were always yours."],
+                    photos=dict(hero=u("1507679799987-c73779587ccf"), cards=[u("1594938298603-c8148c4dae35", 900), u("1617137968427-85924c800a22", 900), u("1593030761757-71fae45fa0e7", 900)], story=u("1593030761757-71fae45fa0e7", 1200), cta=u("1507679799987-c73779587ccf")))
+    if any(k in s for k in ("jewel", "bridal")): return THEMES["boutique"]
     if any(k in s for k in ("upholst", "furniture", "frame", "framing", "interior", "cabinet", "carpent", "remodel", "builder", "restoration", "woodwork")): return THEMES["home"]
     if any(k in s for k in ("landscap", "tree", "lawn")): return THEMES["garden"]
     if any(k in s for k in ("tuition", "residency", "education", "consult", "college")): return THEMES["education"]
@@ -126,6 +132,7 @@ def build_copy(p, t):
                  "Greenhouse & garden": f"Growing in {city} since {yr}.", "Licensed & insured": f"{city}'s neighborhood pros since {yr}.", "Residency consulting": "Pay in-state tuition. Legally, and for good.", "Craftsmanship for the home": f"Crafted in {city} since {yr}.", "Fine craftsmanship": f"A {city} tradition since {yr}."}
     no_year = {"Family bakery": "Baked fresh every morning, the way it should be.", "Family deli": "Piled-high subs, made the old-fashioned way.", "Auto repair": "Honest car care from people who know your name.",
                "Greenhouse & garden": "Healthy plants, grown right here.", "Licensed & insured": "Done right the first time, by your neighbors.", "Residency consulting": "Pay in-state tuition. Legally, and for good.", "Craftsmanship for the home": "Craftsmanship you can see, and feel.", "Fine craftsmanship": "Fine work, personal service."}
+    key = {"Watchmaker": "Fine craftsmanship", "Bespoke tailoring": "Fine craftsmanship"}.get(key, key)
     headline = (with_year if yr and city else no_year)[key]
     subs = {"Family bakery": "Order ahead online, browse the full menu, or stop by and say hi.", "Family deli": "Order ahead online and skip the line, or let us cater your next event.",
             "Auto repair": "Book online in a minute, get a clear quote, and get back on the road.", "Greenhouse & garden": "See what's in stock this week and reserve plants for pickup.",
