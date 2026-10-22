@@ -93,7 +93,7 @@ try {
   const dupPay = await worker("POST", "", { action: "payment", ref, stripe_id: `cs_test_${ref}_extra`, kind: "extra", cents: 15000 });
   console.log(`${dupPay.duplicate ? "ok  " : "FAIL"}  the same Stripe payment posted twice counts once`);
   if (!dupPay.duplicate) failures++;
-  await worker("POST", "", { action: "update", ref, applied_seq: 6, set: { status: "preview_sent", todo: null, pending_changes: null } });
+  await worker("POST", "", { action: "update", ref, applied_seq: 5, set: { status: "preview_sent", todo: null, pending_changes: null } });
 
   const found = await worker("GET", `?email=${encodeURIComponent(email)}`);
   console.log(`${found.projects?.[0]?.ref === ref ? "ok  " : "FAIL"}  sender lookup finds the project`);
