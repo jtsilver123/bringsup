@@ -45,7 +45,7 @@ Each is prepared so it takes minutes, and each reaches him as a push (OPERATOR.m
 - **The mailbox and DNS (Jake only, never the operator):** Google Postmaster Tools for bringsup.com; point DMARC `rua=` away from the inbox the operator reads, and move to `p=quarantine` after a few clean weeks; real two-way email from jake@bringsup.com in the first weeks of sending (no automated warm-up networks); a PO box or private mailbox for the CAN-SPAM address if he'd rather not publish a street address; optionally an address-checking service (NeverBounce, ZeroBounce).
 
 ## Accuracy (applies to everything we send or publish)
-- Every fact on a site, homepage, brand guide or email comes from a source we can point to: the owner's start form, their own website or menu, their Google listing, or their uploads. Keep the list in `work/.../sources.md` while building.
+- Every fact on a site, homepage, brand guide or email comes from a source we can point to: the owner's start form, their own website or menu, their Google or Yelp listing, or their uploads. Keep the list in `work/.../sources.md` while building.
 - Nothing is invented: no hours, prices, years, awards, reviews, policies ("free tastes"), directions or claims about their street, building or neighbors.
 - If a fact may be stale (seasonal hours, a holiday menu), say so the way the owner would ("summer hours, call to confirm"), or leave it out.
 - Awards are attributed exactly as the source states them.
