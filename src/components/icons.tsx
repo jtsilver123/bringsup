@@ -14,9 +14,9 @@ export function BrandMark({ size = 38, className = "brand-mark" }: { size?: numb
   );
 }
 
-export function Check({ size = 20 }: { size?: number }) {
+export function Check({ size = 20, strokeWidth = 2.8 }: { size?: number; strokeWidth?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M5 12.5l4.5 4.5L19 7.5" />
     </svg>
   );

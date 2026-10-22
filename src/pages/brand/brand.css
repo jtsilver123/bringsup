@@ -1,0 +1,55 @@
+/* BringsUp brand tokens — see brand.md. Use only these values. */
+:root{--ink:#16181D;--muted:#3D414B;--subtle:#5A5F6B;--paper:#FBFAF7;--sand:#F1EEE6;--line:#E4E1D9;--ember:#C2410C;--ember-deep:#9A3412;--glow:#FFB37A;--tint:#FFE8DC;--display:'Bricolage Grotesque',system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'DM Sans',system-ui,sans-serif;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,p{margin:0}
+a{color:var(--ember-deep)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+header{padding:28px 0;border-bottom:1px solid var(--line)}
+header .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+header img{height:40px;width:auto}
+.eyebrow{color:var(--ember-deep);font-weight:700;font-size:15px;letter-spacing:.06em;text-transform:uppercase}
+.display{font-family:var(--display);font-weight:800;letter-spacing:-.03em}
+h1{font-size:clamp(40px,6vw,72px);line-height:1;margin-top:12px}
+h2{font-size:clamp(28px,3.4vw,40px);line-height:1.05;margin-top:10px}
+section{padding:72px 0;border-bottom:1px solid var(--line)}
+.lead{font-size:19px;color:var(--muted);margin-top:16px;max-width:680px}
+.grid{display:grid;gap:16px;margin-top:32px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.g5{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.tile{border:1px solid var(--line);border-radius:20px;overflow:hidden;background:#fff}
+.tile .show{height:200px;display:flex;align-items:center;justify-content:center;padding:24px}
+.tile .show img{max-height:64px;width:auto}
+.tile .cap{padding:14px 18px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;font-size:15px;flex-wrap:wrap}
+.tile .cap a{font-weight:700;text-decoration:none}
+.sw{border-radius:20px;overflow:hidden;border:1px solid var(--line);background:#fff}
+.sw .c{height:110px}
+.sw div.t{padding:12px 14px;font-size:14px;line-height:1.4}
+.sw b{display:block;font-size:16px}
+.sw code{color:var(--subtle)}
+.type{margin-top:32px;display:grid;gap:24px}
+.type .row{display:grid;grid-template-columns:200px 1fr;gap:24px;align-items:baseline;border-top:1px solid var(--line);padding-top:20px}
+@media (max-width:640px){.type .row{grid-template-columns:1fr;gap:6px}}
+.type small{color:var(--subtle);font-size:14px}
+.btns{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px;align-items:center}
+.btn{display:inline-flex;align-items:center;min-height:56px;padding:16px 26px;border-radius:999px;font-weight:700;font-size:18px;text-decoration:none}
+.dark{background:var(--ink);padding:24px;border-radius:20px;display:inline-flex}
+.dos{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:32px}
+.dos div{border-radius:20px;padding:24px;background:#fff;border:1px solid var(--line)}
+.dos h3{font-size:18px}
+.dos ul{margin:12px 0 0;padding-left:20px;color:var(--muted)}
+.dos li+li{margin-top:6px}
+footer{padding:40px 0;color:var(--subtle);font-size:15px}
+.lift{position:relative;white-space:nowrap;display:inline-block}
+.lift svg{position:absolute;left:-2%;bottom:-.12em;width:106%;height:.32em;overflow:visible}
+.lift path{fill:none;stroke:var(--ember);stroke-width:6;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.sig-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:32px}
+.sig-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:28px}
+.sig-card .demo{min-height:110px;display:flex;align-items:center}
+.sig-card h3{font-size:18px;margin-top:16px}
+.sig-card p{color:var(--muted);font-size:16px;margin-top:6px}
+.stars{color:var(--ember);font-size:40px;letter-spacing:4px}
+.motion{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:32px}
+.motion div{background:#fff;border:1px solid var(--line);border-radius:20px;padding:22px}
+.motion b{display:block;font-family:var(--display);font-size:28px;letter-spacing:-.02em}
+.motion span{color:var(--muted);font-size:15px}

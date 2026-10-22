@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
 declare global {
   interface Window {
@@ -12,7 +12,7 @@ const SCRIPT = "https://tally.so/widgets/embed.js";
  * A Tally form embed. Tally's script sizes the iframe to its content and forwards page query
  * parameters (like ?ref=) to the form's hidden fields. onSubmit fires on Tally.FormSubmitted.
  */
-export function TallyEmbed({ formId, title, height = 520, extra = "", lazy = false, onSubmit }: {
+export function TallyEmbed({ formId, title, height = 520, extra = "", lazy = false, onSubmit, fallback }: {
   formId: string;
   title: string;
   height?: number;
@@ -20,6 +20,8 @@ export function TallyEmbed({ formId, title, height = 520, extra = "", lazy = fal
   extra?: string;
   lazy?: boolean;
   onSubmit?: () => void;
+  /** What to show without JavaScript. Defaults to a plain link to the form. */
+  fallback?: ReactNode;
 }) {
   const frame = useRef<HTMLIFrameElement>(null);
   const src = `https://tally.so/embed/${formId}?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1${extra}`;
@@ -69,7 +71,7 @@ export function TallyEmbed({ formId, title, height = 520, extra = "", lazy = fal
         title={title}
       />
       <noscript>
-        <p className="foot"><a href={`https://tally.so/r/${formId}`}>Open the form</a></p>
+        {fallback ?? <p className="foot"><a href={`https://tally.so/r/${formId}`}>Open the form</a></p>}
       </noscript>
     </>
   );

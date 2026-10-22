@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Link preview (Open Graph) image template, 1200x630. Rendered by tools/make-og.ts; ?v= picks the variant. -->
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=DM+Sans:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#16181D;--glow:#FFB37A;--ember:#C2410C;--paper:#F4F2EC;--soft:#C9C7C0}
+*{box-sizing:border-box}
+body{margin:0;width:1200px;height:630px;background:var(--ink);color:var(--paper);font-family:'DM Sans',sans-serif;overflow:hidden;position:relative}
+.logo{position:absolute;left:72px;top:64px;height:52px}
+.copy{position:absolute;left:72px;top:150px;width:560px}
+h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;letter-spacing:-.035em;font-size:76px;line-height:.98;margin:0}
+.lift{position:relative;display:inline-block;color:var(--glow);white-space:nowrap}
+.lift svg{position:absolute;left:-2%;bottom:-.14em;width:106%;height:.3em;overflow:visible}
+.lift path{fill:none;stroke:var(--glow);stroke-width:6;stroke-linecap:round;vector-effect:non-scaling-stroke}
+p{font-size:26px;color:var(--soft);line-height:1.35;margin:26px 0 0}
+.pills{position:absolute;left:72px;bottom:60px;display:flex;gap:12px}
+.pills span{background:var(--glow);color:var(--ink);font-weight:700;font-size:22px;padding:13px 22px;border-radius:999px}
+.pills span.o{background:transparent;color:var(--paper);box-shadow:inset 0 0 0 2px rgba(255,255,255,.3)}
+.shot{position:absolute;border-radius:14px;overflow:hidden;box-shadow:0 30px 70px rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.12);background:#fff}
+.shot img{display:block;width:100%}
+.tag{position:absolute;top:14px;left:14px;font-weight:700;font-size:17px;padding:7px 14px;border-radius:999px;z-index:1}
+.tag.before{background:rgba(22,24,29,.85);color:#fff}
+.tag.after{background:var(--glow);color:var(--ink)}
+.phone{position:absolute;width:150px;border-radius:22px;border:5px solid #000;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.55)}
+.phone img{display:block;width:100%}
+.arrow{position:absolute;width:74px;height:74px;border-radius:50%;background:var(--glow);color:var(--ink);display:flex;align-items:center;justify-content:center;box-shadow:0 12px 30px rgba(0,0,0,.4);z-index:2}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<img class="logo" src="../../public/assets/brand/logo-reverse.svg" alt="">
+
+<!-- try: before -> after -->
+<section data-v="try" hidden>
+  <div class="copy" style="width:470px"><h1>See your website, <span class="lift">redone.<svg viewBox="0 0 300 24" preserveAspectRatio="none"><path d="M4 16 C 70 11, 170 10, 250 12 C 268 12, 282 9, 296 3"/></svg></span></h1>
+  <p>Paste your website. Get your new homepage by email, free.</p></div>
+  <div class="shot" style="width:390px;right:250px;top:86px;transform:rotate(-4deg);filter:saturate(.6) brightness(.9)"><span class="tag before">Before</span><img src="../../public/assets/work/bakery-before.jpg"></div>
+  <div class="shot" style="width:470px;right:-50px;top:250px;transform:rotate(2.5deg)"><span class="tag after">After</span><img src="../../public/assets/work/bakery-hero.jpg"></div>
+  <div class="arrow" style="right:385px;top:350px"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></div>
+  <div class="pills"><span>Free</span><span class="o">No call</span><span class="o">Takes 30 seconds</span></div>
+</section>
+
+<!-- start: the customer flow -->
+<section data-v="start" hidden>
+  <div class="copy"><h1>Let's build your <span class="lift">new site.<svg viewBox="0 0 300 24" preserveAspectRatio="none"><path d="M4 16 C 70 11, 170 10, 250 12 C 268 12, 282 9, 296 3"/></svg></span></h1>
+  <p>One 10-minute form. No call. Nothing to pay until you approve it.</p></div>
+  <div class="shot" style="width:560px;right:-60px;top:100px;transform:rotate(-3deg)"><img src="../../public/assets/work/plumbing-hero.jpg"></div>
+  <div class="phone" style="right:440px;top:250px;transform:rotate(4deg)"><img src="../../public/assets/work/bakery-phone.jpg"></div>
+  <div class="pills"><span>$0 until you approve</span><span class="o">Flat $1,000</span></div>
+</section>
+<script>
+  const v = new URLSearchParams(location.search).get("v") || "try";
+  document.querySelector(`[data-v="${v}"]`).hidden = false;
+</script>
+</body>
+</html>
