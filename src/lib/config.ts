@@ -10,4 +10,5 @@ export const TALLY = {
   start: "Ar7yBl",
   changes: "EqkMlA",
   approve: "VpLDP6",
+  extra: "5XBMpd",
 } as const;

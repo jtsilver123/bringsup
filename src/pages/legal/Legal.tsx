@@ -42,7 +42,7 @@ export function Legal({ kind }: { kind: LegalKind }) {
       <footer>
         <div className="wrap">
           <span>© 2026 BringsUp · Websites as good as your reviews.</span>
-          <span><a href="/terms/">Terms</a> · <a href="/privacy/">Privacy</a> · <a href="mailto:hello@bringsup.com">hello@bringsup.com</a></span>
+          <span><a href="/terms/">Terms</a> · <a href="/privacy/">Privacy</a> · <a href="mailto:jake@bringsup.com">jake@bringsup.com</a></span>
         </div>
       </footer>
     </>

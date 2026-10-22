@@ -37,13 +37,13 @@ export function Pricing() {
             <div className="price-main">
               <p className="eyebrow">Website + brand refresh</p>
               <div style={{ marginTop: 12, display: "flex", alignItems: "baseline", gap: 10 }}><span className="amt">$1,000</span><span className="per">flat</span></div>
-              <p>That's the whole price, and you pay it only after you've seen your finished site and approved it. No hidden fees, no contract.</p>
+              <p>That's the whole price, including hosting, and you pay it only after you've seen your finished site and approved it. No monthly fee, no contract.</p>
               <div className="split-pay"><div><b>$0</b>to start</div><div><b>$1,000</b>when you approve</div></div>
               <a className="btn btn-glow" href="#concept">Start with a free concept <Arrow /></a>
             </div>
             <div className="care">
               <div className="care-top"><h3>Optional Care Plan</h3><span className="amt">$79<small>/mo</small></span></div>
-              <p>Hosting, security updates, and unlimited small edits: new hours, specials, photos. Cancel anytime.</p>
+              <p>Unlimited small edits by email: new hours, specials, photos, seasonal menus, usually done within two business days. Hosting is already included, so this is only if you'd like us to handle updates. Cancel anytime.</p>
             </div>
           </Reveal>
         </div>

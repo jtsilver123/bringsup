@@ -8,7 +8,7 @@ Read `brand.md` and `tools/email_template.md` first; their rules apply to everyt
 - `meta/pipeline`: `sender`, `dailyCap`, `firstSendDate`, `blocker`, `lastRunAt`, `lastRunSummary`
 
 Prospect fields: `name, industry, city, website, rating, reviews, ratingSource, email, owner, phone, issues[], praise, services[], hours, founded, conceptUrl, conceptFile, status, addedAt, emailedAt, followUpAt, followedUpAt, repliedAt, lastTouchAt, threadId, notes`.
-`status` is one of `found, concept, emailed, followed_up, replied, started, won, lost, dnc` (`started` = the owner submitted the start form; `won` = they approved and paid). Only Jake sets `won` and `lost` (except bounces). Never overwrite `notes` except where this runbook says to add to an empty one.
+`status` is one of `found, concept, emailed, followed_up, replied, started, won, lost, dnc` (`started` = the owner submitted the start form; `won` = they approved and paid). The operator sets `won` when a project goes live; `lost` is for bounces and closed-out projects. Never overwrite `notes` except where this runbook says to add to an empty one.
 
 ## 0. Setup
 1. Attach and clone `jtsilver123/bringsup` (read access is enough).
@@ -25,11 +25,7 @@ Prospect fields: `name, industry, city, website, rating, reviews, ratingSource, 
 - When the sender gate passes: set `meta.sender`, clear `meta.blocker`, set `meta.firstSendDate` to today if empty.
 
 ## 2. Replies
-Search the jake@bringsup.com inbox for replies to our threads (match `threadId` or the prospect's email).
-- Interested, a question, or anything that needs Jake: `status: replied`, `repliedAt`, star the thread, leave it in the inbox. Do not reply for him. Push-notify him.
-- "No", "stop", "unsubscribe", "not interested" or similar: `status: dnc`, archive. Never email them again.
-- Bounce or "address not found": `status: lost`; if `notes` is empty set it to "Email bounced"; archive the bounce.
-- Never create Gmail labels. Use INBOX, STARRED and UNREAD only.
+Handled every hour by the operator task (`tools/OPERATOR.md`, step 1): interested replies and questions get answered from the FAQ with the start link, opt-outs become `dnc`, bounces become `lost`. When this runbook runs as part of the operator task, skip this step.
 
 ## 3. Follow-ups
 For each prospect with `status: emailed`, `followUpAt` on or before today and no reply: send Email 2 as a reply in the same thread. Set `status: followed_up`, `followedUpAt`, `lastTouchAt`. Never send a third email.
@@ -53,9 +49,5 @@ Each must be: US, family-owned or owner-run, independent, open now; 4.5+ stars w
 Set `meta.lastRunAt` and `meta.lastRunSummary` (e.g. "Sent 10 · 2 follow-ups · 1 reply · 12 new prospects ready"). End with a short summary for Jake: replies that need him first (business, what they said, thread link https://mail.google.com/mail/u/0/#all/<threadId>), then emails sent (business names), follow-ups, opt-outs, prospects added, and any blocker.
 
 ## Customer flow (no calls)
-Everything after a yes runs through Tally forms wrapped in pages on bringsup.com. Each link carries `?ref=<slug>` so submissions match tracker rows.
-1. **Start** — `https://bringsup.com/start/?ref=<slug>` (Tally `Ar7yBl`). Owner gives details, photos and domain info. Nothing is charged. On a new submission: set `status: started`, add a one-line summary to empty `notes`, and push-notify Jake that a site needs building.
-2. **Build** — Jake (or an agent) builds the full site and emails a private preview link plus `https://bringsup.com/changes/?ref=<slug>`.
-3. **Changes** — `https://bringsup.com/changes/?ref=<slug>` (Tally `EqkMlA`). Two rounds. Each submission goes to Jake to apply, then a new preview email.
-4. **Approve and pay** — `https://bringsup.com/approve/?ref=<slug>` (Tally `VpLDP6`, $1,000 through Stripe). Paid submission: Jake sets `won`, sends domain steps, and the Care Plan link if they asked for it.
+Everything after a yes is automated. Tally sends each start, changes, extra-round and approve submission to the `projects` Supabase function, which logs it, counts rounds and sets the next job. The operator task (`tools/OPERATOR.md`) builds the site, sends previews and customer emails (`tools/customer_emails.md`), applies changes, launches on Cloudflare Pages and checks DNS. Each link carries `?ref=<slug>`, so submissions match tracker rows. When a project goes live, set the tracker row to `won`.
 Never charge, or ask for payment, before the owner approves the finished site.

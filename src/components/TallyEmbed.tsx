@@ -29,7 +29,8 @@ export function TallyEmbed({ formId, title, height = 520, extra = "", lazy = fal
   useEffect(() => {
     const load = () => {
       if (window.Tally) window.Tally.loadEmbeds();
-      else if (frame.current && !frame.current.src) frame.current.src = src;
+      // Without the Tally script, pass the page parameters (like ?ref=) on ourselves.
+      else if (frame.current && !frame.current.src) frame.current.src = src + (location.search ? "&" + location.search.slice(1) : "");
     };
     if (window.Tally) return load();
     let script = document.querySelector<HTMLScriptElement>(`script[src="${SCRIPT}"]`);

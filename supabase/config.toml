@@ -1,3 +1,6 @@
 # Public endpoint: the function does its own validation and rate limiting.
 [functions.redesign]
 verify_jwt = false
+
+[functions.projects]
+verify_jwt = false

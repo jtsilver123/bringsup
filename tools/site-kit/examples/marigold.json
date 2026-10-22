@@ -1,0 +1,53 @@
+{
+  "business_name": "Marigold Bakery",
+  "theme": "bakery",
+  "tagline": "Family bakery",
+  "city_state": "Westbrook, CT",
+  "phone": "(860) 555-0142",
+  "email": "hello@marigoldbakery.example",
+  "address": "12 Main Street, Westbrook, CT 06498",
+  "hours": [
+    { "days": "Tuesday to Friday", "time": "6am to 3pm" },
+    { "days": "Saturday and Sunday", "time": "7am to 2pm" },
+    { "days": "Monday", "time": "Closed" }
+  ],
+  "year_founded": "1984",
+  "rating": "4.9",
+  "review_count": "412",
+  "reviews_url": "",
+  "brand_primary": "#3B2416",
+  "brand_accent": "#F2A65A",
+  "logo": "",
+  "hero_image": "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1800&q=80",
+  "primary_cta": { "label": "Order for pickup", "href": "contact/" },
+  "home": {
+    "headline": "Westbrook's sourdough, since 1984.",
+    "subheadline": "A family bakery on Main Street baking bread, pastries and celebration cakes from scratch every morning. Order ahead and we'll have it boxed and ready.",
+    "final_heading": "Come hungry. We'll have something warm."
+  },
+  "offer": {
+    "title": "Menu",
+    "intro": "Everything is baked in-house, in small batches, every morning.",
+    "groups": [
+      { "name": "Breads", "items": [
+        { "name": "Country sourdough", "description": "Made with the starter we've kept going since we opened.", "price": "$9", "image": "https://images.unsplash.com/photo-1608198093002-ad4e005484ec?auto=format&fit=crop&w=900&q=80" },
+        { "name": "Seeded rye", "description": "Dense, nutty and great for sandwiches.", "price": "$8", "image": "" }
+      ]},
+      { "name": "Pastries", "items": [
+        { "name": "Cannoli", "description": "Filled to order so the shells stay crisp.", "price": "$4", "image": "https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=900&q=80" },
+        { "name": "Celebration cakes", "description": "Birthdays, weddings and everything in between. Give us three days.", "price": "From $45", "image": "https://images.unsplash.com/photo-1568254183919-78a4f43a2877?auto=format&fit=crop&w=900&q=80" }
+      ]}
+    ]
+  },
+  "about": {
+    "heading": "Three generations of early mornings.",
+    "paragraphs": [
+      "The Russo family opened Marigold in 1984 with one oven and a sourdough starter.",
+      "Forty years later we still bake everything by hand, before sunrise, right here in Westbrook."
+    ],
+    "images": ["https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=1200&q=80"]
+  },
+  "testimonials": [],
+  "domain": "marigoldbakery.example",
+  "social": []
+}

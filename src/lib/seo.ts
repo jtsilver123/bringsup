@@ -53,6 +53,13 @@ export const META: Record<string, PageMeta> = {
     ...START_IMAGE,
     noindex: true,
   },
+  extra: {
+    path: "/extra/",
+    title: "One more round of changes — BringsUp",
+    description: "Pay for one more round of changes to your BringsUp website preview.",
+    ...START_IMAGE,
+    noindex: true,
+  },
   terms: {
     path: "/terms/",
     title: "Terms of Service — BringsUp",

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
+import { Arrow } from "../../components/icons.tsx";
 import { REDESIGN_API } from "../../lib/config.ts";
 import { hasIO, useSearch } from "./hooks.ts";
 import { About } from "./sections/About.tsx";
@@ -67,13 +68,20 @@ export function Home() {
   const active = useScrollspy(main);
   const search = useSearch();
   const toast = useToast();
+  const fromEmail = new URLSearchParams(search).has("ref");
+  const startHref = `/start/${search}`;
 
   return (
     <>
       <a className="skip" href="#main">Skip to content</a>
+      {fromEmail && (
+        <div className="welcome" role="region" aria-label="Welcome">
+          <div className="wrap"><span>Welcome. The homepage concept Jake sent you was made for you, free.</span><a href={startHref}>Start my website <Arrow size={16} /></a></div>
+        </div>
+      )}
       <Header active={active} />
       <main id="main" ref={main}>
-        <Hero live={LIVE} ref={hero} />
+        <Hero live={LIVE} start={fromEmail ? startHref : undefined} ref={hero} />
         <Facts />
         <Inbox search={search} />
         <Problem />
