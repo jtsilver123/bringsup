@@ -81,13 +81,13 @@ const FLOWS: Record<FlowKind, Flow> = {
   },
 };
 
-interface Rounds { rounds_included: number; rounds_extra: number; rounds_used: number; rounds_left: number }
+interface Rounds { status: string; rounds_included: number; rounds_extra: number; rounds_used: number; rounds_left: number }
 
-/** On /changes and /extra, how many rounds the project has left (from the public status endpoint); null until known or if unknown. */
+/** On /changes, /extra and /approve, the project's status and rounds left (from the public status endpoint); null until known or if unknown. */
 function useRounds(kind: FlowKind): Rounds | null {
   const [rounds, setRounds] = useState<Rounds | null>(null);
   useEffect(() => {
-    if (kind !== "changes" && kind !== "extra") return;
+    if (kind !== "changes" && kind !== "extra" && kind !== "approve") return;
     const ref = new URLSearchParams(location.search).get("ref");
     if (!ref) return;
     const ctrl = new AbortController();
@@ -101,7 +101,7 @@ function useRounds(kind: FlowKind): Rounds | null {
 }
 
 function RoundsNote({ kind, rounds }: { kind: FlowKind; rounds: Rounds | null }) {
-  if (!rounds) return null;
+  if (!rounds || kind === "approve") return null;
   const total = rounds.rounds_included + rounds.rounds_extra;
   if (rounds.rounds_left > 0) {
     return <p className="rounds">You have {rounds.rounds_left} of {total} round{total === 1 ? "" : "s"} of changes left.</p>;
@@ -120,6 +120,9 @@ export function FlowPage({ kind }: { kind: FlowKind }) {
   const card = useRef<HTMLDivElement>(null);
   const done = useRef<HTMLDivElement>(null);
   const rounds = useRounds(kind);
+  // Already approved and paid: show the done state instead of a form that would charge them again.
+  const paid = kind === "approve" && !!rounds && ["approved", "launching", "live"].includes(rounds.status);
+  useEffect(() => { if (paid) setSent(true); }, [paid]);
 
   useEffect(() => {
     if (!sent) return;
@@ -151,8 +154,8 @@ export function FlowPage({ kind }: { kind: FlowKind }) {
             <TallyEmbed formId={f.form} title={f.title} height={560} onSubmit={onSubmit} />
             {!sent && <p className="small form-help">Form not loading? <a href={`https://tally.so/r/${f.form}`}>Open it here</a> or email <a href={`mailto:${EMAIL}`}>{EMAIL}</a>.</p>}
             <div className="done" role="status" aria-live="polite" tabIndex={-1} ref={done}>
-              <h2>{f.doneTitle}</h2>
-              <p>{f.doneText}</p>
+              <h2>{paid ? "Already paid. Thank you." : f.doneTitle}</h2>
+              <p>{paid ? `${rounds?.status === "live" ? "Your site is live" : "Your site is approved and paid for"}, so there's nothing more to do here. Questions? Email ${EMAIL}.` : f.doneText}</p>
               <a className="btn btn-ink" href="/">Back to BringsUp</a>
             </div>
           </div>
