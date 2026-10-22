@@ -38,6 +38,8 @@ Sendable = `status` is `found` or `concept`, has a published `email`, and meets 
 For each sendable `found` row: write its JSON for the generator (name, industry, city_state, website, rating, review_count, rating_source_url, email, owner_name_if_known, site_issues, what_customers_praise, menu_or_services, hours_if_found, phone, year_founded_if_known) and run `python3 tools/make_concept.py prospect.json out/`. Open the `-board.png` once and check it: right business name and domain, no placeholder text, nothing clipped. Upload or keep the PDF per the Concept delivery gate, set `conceptUrl` (Drive link) or `conceptFile` (attachment name), and `status: concept`.
 
 ## 5. Send first emails
+When an email links to the website, use `https://bringsup.com/?ref=<slug>` (the prospect's tracker slug). If they request a concept through the site form, the Tally submission carries that `ref`, so it can be matched to their tracker row.
+
 Daily cap from `firstSendDate`: week 1 → 10/day, week 2 → 20/day, week 3 onward → 30/day, minus follow-ups already sent today. For `status: concept` rows, oldest first, up to the cap: send Email 1, personalized, with the concept link or the PDF attached. After each send: `status: emailed`, `emailedAt`, `lastTouchAt`, `threadId`, and `followUpAt` = 4 business days later. Then archive our sent thread (it needs nothing from Jake).
 
 ## 6. Research to refill the queue

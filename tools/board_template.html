@@ -11,7 +11,7 @@ body{margin:0;width:1600px;height:1000px;background:#16181D;font-family:'DM Sans
 .head h1 span{color:#FFB37A}
 .head p{margin:10px 0 0;font-size:20px;color:#C9C7C0}
 .brand{display:flex;align-items:center;gap:10px;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:22px}
-.mark{width:34px;height:34px;border-radius:10px;background:#FBFAF7;display:flex;align-items:center;justify-content:center}
+.mark{display:block;flex:none}
 .laptop{position:absolute;left:72px;top:206px;width:1120px;border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 40px 90px rgba(0,0,0,.5)}
 .bar{height:42px;background:#E9E7E1;display:flex;align-items:center;gap:8px;padding:0 16px}
 .dot{width:12px;height:12px;border-radius:50%;background:#C9C4B8}
@@ -31,7 +31,7 @@ body{margin:0;width:1600px;height:1000px;background:#16181D;font-family:'DM Sans
     <h1>A new homepage for <span>{{ name }}</span></h1>
     <p>Free concept · Works on every phone · {{ cta }} built in</p>
   </div>
-  <div class="brand"><span class="mark"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#16181D" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg></span>BringsUp</div>
+  <div class="brand"><svg class="mark" viewBox="0 0 48 48" width="36" height="36" aria-hidden="true"><path class="bm-tile" fill="#FBFAF7" d="M14 4H34A10 10 0 0 1 44 14V30A10 10 0 0 1 34 40H21L10.6 46.6A1 1 0 0 1 9 45.8V39.3A10 10 0 0 1 4 30V14A10 10 0 0 1 14 4Z"/><g class="bm-arrow" stroke="#16181D" fill="none" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 31V13"/><path d="M16 21l8-8 8 8"/></g></svg>BringsUp</div>
 </div>
 <div class="laptop">
   <div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>

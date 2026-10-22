@@ -11,11 +11,11 @@ One source of truth for the website, cold emails, prospect concept mockups and a
 - **Who we serve:** family-owned local businesses with strong reviews and an outdated website (bakeries, diners and delis, auto shops, florists, plumbers and HVAC, hardware stores).
 
 ## Logo
-- Mark: an up arrow (24-unit grid, stroke 2.8, round caps and joins) in Glow `#FFB37A` on an Ink `#16181D` rounded square. Radius = 28% of the tile; the arrow fills about 56% of it.
-- Wordmark: "BringsUp" in Bricolage Grotesque 800, letter-spacing -0.02em, Ink. Cap height = half the mark.
-- Lockup: mark left of wordmark, gap = 28% of mark size. Minimum mark size 24px. Clear space on every side = half the mark.
-- Reverse (on Ink or photos): Paper tile with an Ink arrow, Paper wordmark. This is the only other colorway.
-- Never recolor the arrow outside these two colorways, stretch or rotate the mark, outline the wordmark, or put either on Ember.
+- **Mark: the review bubble.** A speech bubble (what your customers say) with an up arrow inside (we bring it up). Ink `#16181D` bubble, Glow `#FFB37A` arrow. 48-unit grid: bubble body 40×36 with 10-unit corners, tail at the bottom left; arrow stroke 3.6 with round caps and joins, centered on the body.
+- **Wordmark:** "BringsUp" in Bricolage Grotesque 800, letter-spacing -0.02em, Ink, converted to outlines. Cap height = 20/48 of the mark, centered on the bubble body.
+- **Lockup:** mark left of wordmark, gap = 28% of mark size. Minimum mark size 16px (favicon). Clear space = half the mark on every side.
+- **Colorways:** primary (Ink bubble, Glow arrow) on Paper, Sand or white; reverse (Paper bubble, Ink arrow) on Ink or dark photos; app icon (Glow bubble, Ink arrow on an Ink square) for avatars and home-screen icons.
+- **Never** rotate or mirror the bubble (the tail always sits bottom left), outline it, add a second arrow, swap in a different icon, or put the mark on Ember.
 
 ### Asset files
 All in `assets/brand/` (wordmark converted to outlines, so no font is needed):
@@ -24,7 +24,8 @@ All in `assets/brand/` (wordmark converted to outlines, so no font is needed):
 |---|---|
 | `logo.svg` | Primary lockup on Paper, Sand or white |
 | `logo-reverse.svg` | Lockup on Ink or dark photos |
-| `mark.svg` / `mark-reverse.svg` | Mark alone: avatars, social profiles, small spaces |
+| `mark.svg` / `mark-reverse.svg` / `mark-glow.svg` | Mark alone in each colorway |
+| `avatar.png` | 400×400 profile picture for email, LinkedIn, Google Business |
 | `wordmark.svg` | Wordmark alone, when the mark already appears nearby |
 | `icon-192.png`, `icon-512.png`, `apple-touch-icon.png`, `favicon-32.png`, `/favicon.svg` | App and browser icons |
 | `../og.png` | 1200x630 link preview for bringsup.com |
@@ -99,6 +100,7 @@ bringsup.com
 - Sample concepts on the site (`assets/work/`) are **fictional businesses**, generated with `tools/make_concept.py`, and must always be labeled as fictional with stock photos. Never show a real prospect's concept on the site without their written OK.
 - The site's promises must stay true to the runbook: two emails maximum, flat $1,000 split $500/$500, the owner keeps everything.
 - Contact: `hello@bringsup.com` for general mail, `jake@bringsup.com` for outreach replies.
+- The concept request form is the Tally form "Get your free homepage concept" (`9NqoKQ`, https://tally.so/r/9NqoKQ), embedded in the last section. Hidden fields: `source` (always `website`) and `ref` (copied from the page URL, e.g. `bringsup.com/?ref=marigold-bakery`). Submissions are emailed to the Tally account owner. Edit questions in Tally, not in `index.html`.
 
 ## Concept mockup labeling
 Every prospect concept carries a small footer: "Concept by BringsUp · Not affiliated with [Business] · Not a live site".

@@ -87,9 +87,10 @@ h1,h2,h3,p,ul,ol,figure{margin:0}
 .site-head.scrolled .wrap{padding-top:10px;padding-bottom:10px}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
 .brand:hover{color:var(--ink)}
-.brand-mark{width:36px;height:36px;border-radius:10px;background:var(--ink);display:flex;align-items:center;justify-content:center;flex:none}
-.brand-mark svg{transition:transform .3s var(--ease)}
-.brand:hover .brand-mark svg{transform:translateY(-2px)}
+.brand-mark{width:38px;height:38px;flex:none;overflow:visible}
+.bm-tile{fill:var(--ink)}
+.bm-arrow{stroke:var(--glow);transition:transform .3s var(--ease)}
+.brand:hover .bm-arrow{transform:translateY(-2.5px)}
 .brand-name{font-family:var(--display);font-weight:800;font-size:24px;letter-spacing:-.02em}
 .site-nav{display:flex;gap:6px;align-items:center;font-weight:500;font-size:17px}
 .site-nav a.plain{color:var(--ink);text-decoration:none;padding:8px 12px;border-radius:999px;position:relative;transition:background-color var(--fast),color var(--fast)}
@@ -110,7 +111,7 @@ h1,h2,h3,p,ul,ol,figure{margin:0}
 .sheet a.plain{display:flex;justify-content:space-between;align-items:center;padding:14px 12px;border-radius:12px;color:var(--ink);text-decoration:none;font-weight:700;font-size:20px}
 .sheet a.plain:hover{background:var(--sand)}
 .sheet .btn{width:100%;margin-top:8px}
-@media (max-width:420px){.pill{font-size:12px}.brand-name{font-size:21px}.brand-mark{width:32px;height:32px}.site-nav .btn{padding:10px 14px;font-size:15px}}
+@media (max-width:420px){.pill{font-size:12px}.brand-name{font-size:21px}.brand-mark{width:34px;height:34px}.site-nav .btn{padding:10px 14px;font-size:15px}}
 
 /* hero */
 .hero{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:64px;align-items:center;padding-top:52px;padding-bottom:72px}
@@ -334,24 +335,11 @@ td.us{color:var(--ink);font-weight:700}
 .copy{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:14px;font-weight:700;color:#fff;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:5px 12px;cursor:pointer;transition:background-color var(--fast)}
 .copy:hover{background:rgba(255,255,255,.24)}
 .formcard{background:#fff;color:var(--ink);border-radius:var(--r-md);padding:28px;box-shadow:0 24px 60px rgba(60,20,4,.25)}
-form{display:flex;flex-direction:column;gap:16px}
-.field{display:flex;flex-direction:column;gap:6px}
-.field label{font-size:15px;font-weight:700;display:flex;justify-content:space-between;gap:8px}
-.field label small{font-weight:500;color:var(--subtle)}
-.ctrl{position:relative}
-input,textarea{font:inherit;font-weight:400;font-size:17px;padding:13px 44px 13px 16px;border:1.5px solid #BDB8AD;border-radius:var(--r-sm);min-height:52px;background:#fff;color:var(--ink);width:100%;transition:border-color var(--fast),box-shadow var(--fast)}
-textarea{min-height:88px;resize:vertical;padding-right:16px}
-input:hover,textarea:hover{border-color:var(--subtle)}
-input:focus,textarea:focus{outline:0;border-color:var(--ink);box-shadow:0 0 0 4px rgba(255,179,122,.55)}
-.ok{position:absolute;right:14px;top:50%;margin-top:-11px;color:#1F7A4D;opacity:0;transform:scale(.6);transition:opacity .2s,transform .3s cubic-bezier(.3,1.6,.5,1);pointer-events:none}
-.field.valid .ok{opacity:1;transform:none}
-.field.invalid input{border-color:#B42318}
-.err{font-size:14px;color:#B42318;font-weight:500;display:none}
-.field.invalid .err{display:block}
-.form-foot{font-size:14px;color:var(--subtle);text-align:center}
+#tally{display:block;width:100%;min-height:440px;border:0;margin:-8px 0 0}
+.formcard.sent #tally,.formcard.sent .form-foot{display:none}
+.form-foot{font-size:14px;color:var(--subtle);text-align:center;margin-top:4px}
 .done{display:none;text-align:center;padding:12px 4px}
 .done:focus{outline:0}
-.formcard.sent form{display:none}
 .formcard.sent .done{display:block;animation:pop .45s var(--ease)}
 @keyframes pop{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
 .done .tick{width:64px;height:64px;border-radius:50%;background:var(--tint);color:var(--ember);display:flex;align-items:center;justify-content:center;margin:0 auto}
@@ -374,7 +362,8 @@ footer{background:var(--ink);color:#C9C7C0}
 footer .wrap{padding-top:72px;padding-bottom:40px}
 .foot-top{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap;padding-bottom:48px;border-bottom:1px solid rgba(255,255,255,.12)}
 .foot-top .brand{color:#fff}
-.foot-top .brand .brand-mark{background:var(--paper)}
+.foot-top .bm-tile{fill:var(--paper)}
+.foot-top .bm-arrow{stroke:var(--ink)}
 .foot-tag{margin-top:22px;font-family:var(--display);font-weight:800;letter-spacing:-.03em;font-size:clamp(30px,3.4vw,44px);line-height:1.05;color:#fff;max-width:440px}
 .foot-tag span{color:var(--glow)}
 .foot-links{display:flex;gap:56px;flex-wrap:wrap;font-size:16px}
@@ -416,7 +405,7 @@ dialog.viewer::backdrop{background:rgba(22,24,29,.72);backdrop-filter:blur(4px)}
 <header class="site-head" id="top">
   <div class="wrap">
     <a class="brand" href="#top" aria-label="BringsUp home">
-      <span class="brand-mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFB37A" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg></span>
+      <svg class="brand-mark" viewBox="0 0 48 48" width="38" height="38" aria-hidden="true"><path class="bm-tile" d="M14 4H34A10 10 0 0 1 44 14V30A10 10 0 0 1 34 40H21L10.6 46.6A1 1 0 0 1 9 45.8V39.3A10 10 0 0 1 4 30V14A10 10 0 0 1 14 4Z"/><g class="bm-arrow" fill="none" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 31V13"/><path d="M16 21l8-8 8 8"/></g></svg>
       <span class="brand-name">BringsUp</span>
     </a>
     <nav class="site-nav" aria-label="Main">
@@ -434,7 +423,7 @@ dialog.viewer::backdrop{background:rgba(22,24,29,.72);backdrop-filter:blur(4px)}
   <div class="sheet-bg" data-close></div>
   <div class="sheet-panel">
     <div class="sheet-top">
-      <span class="brand"><span class="brand-mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFB37A" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg></span><span class="brand-name">BringsUp</span></span>
+      <span class="brand"><svg class="brand-mark" viewBox="0 0 48 48" width="38" height="38" aria-hidden="true"><path class="bm-tile" d="M14 4H34A10 10 0 0 1 44 14V30A10 10 0 0 1 34 40H21L10.6 46.6A1 1 0 0 1 9 45.8V39.3A10 10 0 0 1 4 30V14A10 10 0 0 1 14 4Z"/><g class="bm-arrow" fill="none" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 31V13"/><path d="M16 21l8-8 8 8"/></g></svg><span class="brand-name">BringsUp</span></span>
       <button class="menu-btn" type="button" aria-label="Close menu" data-close><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     </div>
     <a class="plain" href="#work" data-close>Sample work <span aria-hidden="true">→</span></a>
@@ -716,42 +705,19 @@ dialog.viewer::backdrop{background:rgba(22,24,29,.72);backdrop-filter:blur(4px)}
         <p class="alt">Already have one from us? Reply to Jake's email, or write to <a href="mailto:hello@bringsup.com">hello@bringsup.com</a> <button class="copy" type="button" data-copy="hello@bringsup.com" aria-label="Copy hello@bringsup.com"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>Copy</button></p>
       </div>
       <div class="formcard" id="formcard">
-        <form id="concept-form" novalidate>
-          <div class="field">
-            <label for="f-business">Business name</label>
-            <div class="ctrl"><input id="f-business" type="text" name="business" placeholder="Rosa's Bakery" required autocomplete="organization" aria-describedby="e-business"><svg class="ok" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
-            <p class="err" id="e-business">What's the name on your sign?</p>
-          </div>
-          <div class="field">
-            <label for="f-website">Current website</label>
-            <div class="ctrl"><input id="f-website" type="text" name="website" placeholder="rosasbakery.com" required inputmode="url" autocomplete="url" autocapitalize="off" spellcheck="false" aria-describedby="e-website"><svg class="ok" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
-            <p class="err" id="e-website">Add your web address, like rosasbakery.com. No website yet? Your Facebook or Google page works too.</p>
-          </div>
-          <div class="field">
-            <label for="f-email">Your email</label>
-            <div class="ctrl"><input id="f-email" type="email" name="email" placeholder="you@rosasbakery.com" required autocomplete="email" autocapitalize="off" spellcheck="false" aria-describedby="e-email"><svg class="ok" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
-            <p class="err" id="e-email">That email doesn't look quite right. It's where your concept will go.</p>
-          </div>
-          <div class="field">
-            <label for="f-notes">Anything we should know? <small>Optional</small></label>
-            <textarea id="f-notes" name="notes" placeholder="We just added catering. Our sign is green."></textarea>
-          </div>
-          <button class="btn btn-ink" type="submit"><span class="lbl">Send me my free concept</span> <svg class="go" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></button>
-          <p class="form-foot">We only use this to send your concept. Never shared, never sold.</p>
-        </form>
+        <iframe id="tally" data-tally-src="https://tally.so/embed/9NqoKQ?alignLeft=1&amp;hideTitle=1&amp;transparentBackground=1&amp;dynamicHeight=1&amp;source=website" loading="lazy" width="100%" height="520" frameborder="0" marginheight="0" marginwidth="0" title="Get your free homepage concept"></iframe>
+        <p class="form-foot">We only use this to send your concept. Never shared, never sold.</p>
+        <noscript><p class="form-foot"><a href="https://tally.so/r/9NqoKQ">Open the request form</a> or email <a href="mailto:hello@bringsup.com">hello@bringsup.com</a>.</p></noscript>
         <div class="done" role="status" aria-live="polite" tabindex="-1">
           <div class="tick"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
-          <h3>Almost there</h3>
-          <p>Your email app should be open with everything filled in. Hit send and you're done.</p>
+          <h3>Got it. It's on its way.</h3>
+          <p>Thanks! We've got your details and we're already looking you up.</p>
           <ol>
-            <li>We look you up and read your reviews.</li>
-            <li>Your concept arrives within 48 hours.</li>
+            <li>We read your reviews and your current site.</li>
+            <li>Your free concept arrives within 48 hours.</li>
             <li>Like it? Reply. Don't? No hard feelings.</li>
           </ol>
-          <div class="row">
-            <button class="ghost" type="button" id="copy-req">Email didn't open? Copy my request</button>
-            <button class="ghost" type="button" id="edit-req">Edit my details</button>
-          </div>
+          <div class="row"><button class="ghost" type="button" id="again">Send another business</button></div>
         </div>
       </div>
     </div>
@@ -772,7 +738,7 @@ dialog.viewer::backdrop{background:rgba(22,24,29,.72);backdrop-filter:blur(4px)}
     <div class="foot-top">
       <div>
         <a class="brand" href="#top" aria-label="BringsUp, back to top">
-          <span class="brand-mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16181D" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg></span>
+          <svg class="brand-mark" viewBox="0 0 48 48" width="38" height="38" aria-hidden="true"><path class="bm-tile" d="M14 4H34A10 10 0 0 1 44 14V30A10 10 0 0 1 34 40H21L10.6 46.6A1 1 0 0 1 9 45.8V39.3A10 10 0 0 1 4 30V14A10 10 0 0 1 14 4Z"/><g class="bm-arrow" fill="none" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 31V13"/><path d="M16 21l8-8 8 8"/></g></svg>
           <span class="brand-name">BringsUp</span>
         </a>
         <p class="foot-tag">Websites as good as <span>your reviews.</span></p>
@@ -913,42 +879,22 @@ dialog.viewer::backdrop{background:rgba(22,24,29,.72);backdrop-filter:blur(4px)}
     els.forEach(function (el) { io.observe(el); });
   } else { els.forEach(function (el) { el.classList.add('in'); }); }
 
-  // Concept request: friendly inline checks, then hand off to the visitor's email app
-  var form = $('#concept-form'), card = $('#formcard'), done = $('.done', card);
-  var checks = {
-    business: function (v) { return v.trim().length > 1; },
-    website: function (v) { return /^[^\s.]+(\.[^\s.]+)*\.[a-z]{2,}(\/\S*)?$/i.test(v.trim().replace(/^https?:\/\//i, '').replace(/^www\./i, '')); },
-    email: function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()); }
+  // Concept request form (Tally). Tally's script forwards page parameters such as ?ref= to the form's hidden fields.
+  var card = $('#formcard'), done = $('.done', card), tally = $('#tally');
+  var loadTally = function () {
+    if (window.Tally) { window.Tally.loadEmbeds(); return; }
+    tally.src = tally.dataset.tallySrc;
   };
-  var check = function (input, show) {
-    var ok = checks[input.name](input.value), f = input.closest('.field');
-    f.classList.toggle('valid', ok);
-    if (show || f.classList.contains('invalid')) f.classList.toggle('invalid', !ok);
-    input.setAttribute('aria-invalid', ok ? 'false' : 'true');
-    return ok;
-  };
-  Object.keys(checks).forEach(function (n) {
-    var input = form.elements[n];
-    input.addEventListener('input', function () { check(input, false); });
-    input.addEventListener('blur', function () { if (input.value) check(input, true); });
+  var tallyScript = document.createElement('script');
+  tallyScript.src = 'https://tally.so/widgets/embed.js'; tallyScript.async = true;
+  tallyScript.onload = loadTally; tallyScript.onerror = loadTally;
+  document.body.appendChild(tallyScript);
+  window.addEventListener('message', function (e) {
+    if (typeof e.data !== 'string' || e.data.indexOf('Tally.FormSubmitted') === -1) return;
+    card.classList.add('sent'); done.focus({ preventScroll: true });
+    card.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
   });
-  var request = function () {
-    return 'Business: ' + form.business.value.trim() + '\nWebsite: ' + form.website.value.trim() + '\nEmail: ' + form.email.value.trim() + (form.notes.value.trim() ? '\n\nNotes: ' + form.notes.value.trim() : '');
-  };
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    var bad = Object.keys(checks).filter(function (n) { return !check(form.elements[n], true); });
-    if (bad.length) { form.elements[bad[0]].focus(); return; }
-    var btn = $('button[type="submit"]', form), lbl = $('.lbl', btn);
-    btn.setAttribute('aria-busy', 'true'); lbl.textContent = 'Opening your email…';
-    window.location.href = 'mailto:hello@bringsup.com?subject=' + encodeURIComponent('Free concept request: ' + form.business.value.trim()) + '&body=' + encodeURIComponent(request());
-    setTimeout(function () {
-      btn.removeAttribute('aria-busy'); lbl.textContent = 'Send me my free concept';
-      card.classList.add('sent'); done.focus({ preventScroll: true });
-    }, 700);
-  });
-  $('#copy-req').addEventListener('click', function () { copy('To: hello@bringsup.com\nSubject: Free concept request\n\n' + request(), 'Copied. Paste it into an email to hello@bringsup.com'); });
-  $('#edit-req').addEventListener('click', function () { card.classList.remove('sent'); form.business.focus(); });
+  $('#again').addEventListener('click', function () { card.classList.remove('sent'); tally.src = tally.dataset.tallySrc; });
 })();
 </script>
 </body>
