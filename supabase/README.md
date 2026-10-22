@@ -18,7 +18,7 @@ Supabase project `bringsup` (ref `rgeeynodxvusivfbaxfu`, Personal Projects org).
 Only on the Claude subscription, never an API key. Requests are saved as `queued`, and the hourly "BringsUp operator" task designs them (OPERATOR.md step 4) and emails each visitor. See `tools/QUEUE_WORKER.md`.
 
 ## Deploying changes
-Run `tools/bundle_function.sh`, push, then deploy `supabase/dist/redesign.ts` (dashboard editor, CLI, or the Management API). Deploys through the API turn JWT verification back on, so switch it off again afterwards.
+Merge to main. `.github/workflows/functions.yml` deploys `redesign` and `projects` from `supabase/functions/` with the Supabase CLI (repo secret `SUPABASE_ACCESS_TOKEN`), keeps JWT verification off per `config.toml`, and checks both answer. To deploy by hand: `SUPABASE_ACCESS_TOKEN=... npx supabase@2 functions deploy redesign projects --project-ref rgeeynodxvusivfbaxfu --use-api`. Database changes in `migrations/` are still applied by hand. (`tools/bundle_function.sh` only makes a single-file copy for the dashboard editor; deploys don't need it.)
 
 ## One-time setup (BringsUp's own Supabase project only)
 1. Apply the files in `migrations/` in order.

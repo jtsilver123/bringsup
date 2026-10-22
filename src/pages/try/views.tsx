@@ -173,14 +173,28 @@ function useWidth(el: RefObject<HTMLElement | null>, active: boolean): number {
 }
 
 /** One live, scaled copy of the page: laid out at `layoutWidth`, shrunk to `width`, `height` tall on screen. Fades in once loaded. */
-function Screen({ html, scripts, layoutWidth, width, height, title }: { html: string; scripts: boolean; layoutWidth: number; width: number; height: number; title: string }) {
+function Screen({ html, scripts, layoutWidth, width, height, title, hint }: { html: string; scripts: boolean; layoutWidth: number; width: number; height: number; title: string; hint?: boolean }) {
   const [ready, setReady] = useState(false);
+  // "Scroll to explore" until they've been inside the preview a moment. Scrolling inside the frame can't be seen from here,
+  // so a short stay with the pointer (or a finger) over it stands in for "they found it".
+  const [explored, setExplored] = useState(false);
+  const [touch, setTouch] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  useEffect(() => { setTouch(matchMedia("(pointer: coarse)").matches); return () => clearTimeout(timer.current); }, []);
+  const enter = () => { clearTimeout(timer.current); timer.current = setTimeout(() => setExplored(true), 1200); };
+  const leave = () => clearTimeout(timer.current);
   const scale = width > 0 ? Math.min(1, width / layoutWidth) : 1;
   return (
-    <div className={ready ? "screen ready" : "screen"} style={{ height }}>
+    <div className={ready ? "screen ready" : "screen"} style={{ height }} onPointerEnter={enter} onPointerLeave={leave} onPointerDown={() => setExplored(true)}>
       <iframe title={title} sandbox={scripts ? "allow-scripts allow-popups allow-popups-to-escape-sandbox" : "allow-popups"} srcDoc={html}
         onLoad={() => setReady(true)}
         style={{ width: layoutWidth, height: height / scale, transform: `scale(${scale})` }}></iframe>
+      {hint && ready && (
+        <span className={explored ? "scroll-hint gone" : "scroll-hint"} aria-hidden="true">
+          {touch ? "Swipe to explore" : "Scroll to explore"}
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M6 13l6 6 6-6" /></svg>
+        </span>
+      )}
     </div>
   );
 }
@@ -322,7 +336,7 @@ export function ResultView({ hidden, data, onCopy, onFullScreen, onAgain }: Resu
                     style={{ width: L.browser.w, transform: place(L.browser, L.browser.h, L.stageH) }}>
                     <div className="browser">
                       <div className="chrome" aria-hidden="true"><i></i><i></i><i></i><span id="r-host">{data?.address}</span></div>
-                      <Screen html={html} scripts={scripts} layoutWidth={DESKTOP_WIDTH} width={L.deskW} height={L.deskH} title={`${name} homepage, desktop`} />
+                      <Screen html={html} scripts={scripts} layoutWidth={DESKTOP_WIDTH} width={L.deskW} height={L.deskH} title={`${name} homepage, desktop`} hint={size === "desktop"} />
                     </div>
                   </div>
                 )}
@@ -330,7 +344,7 @@ export function ResultView({ hidden, data, onCopy, onFullScreen, onAgain }: Resu
                   <div className={["frame f-phone", L.overlap && "overlap", !L.phone.shown && "off"].filter(Boolean).join(" ")} inert={!L.phone.shown}
                     style={{ width: L.phone.w + L.pad * 2, transform: place(L.phone, L.phone.h + L.pad * 2, L.stageH) }}>
                     <div className="phone">
-                      <Screen html={html} scripts={scripts} layoutWidth={PHONE_WIDTH} width={L.phone.w} height={L.phone.h} title={`${name} homepage, phone`} />
+                      <Screen html={html} scripts={scripts} layoutWidth={PHONE_WIDTH} width={L.phone.w} height={L.phone.h} title={`${name} homepage, phone`} hint={size === "phone"} />
                     </div>
                   </div>
                 )}
