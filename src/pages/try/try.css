@@ -146,3 +146,13 @@ form{display:flex;flex-direction:column;gap:18px}
   .views.moved > section:not([hidden]){animation:none}
   .frame.overlap .phone:hover{transform:none}
 }
+
+/* "Scroll to explore": sits on the preview until they've spent a moment inside it, then fades. Never blocks a tap. */
+.scroll-hint{position:absolute;left:50%;bottom:18px;z-index:2;display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;background:rgba(22,24,29,.86);color:#fff;font:600 14px/1 var(--body);white-space:nowrap;pointer-events:none;transform:translateX(-50%);box-shadow:0 8px 24px rgba(22,24,29,.25);transition:opacity .35s var(--out),transform .35s var(--out);animation:hint-in .4s var(--out) .6s both}
+.scroll-hint svg{animation:hint-nudge 1.6s var(--ease) infinite}
+.scroll-hint.gone{opacity:0;transform:translateX(-50%) translateY(6px)}
+@keyframes hint-in{from{opacity:0;transform:translateX(-50%) translateY(8px)}}
+@keyframes hint-nudge{0%,100%{transform:none}50%{transform:translateY(3px)}}
+@media (prefers-reduced-motion:reduce){.scroll-hint,.scroll-hint svg{animation:none;transition:none}}
+/* On the phone frame, sit above a site's own sticky call bar instead of covering it. */
+.f-phone .scroll-hint{bottom:96px}
