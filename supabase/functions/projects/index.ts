@@ -37,7 +37,7 @@ const BUCKET = "project-files";
 const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
 
 export interface Project {
-  id: string; ref: string; status: string; todo: string | null; email: string; business_name: string; current_site: string;
+  id: string; ref: string; updated_at: string; status: string; todo: string | null; email: string; business_name: string; current_site: string;
   rounds_included: number; rounds_extra: number; rounds_used: number; changes_seq: number;
   pending_changes: string | null; held_changes: string | null; care_plan: boolean; last_preview_at: string | null; paid_cents: number; attempts: number;
   brief: Record<string, string>; files: TallyFile[];
@@ -74,10 +74,32 @@ function withJob(set: Record<string, unknown>): Record<string, unknown> {
   return "todo" in set ? { next_check_at: null, attempts: 0, claimed_until: null, last_error: null, ...set } : set;
 }
 
+/** Thrown when the project changed between reading and writing it; the caller re-reads and tries again. */
+class Conflict extends Error {}
+
+/**
+ * Write only if nobody else wrote since `p` was read (optimistic lock on updated_at), so two submissions arriving
+ * together can never overwrite each other's changes.
+ */
 async function save(p: Project, set: Record<string, unknown>): Promise<Project> {
-  const { data, error } = await db.from("projects").update({ ...withJob(set), updated_at: now() }).eq("id", p.id).select("*").single();
+  const stamp = new Date(Math.max(Date.now(), Date.parse(p.updated_at) + 1)).toISOString();
+  const { data, error } = await db.from("projects").update({ ...withJob(set), updated_at: stamp })
+    .eq("id", p.id).eq("updated_at", p.updated_at).select("*").maybeSingle();
   if (error) throw error;
+  if (!data) throw new Conflict(`Project ${p.ref} changed while we were updating it`);
   return data as Project;
+}
+
+/** Run a read-modify-write handler, retrying from a fresh read when another write got there first. */
+async function withRetry<T>(fn: () => Promise<T>): Promise<T> {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await fn();
+    } catch (e) {
+      if (!(e instanceof Conflict) || attempt >= 5) throw e;
+      await new Promise((r) => setTimeout(r, 50 * attempt + Math.random() * 100));
+    }
+  }
 }
 
 async function byRef(ref: string): Promise<Project | null> {
@@ -113,10 +135,11 @@ async function keepFiles(ref: string, files: TallyFile[]): Promise<void> {
       await alert("projects", ref, `Couldn't copy upload "${f.name}" from Tally: ${String(e)}`);
     }
   }
-  const p = await byRef(ref);
-  if (!p) return;
   const urls = new Set(files.map((f) => f.url));
-  await save(p, { files: [...(p.files || []).filter((f) => !urls.has(f.url)), ...kept] });
+  await withRetry(async () => {
+    const p = await byRef(ref);
+    if (p) await save(p, { files: [...(p.files || []).filter((f) => !urls.has(f.url)), ...kept] });
+  });
 }
 
 async function onStart(sub: Submission): Promise<Project> {
@@ -176,64 +199,60 @@ async function onChanges(sub: Submission, paidExtra: boolean): Promise<Project> 
   if (!p) throw new Error(`No project for a change request (ref "${sub.ref}", email "${pick(sub.answers, "Your email")}")`);
   let request = pick(sub.answers, "What would you like changed", "Changes");
   if (sub.files.length) request = join(request, "Attachments:\n" + sub.files.map((f) => f.url).join("\n"));
-  const touch = { last_customer_touch_at: now() };
 
+  // Every branch below makes exactly one write, so a retry after a conflict can't apply anything twice.
+  // A paid extra round rides along in that same write and brings back any held request.
+  const base: Record<string, unknown> = { last_customer_touch_at: now() };
+  let paidNote = "";
   if (paidExtra) {
-    p = await save(p, { ...touch, rounds_extra: p.rounds_extra + 1, paid_cents: p.paid_cents + sub.paidCents });
-    await log(p, "extra_round", `Paid $${(sub.paidCents / 100).toFixed(2)} for extra round ${p.rounds_extra}`);
+    Object.assign(base, { rounds_extra: p.rounds_extra + 1, paid_cents: p.paid_cents + sub.paidCents, held_changes: null });
+    paidNote = `Paid $${(sub.paidCents / 100).toFixed(2)} for an extra round. `;
     request = join(p.held_changes, request);
-    p = await save(p, { held_changes: null });
   }
-  if (!request.trim()) {
-    await log(p, "note", "A change form arrived with no changes listed");
+  const extra = p.rounds_extra + (paidExtra ? 1 : 0);
+  const write = async (set: Record<string, unknown>, kind: string, summary: string, round: number | null = null) => {
+    p = await save(p!, { ...base, ...set });
+    await log(p, kind, paidNote + summary, { request }, round);
     return p;
-  }
+  };
+
+  if (!request.trim()) return write({}, "note", "A change form arrived with no changes listed");
 
   switch (p.status) {
-    case "started": {
+    case "started":
       // No preview yet: fold it into the brief for the first build.
-      p = await save(p, { ...touch, brief: { ...p.brief, "Extra notes from the owner": join(p.brief["Extra notes from the owner"], request) } });
-      await log(p, "changes", "Arrived before the first preview; added to the brief (no round used)", { request });
-      return p;
-    }
+      return write({ brief: { ...p.brief, "Extra notes from the owner": join(p.brief["Extra notes from the owner"], request) } },
+        "changes", "Arrived before the first preview; added to the brief (no round used)");
     case "approved":
     case "launching":
-    case "live": {
+    case "live":
       if (p.care_plan || paidExtra) {
-        p = await save(p, { ...touch, pending_changes: join(p.pending_changes, request), changes_seq: p.changes_seq + 1, todo: "care_edit" });
-        await log(p, "care_edit", paidExtra ? "Paid $150 for a round of changes after launch" : "Care Plan edit requested", { request });
-      } else {
-        p = await save(p, { ...touch, held_changes: join(p.held_changes, request), todo: "reply_out_of_scope" });
-        await log(p, "out_of_scope", "Change requested after approval without the Care Plan", { request });
+        return write({ pending_changes: join(p.pending_changes, request), changes_seq: p.changes_seq + 1, todo: "care_edit" },
+          "care_edit", paidExtra ? "Round of changes after launch" : "Care Plan edit requested");
       }
-      return p;
-    }
+      return write({ held_changes: join(p.held_changes, request), todo: "reply_out_of_scope" }, "out_of_scope", "Change requested after approval without the Care Plan");
     case "cancelled":
       await alert("projects", p.ref, "Change request for a cancelled project", { request });
-      return p;
+      return write({}, "note", "Change request for a cancelled project");
   }
 
   // preview_sent, changes_requested, awaiting_extra
   if (p.status === "changes_requested" && p.pending_changes) {
-    p = await save(p, { ...touch, pending_changes: join(p.pending_changes, request), changes_seq: p.changes_seq + 1 });
-    await log(p, "changes", `Added to round ${p.rounds_used} (not applied yet, so no extra round used)`, { request }, p.rounds_used);
-    return p;
+    return write({ pending_changes: join(p.pending_changes, request), changes_seq: p.changes_seq + 1 },
+      "changes", `Added to round ${p.rounds_used} (not applied yet, so no extra round used)`, p.rounds_used);
   }
   if (p.status === "preview_sent" && p.rounds_used > 0 && p.last_preview_at && Date.now() - Date.parse(p.last_preview_at) < GRACE_MS) {
-    p = await save(p, { ...touch, status: "changes_requested", pending_changes: request, changes_seq: p.changes_seq + 1, todo: "revise" });
-    await log(p, "changes", `Follow-up within 2 days of the updated preview; part of round ${p.rounds_used}`, { request }, p.rounds_used);
-    return p;
+    return write({ status: "changes_requested", pending_changes: request, changes_seq: p.changes_seq + 1, todo: "revise" },
+      "changes", `Follow-up within 2 days of the updated preview; part of round ${p.rounds_used}`, p.rounds_used);
   }
   const round = p.rounds_used + 1;
-  const allowed = p.rounds_included + p.rounds_extra;
+  const allowed = p.rounds_included + extra;
   if (round > allowed) {
-    p = await save(p, { ...touch, status: "awaiting_extra", held_changes: join(p.held_changes, request), todo: "offer_extra" });
-    await log(p, "changes_over_limit", `Round ${round} requested after ${allowed} used; offering an extra round`, { request }, round);
-    return p;
+    return write({ status: "awaiting_extra", held_changes: join(p.held_changes, request), todo: "offer_extra" },
+      "changes_over_limit", `Round ${round} requested after ${allowed} used; offering an extra round`, round);
   }
-  p = await save(p, { ...touch, status: "changes_requested", rounds_used: round, pending_changes: request, changes_seq: p.changes_seq + 1, todo: "revise" });
-  await log(p, "changes", `Round ${round} of ${allowed}`, { request }, round);
-  return p;
+  return write({ status: "changes_requested", rounds_used: round, pending_changes: request, changes_seq: p.changes_seq + 1, todo: "revise" },
+    "changes", `Round ${round} of ${allowed}`, round);
 }
 
 async function onApprove(sub: Submission): Promise<Project> {
@@ -288,10 +307,10 @@ async function webhook(req: Request): Promise<Response> {
 
   try {
     let p: Project;
-    if (sub.formId === FORMS.start) p = await onStart(sub);
-    else if (sub.formId === FORMS.changes) p = await onChanges(sub, false);
-    else if (FORMS.extra && sub.formId === FORMS.extra) p = await onChanges(sub, sub.paidCents > 0);
-    else if (sub.formId === FORMS.approve) p = await onApprove(sub);
+    if (sub.formId === FORMS.start) p = await withRetry(() => onStart(sub));
+    else if (sub.formId === FORMS.changes) p = await withRetry(() => onChanges(sub, false));
+    else if (FORMS.extra && sub.formId === FORMS.extra) p = await withRetry(() => onChanges(sub, sub.paidCents > 0));
+    else if (sub.formId === FORMS.approve) p = await withRetry(() => onApprove(sub));
     else return json(200, { ignored: sub.formId });
     if (sub.files.length) background(keepFiles(p.ref, sub.files));
     return json(200, { ok: true, ref: p.ref });
@@ -330,7 +349,7 @@ async function work(req: Request): Promise<Response> {
   let p = p0;
 
   if (body.action === "fail") {
-    p = await save(p, { last_error: String(body.error || "failed").slice(0, 1000), claimed_until: null });
+    p = await withRetry(async () => save((await byRef(p0.ref))!, { last_error: String(body.error || "failed").slice(0, 1000), claimed_until: null }));
     await log(p, "error", `Builder failed (${p.attempts}/5): ${String(body.error).slice(0, 200)}`);
     if (p.attempts >= 5) await alert("builder", p.ref, `Job "${p.todo}" failed 5 times: ${String(body.error).slice(0, 300)}`);
     return json(200, { ok: true });
@@ -339,7 +358,7 @@ async function work(req: Request): Promise<Response> {
     // A change request that arrived by email instead of the form: same round rules, logged the same way.
     const sub: Submission = { formId: "email", responseId: `email-${crypto.randomUUID()}`, ref: p.ref, files: [], paidCents: 0,
       answers: { "Your email": p.email, "What would you like changed?": String(body.text || "") } };
-    const updated = await onChanges(sub, false);
+    const updated = await withRetry(() => onChanges(sub, false));
     await log(updated, "email", "Change request received by email");
     return json(200, { ok: true, project: updated });
   }
@@ -353,21 +372,26 @@ async function work(req: Request): Promise<Response> {
   }
   if (body.action !== "update") return json(400, { error: 'Use {action: "update" | "fail" | "email_changes" | "delete", ref, ...}' });
 
-  const set = Object.fromEntries(Object.entries(body.set || {}).filter(([k]) => SETTABLE.has(k)));
-  if (typeof set.status === "string" && set.status !== p.status && !TRANSITIONS[p.status]?.includes(set.status)) {
-    return json(409, { error: `Can't move from ${p.status} to ${set.status}` });
-  }
-  if ("pending_changes" in set && set.pending_changes === null && body.applied_seq !== undefined && body.applied_seq !== p.changes_seq) {
-    // New requests arrived while the builder worked: keep them and keep the job.
-    delete set.pending_changes;
-    set.todo = p.todo === "care_edit" ? "care_edit" : "revise";
-    if (set.status === "preview_sent") set.status = "changes_requested";
-  }
-  if (set.status === "preview_sent" && !("last_preview_at" in set)) set.last_preview_at = now();
-  // A successful update ends the lease and clears the failure count (repeating jobs like DNS checks claim again later).
-  p = await save(p, { ...set, claimed_until: null, attempts: 0, last_error: null });
-  if (body.event?.kind) await log(p, body.event.kind, body.event.summary || "", body.event.payload ?? {}, body.event.round ?? null);
-  return json(200, { ok: true, project: p });
+  // Re-read on every attempt: a webhook may have changed the project while the builder worked.
+  const result = await withRetry(async () => {
+    const cur = (await byRef(p0.ref))!;
+    const set = Object.fromEntries(Object.entries(body.set || {}).filter(([k]) => SETTABLE.has(k)));
+    if (typeof set.status === "string" && set.status !== cur.status && !TRANSITIONS[cur.status]?.includes(set.status)) {
+      return { error: `Can't move from ${cur.status} to ${set.status}` };
+    }
+    if ("pending_changes" in set && set.pending_changes === null && body.applied_seq !== undefined && body.applied_seq !== cur.changes_seq) {
+      // New requests arrived while the builder worked: keep them and keep the job.
+      delete set.pending_changes;
+      set.todo = cur.todo === "care_edit" ? "care_edit" : "revise";
+      if (set.status === "preview_sent") set.status = "changes_requested";
+    }
+    if (set.status === "preview_sent" && !("last_preview_at" in set)) set.last_preview_at = now();
+    // A successful update ends the lease and clears the failure count (repeating jobs like DNS checks claim again later).
+    return { project: await save(cur, { ...set, claimed_until: null, attempts: 0, last_error: null }) };
+  });
+  if ("error" in result) return json(409, { error: result.error });
+  if (body.event?.kind) await log(result.project, body.event.kind, body.event.summary || "", body.event.payload ?? {}, body.event.round ?? null);
+  return json(200, { ok: true, project: result.project });
 }
 
 async function health(): Promise<Response> {

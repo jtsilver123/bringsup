@@ -100,7 +100,7 @@ async function preview(ref: string): Promise<void> {
   const site = siteFile(ref);
   const roundsLeft = project.rounds_included + project.rounds_extra - project.rounds_used;
   const dir = join(WORK, ref, "dist-preview");
-  await build(site, dir, { ref, roundsLeft });
+  await build(site, dir, { ref, roundsLeft }, join(WORK, ref));
   const name = project.pages_project || pagesName(ref);
   await ensurePagesProject(name);
   const url = deploy(dir, name, "preview");
@@ -113,7 +113,7 @@ async function launch(ref: string): Promise<void> {
   const { project } = await api("GET", `?ref=${encodeURIComponent(ref)}`) as { project: Project };
   const site = siteFile(ref);
   const dir = join(WORK, ref, "dist-live");
-  await build(site, dir);
+  await build(site, dir, undefined, join(WORK, ref));
   const name = project.pages_project || pagesName(ref);
   await ensurePagesProject(name);
   deploy(dir, name, "main");

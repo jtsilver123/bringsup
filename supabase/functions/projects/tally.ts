@@ -67,9 +67,13 @@ export function parse(event: TallyEvent): Submission {
     if (f.type === "FILE_UPLOAD" && Array.isArray(f.value)) {
       for (const x of f.value as TallyFile[]) files.push({ name: x.name, url: x.url, mimeType: x.mimeType });
     }
-    if (f.type === "PAYMENT" && f.value && typeof f.value === "object") {
-      const price = Number((f.value as { price?: number }).price || 0);
-      paidCents = Math.round(price * 100);
+    // Tally sends a payment as separate PAYMENT fields: "Payment (price)" (a number), "(currency)", "(name)", "(email)"...
+    if (f.type === "PAYMENT") {
+      const isPrice = /_price$/.test(f.key) || /\(price\)$/i.test(f.label);
+      if (isPrice && f.value != null && f.value !== "") paidCents = Math.round(Number(f.value) * 100) || 0;
+      else if (f.value && typeof f.value === "object" && "price" in (f.value as object)) {
+        paidCents = Math.round(Number((f.value as { price?: number }).price || 0) * 100);
+      }
     }
     const label = (f.label || f.key).trim();
     // Checkbox groups report each option as its own field as well as the group; keep the first non-empty answer.

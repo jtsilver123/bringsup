@@ -12,6 +12,12 @@ const email = `${ref}@example.com`;
 
 type Field = { key: string; label: string; type: string; value: unknown; options?: { id: string; text: string }[] };
 const text = (label: string, value: string): Field => ({ key: label, label, type: "INPUT_TEXT", value });
+/** A payment exactly as Tally's webhook sends it: separate PAYMENT fields per property, the price as a number. */
+const payment = (price: number): Field[] => [
+  { key: "question_pay_price", label: "Payment (price)", type: "PAYMENT", value: price },
+  { key: "question_pay_currency", label: "Payment (currency)", type: "PAYMENT", value: "USD" },
+  { key: "question_pay_name", label: "Payment (name)", type: "PAYMENT", value: "Rosa Test" },
+];
 
 async function submit(formId: string, fields: Field[], responseId = randomUUID()): Promise<any> {
   const body = JSON.stringify({
@@ -87,7 +93,7 @@ try {
   await expect("a third request is held and an extra round offered", { status: "awaiting_extra", rounds_used: 2, todo: "offer_extra", held_changes: "Round 3: different font" });
 
   if (FORMS.extra) {
-    await submit(FORMS.extra, [text("Your email", email), text("What would you like changed?", ""), { key: "pay", label: "Pay", type: "PAYMENT", value: { price: 150, currency: "USD" } }]);
+    await submit(FORMS.extra, [text("Your email", email), text("What would you like changed?", ""), ...payment(150)]);
     await expect("paying for the extra round applies the held request", { status: "changes_requested", rounds_extra: 1, rounds_used: 3, held_changes: null, paid_cents: 15000 });
     await worker("POST", "", { action: "update", ref, applied_seq: 5, set: { status: "preview_sent", todo: null, pending_changes: null } });
   } else {
@@ -101,15 +107,26 @@ try {
   const status = await (await fetch(`${API}?status=${ref}`)).json();
   console.log(`${typeof status.rounds_left === "number" ? "ok  " : "FAIL"}  public status: ${JSON.stringify(status)}`);
 
-  await submit(FORMS.approve, [text("Your email", email), text("Want us to handle updates later?", "Yes, send me the Care Plan link ($79/mo)"), { key: "pay", label: "Pay", type: "PAYMENT", value: { price: 1000, currency: "USD" } }]);
+  await submit(FORMS.approve, [text("Your email", email), text("Want us to handle updates later?", "Yes, send me the Care Plan link ($79/mo)"), ...payment(1000)]);
   await expect("approve and pay", { status: "approved", todo: "launch", care_plan: true });
 
-  await submit(FORMS.approve, [text("Your email", email), { key: "pay", label: "Pay", type: "PAYMENT", value: { price: 1000, currency: "USD" } }]);
+  await submit(FORMS.approve, [text("Your email", email), ...payment(1000)]);
   await expect("a second approval doesn't double count", { status: "approved", paid_cents: FORMS.extra ? 115000 : 100000 });
 
   await worker("POST", "", { action: "update", ref, set: { status: "live", todo: null } });
   await submit(FORMS.changes, [text("Your email", email), text("What would you like changed?", "New holiday hours")]);
   await expect("after launch, a Care Plan customer's change is a care edit", { status: "live", todo: "care_edit" });
+
+  // Two submissions at the same moment: both must survive (optimistic locking with retry).
+  const before = (await worker("GET", `?ref=${ref}`)).project;
+  await Promise.all([
+    submit(FORMS.changes, [text("Your email", email), text("What would you like changed?", "Concurrent A")]),
+    submit(FORMS.changes, [text("Your email", email), text("What would you like changed?", "Concurrent B")]),
+  ]);
+  const after = (await worker("GET", `?ref=${ref}`)).project;
+  const both = after.pending_changes?.includes("Concurrent A") && after.pending_changes?.includes("Concurrent B") && after.changes_seq === before.changes_seq + 2;
+  console.log(`${both ? "ok  " : "FAIL"}  two simultaneous change requests both survive`);
+  if (!both) failures++;
 
   const { events } = await worker("GET", `?ref=${ref}`);
   console.log(`\n${events.length} events logged:`);

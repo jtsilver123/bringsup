@@ -2,8 +2,8 @@
 //   node tools/site-kit/build.ts <site.json> <out-dir> [--preview <ref> <rounds-left>]
 // Remote images (Tally uploads, stock photos) are downloaded into <out-dir>/assets/ so the site never hotlinks.
 import { createHash } from "node:crypto";
-import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { dirname, extname, join, resolve } from "node:path";
 import { render, type SiteContent } from "./render.ts";
 
 const REQUIRED: (keyof SiteContent)[] = ["business_name", "theme", "phone", "address", "hours", "primary_cta", "home", "offer", "about", "testimonials", "social", "domain"];
@@ -17,11 +17,24 @@ export function check(c: SiteContent): string[] {
   return errors;
 }
 
-async function localize(c: SiteContent, out: string): Promise<SiteContent> {
+/**
+ * Copy every image into <out>/assets/: remote URLs are downloaded, relative paths are read from `base` (the folder of
+ * site.json). A missing or unreachable image fails the build, so a broken image never ships.
+ */
+async function localize(c: SiteContent, out: string, base: string): Promise<SiteContent> {
   const cache = new Map<string, string>();
   const grab = async (url: string): Promise<string> => {
-    if (!url || !/^https?:/.test(url)) return url;
+    if (!url) return url;
     if (cache.has(url)) return cache.get(url)!;
+    if (!/^https?:/.test(url)) {
+      const from = resolve(base, url);
+      if (!existsSync(from)) throw new Error(`Image not found: ${url} (looked in ${base})`);
+      const name = `assets/${createHash("sha1").update(from).digest("hex").slice(0, 12)}${extname(from).toLowerCase() || ".jpg"}`;
+      mkdirSync(join(out, "assets"), { recursive: true });
+      copyFileSync(from, join(out, name));
+      cache.set(url, name);
+      return name;
+    }
     const res = await fetch(url, { signal: AbortSignal.timeout(30_000) });
     if (!res.ok) throw new Error(`Couldn't download ${url}: ${res.status}`);
     const type = res.headers.get("content-type") || "";
@@ -40,12 +53,12 @@ async function localize(c: SiteContent, out: string): Promise<SiteContent> {
   return copy;
 }
 
-export async function build(content: SiteContent, out: string, preview?: { ref: string; roundsLeft: number }): Promise<string[]> {
+export async function build(content: SiteContent, out: string, preview?: { ref: string; roundsLeft: number }, base = process.cwd()): Promise<string[]> {
   const errors = check(content);
   if (errors.length) throw new Error("site.json problems:\n- " + errors.join("\n- "));
   rmSync(out, { recursive: true, force: true });
   mkdirSync(out, { recursive: true });
-  const local = await localize(content, out);
+  const local = await localize(content, out, base);
   const files = render(local, { preview });
   for (const [path, body] of Object.entries(files)) {
     mkdirSync(dirname(join(out, path)), { recursive: true });
@@ -62,6 +75,6 @@ if (process.argv[1] && import.meta.filename === resolve(process.argv[1])) {
   }
   const content = JSON.parse(readFileSync(file, "utf8")) as SiteContent;
   const preview = flag === "--preview" ? { ref, roundsLeft: Number(left || 0) } : undefined;
-  const written = await build(content, out, preview);
+  const written = await build(content, out, preview, dirname(resolve(file)));
   console.log(`Built ${written.length} files into ${out}${preview ? " (preview)" : ""}`);
 }
