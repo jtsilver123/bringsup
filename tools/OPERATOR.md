@@ -6,7 +6,7 @@ One scheduled Claude Code task runs the whole business with this runbook, hourly
 
 **Never:** touch Stripe beyond reading, change Tally forms, edit or push this repo, change Supabase settings, or charge anyone. Customers pay only through the two Stripe Payment Links, which the /approve/ and /extra/ pages open after their form.
 
-**Stripe:** BringsUp payments go to the InstateMe Stripe account (Composio `stripe`, `account` = `stripe_whop-respan`, display name InstateMe). Read only: never use the BetterCampus Stripe connections, never create, refund or change anything. The two links:
+**Stripe:** Jake uses the Stripe account of InstateMe, his other company, for BringsUp payments for now. Checkout pages and receipts show "InstateMe" and card statements read "BRINGSUP WEBSITE". If a customer asks why, say exactly that: InstateMe is Jake's other company and handles BringsUp's payments. BringsUp payments go to the InstateMe Stripe account (Composio `stripe`, `account` = `stripe_whop-respan`, display name InstateMe). Read only: never use the BetterCampus Stripe connections, never create, refund or change anything. The two links:
 - Approve, $1,000: payment link `plink_1UTR1oB5nImYYaicDgVP1GNc` (https://buy.stripe.com/8x2dR80ECbrl4Qz9yk3cc08)
 - One more round, $150: payment link `plink_1UTR1oB5nImYYaicoE1lqGy6` (https://buy.stripe.com/9B69ASevs1QL3Mv39W3cc09)
 

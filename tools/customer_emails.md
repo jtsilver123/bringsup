@@ -97,7 +97,7 @@ Sent when the site is approved (`launch` job). Send it to the owner. If someone 
 
 Hi {first name},
 
-Thank you. Your site is approved and paid, and Stripe has emailed your receipt. If you spot anything we got wrong, reply and we'll fix it before it goes live, at no charge.
+Thank you. Your site is approved and paid, and Stripe has emailed your receipt (it says InstateMe, my other company, which handles our payments). If you spot anything we got wrong, reply and we'll fix it before it goes live, at no charge.
 
 The last step is pointing {domain} at your new site. It takes about 10 minutes at {provider}. {If someone else has the login: "We've sent the steps to {helper email}, so there's nothing for you to do."}
 

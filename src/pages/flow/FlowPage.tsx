@@ -61,7 +61,7 @@ const FLOWS: Record<FlowKind, Flow> = {
     h1: <>One more round of <Lift>changes.</Lift></>,
     lead: "One round of changes is $150. That's the only charge on this page. Already sent us the changes by email? You don't need to type them again.",
     steps: [
-      ["Pay for the round", "$150 by card through Stripe. Your receipt comes by email."],
+      ["Pay for the round", "$150 by card through Stripe. Your receipt comes by email. The payment page says InstateMe: that's Jake's other company, which handles our payments."],
       ["We make your changes", "Including anything you already sent. About 3 days."],
       ["You check the result", "Before launch, you get an updated preview to approve. After launch, the change goes straight onto your live site and we email you when it's done."],
     ],
@@ -76,7 +76,7 @@ const FLOWS: Record<FlowKind, Flow> = {
     h1: <>Ready to go <Lift>live?</Lift></>,
     lead: "Approve the preview as it is now and pay the flat $1,000. Payment is final, and anything that doesn't work the way it does in the preview is fixed free for 30 days. Then one 10-minute step at your domain provider and the site is live on the web address you already have.",
     steps: [
-      ["Approve and pay", "One flat $1,000, by card through Stripe. Your receipt comes by email."],
+      ["Approve and pay", "One flat $1,000, by card through Stripe. Your receipt comes by email. The payment page says InstateMe: that's Jake's other company, which handles our payments."],
       ["Connect your domain", "We email simple steps for your provider. About 10 minutes, or we send them straight to your web person. We never touch the settings that run your email."],
       ["You're live", "We check your email still works, then send your launch note. Hosting is included with no monthly fee, and you own the site and every file."],
     ],

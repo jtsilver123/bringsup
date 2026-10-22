@@ -33,7 +33,7 @@ export const TERMS: LegalDoc = {
     },
     {
       title: "Approval and payment",
-      body: <><p>You pay nothing up front. If you approve your finished site, you pay a flat fee of $1,000 (US dollars) by card through Stripe when you approve it. If you decide not to approve it, you can walk away and you owe nothing. We don't publish an unapproved site.</p><p>Because you see and approve the finished work before paying, payments are generally non-refundable. If something we built doesn't work as shown in the approved preview, tell us within 30 days of launch and we'll fix it at no charge.</p></>,
+      body: <><p>You pay nothing up front. If you approve your finished site, you pay a flat fee of $1,000 (US dollars) by card through Stripe when you approve it. Payments are processed through the Stripe account of InstateMe, our founder's other company, so its name appears on the payment page and receipt. If you decide not to approve it, you can walk away and you owe nothing. We don't publish an unapproved site.</p><p>Because you see and approve the finished work before paying, payments are generally non-refundable. If something we built doesn't work as shown in the approved preview, tell us within 30 days of launch and we'll fix it at no charge.</p></>,
     },
     {
       title: "Who owns what",
@@ -89,7 +89,7 @@ export const PRIVACY: LegalDoc = {
     },
     {
       title: "Who helps us",
-      body: <><p>We use a small set of trusted services to run BringsUp, and they only get what they need to do their job:</p><ul><li><b>Tally</b>, for our forms and file uploads</li><li><b>Stripe</b>, for payments</li><li><b>Supabase</b>, for storing redesign requests</li><li><b>Anthropic (Claude)</b>, the AI that helps us draft designs and copy from your website's content</li><li><b>GitHub Pages</b>, which hosts bringsup.com</li><li>Our email provider, for sending and receiving email</li></ul><p>We don't sell your information, and we don't share it with advertisers. We'd only share it otherwise if the law requires us to.</p></>,
+      body: <><p>We use a small set of trusted services to run BringsUp, and they only get what they need to do their job:</p><ul><li><b>Tally</b>, for our forms and file uploads</li><li><b>Stripe</b>, for payments (through the Stripe account of InstateMe, our founder's other company)</li><li><b>Supabase</b>, for storing redesign requests</li><li><b>Anthropic (Claude)</b>, the AI that helps us draft designs and copy from your website's content</li><li><b>GitHub Pages</b>, which hosts bringsup.com</li><li>Our email provider, for sending and receiving email</li></ul><p>We don't sell your information, and we don't share it with advertisers. We'd only share it otherwise if the law requires us to.</p></>,
     },
     {
       title: "Cookies",
