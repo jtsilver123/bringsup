@@ -4,7 +4,8 @@ One source of truth for the website, cold emails, prospect concept mockups and a
 
 ## Name and positioning
 - **Name:** BringsUp. One word, capital B and capital U. Never "Brings Up", "Bringsup" or "BRINGSUP".
-- **Tagline:** Websites for the businesses your town already loves.
+- **Tagline:** Websites as good as your reviews. (The whole business in five words. Use it in the footer, social bios, email signature and link previews.)
+- **Descriptor:** For the businesses your town already loves. (Supporting line, never the headline.)
 - **Promise:** Your reviews say you're the best in town. Your website should too.
 - **Offer:** Free homepage concept first. Then one flat $1,000 for a new website and brand refresh: $500 to start, $500 at launch, live in about two weeks. Optional Care Plan $79/mo.
 - **Who we serve:** family-owned local businesses with strong reviews and an outdated website (bakeries, diners and delis, auto shops, florists, plumbers and HVAC, hardware stores).
@@ -51,21 +52,45 @@ Rules: one accent (Ember) per screen. No gradients. No other hues in BringsUp-br
 - **Body:** DM Sans 400/500/700. Body 17–20px, line-height 1.55.
 - **Eyebrow:** DM Sans 700, 15px, uppercase, +0.06em, Ember Deep. Every section opens with one.
 
+## Signature devices
+These two make a page recognizably BringsUp. Use each at most once per screen.
+- **The lift.** A hand-drawn Ember underline that rises at its right end, like the arrow in the mark. It draws itself in once (0.9s) when it scrolls into view. Use it under the one phrase that carries the promise ("should too."). Never on links, never more than once per page section.
+- **Five stars.** Ember ★★★★★ is our shorthand for "your reputation". The stars light up one by one (80ms apart) when first seen. Pair them with words about reviews, never with claims about BringsUp itself.
+
 ## Shape
 - Radius: 12px (inputs, icon tiles), 20px (cards), 32px (big panels), pill (all buttons).
 - Buttons: pill, min height 56px (44px in nav). Primary = Ember fill + white text. Secondary = 2px Ink outline. On dark = Glow fill + Ink text.
 
+## Color in UI states
+Functional colors are allowed only for form feedback: Error `#B42318` (border + message), Success `#1F7A4D` (check mark). Nothing decorative.
+
+## Motion
+Quick, warm, purposeful. Motion explains something or confirms an action; it is never decoration.
+- Durations: 150–250ms for hovers and presses, 300–450ms for panels and dialogs, 600ms for scroll reveals, 900ms for the lift.
+- Easing: `cubic-bezier(.2,.7,.2,1)` (fast out, soft landing). Spring overshoot only on small confirmations (stars, check marks).
+- Buttons press to 97% scale. Arrow icons nudge 4px toward where they lead. Cards lift 6px on hover.
+- Reveals stagger 90ms within a group, max 4 steps. Content is never hidden if JavaScript fails.
+- Everything respects `prefers-reduced-motion`: no movement, content shown immediately.
+
 ## Voice
 - Plain, warm and specific. Write like a neighbor who happens to build websites.
+- Their pride, not our pitch. Every headline should be about the owner's business, not about BringsUp.
+- The owner test: would a busy bakery owner read the sentence to the end? If not, cut it.
 - Lead with what's great about the business (their reviews, their history). Then show the gap.
 - **Never** mention or quote a business's bad reviews. Never insult their current site; say "outdated" or "doesn't match your reputation".
 - No jargon (SEO, conversion, UX), no hype words (revolutionary, cutting-edge), no emojis.
 - Always say "flat $1,000" and "free concept". Never invent stats or client results.
 
+### Microcopy
+- Buttons say what happens, in the visitor's words: "Get my free concept", "Send me my free concept", "View the full homepage". Never "Submit", "Learn more" or "Click here".
+- Form errors are helpful, not scolding, and offer a way out: "Add your web address, like rosasbakery.com. No website yet? Your Facebook or Google page works too."
+- Confirmations say what happens next, in steps, and how to undo: "Almost there… Edit my details".
+- Reassurance sits right under the action: "Free, no strings · No contract · You own everything".
+
 ## Email signature
 ```
 Jake Silver
-BringsUp — websites for the businesses your town already loves
+BringsUp — websites as good as your reviews
 bringsup.com
 ```
 
