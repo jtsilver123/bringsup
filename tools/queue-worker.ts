@@ -11,7 +11,7 @@
 //
 // Needs BRINGSUP_WORKER_TOKEN (the function's WORKER_TOKEN secret). Node 22.6+ runs this file directly.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import { SCHEMA } from "../supabase/functions/redesign/prompt.ts";
 
 const API = process.env.BRINGSUP_API || "https://rgeeynodxvusivfbaxfu.supabase.co/functions/v1/redesign";
@@ -91,6 +91,33 @@ async function complete(id: string): Promise<void> {
   console.log(res.status === "skipped" ? "Skipped (not a business)." : `Published: ${res.link}`);
 }
 
+/** The link preview card's picture (iMessage, Gmail, WhatsApp), 1200x630 base64 JPEG: their homepage in a browser frame
+ *  beside "This could be your new website. Made for <name>" (tools/worker/og-card.html). */
+async function previewImage(file: string, name: string): Promise<string | undefined> {
+  let browser: any;
+  try {
+    const { chromium } = await import("/opt/node-tools/node_modules/playwright/index.mjs" as string);
+    browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" }).catch(() => chromium.launch());
+    const site = await browser.newPage({ viewport: { width: 1280, height: 860 } });
+    await site.goto("file://" + resolve(file), { waitUntil: "networkidle", timeout: 30_000 }).catch(() => {});
+    await site.waitForTimeout(800);
+    const top: Buffer = await site.screenshot({ type: "jpeg", quality: 85 });
+    const card = await browser.newPage({ viewport: { width: 1200, height: 630 } });
+    const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+    const html = readFileSync(join(import.meta.dirname, "worker", "og-card.html"), "utf8")
+      .replaceAll("{{NAME}}", esc(name)).replaceAll("{{SHOT}}", "data:image/jpeg;base64," + top.toString("base64"));
+    await card.setContent(html, { waitUntil: "networkidle", timeout: 30_000 }).catch(() => {});
+    await card.evaluate(() => document.fonts.ready);
+    const shot: Buffer = await card.screenshot({ type: "jpeg", quality: 82 });
+    return shot.toString("base64");
+  } catch (e) {
+    console.error(`No link preview picture (the link still works): ${String(e).slice(0, 160)}`);
+    return undefined;
+  } finally {
+    await browser?.close().catch(() => {});
+  }
+}
+
 async function outreach(slug: string, dir: string): Promise<void> {
   const concept = JSON.parse(readFileSync(join(dir, "concept.json"), "utf8"));
   let html: string | undefined;
@@ -116,7 +143,8 @@ async function outreach(slug: string, dir: string): Promise<void> {
       process.exit(1);
     }
   }
-  const res = await call("POST", "", { action: "create", ref: slug, concept, ...(html ? { html } : {}), ...meta });
+  const og_image = html ? await previewImage(join(dir, "index.html"), String(concept.business_name)) : undefined;
+  const res = await call("POST", "", { action: "create", ref: slug, concept, ...(html ? { html } : {}), ...(og_image ? { og_image } : {}), ...meta });
   if (!res.link) { console.error(JSON.stringify(res)); process.exit(1); }
   console.log(res.link);
 }

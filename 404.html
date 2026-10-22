@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script>/* bringsup.com/for/<slug>-<code>: a prospect's preview. The Cloudflare worker normally serves these; this is the fallback. */
+if (/^\/for\/[a-z0-9-]+\/?$/i.test(location.pathname)) location.replace("/try/?for=" + location.pathname.split("/")[2] + location.hash);</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!--meta-->
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">

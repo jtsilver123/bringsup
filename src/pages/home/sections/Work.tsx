@@ -10,7 +10,9 @@ function Shot({ work, onOpen }: { work: WorkSample; onOpen: Open }) {
   const view = useRef<HTMLDivElement>(null);
   const [h, setH] = useState<number | null>(null);
   const full = `/assets/work/${work.slug}-full.jpg`;
-  const open = () => onOpen(full, work.name);
+  // The viewer opens it big, so it gets the double-resolution file (sharp on phones and Retina screens).
+  const sharp = `/assets/work/${work.slug}-full@2x.webp`;
+  const open = () => onOpen(sharp, work.name);
 
   useEffect(() => {
     const el = view.current;
@@ -39,7 +41,7 @@ function Shot({ work, onOpen }: { work: WorkSample; onOpen: Open }) {
         className="shot-view"
         tabIndex={0}
         role="button"
-        data-src={full}
+        data-src={sharp}
         data-name={work.name}
         aria-label={`Open the full homepage for ${work.ariaName}`}
         style={h === null ? undefined : ({ "--h": `${h}px` } as CSSProperties)}
@@ -52,7 +54,7 @@ function Shot({ work, onOpen }: { work: WorkSample; onOpen: Open }) {
       <h3>{work.name}</h3>
       <p className="k">{work.kind}</p>
       <p>{work.text}</p>
-      <button className="tlink view" type="button" data-src={full} data-name={work.name} onClick={open}>View the full homepage <ExpandIcon /></button>
+      <button className="tlink view" type="button" data-src={sharp} data-name={work.name} onClick={open}>View the full homepage <ExpandIcon /></button>
     </article>
   );
 }

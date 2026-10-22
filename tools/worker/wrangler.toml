@@ -1,0 +1,6 @@
+name = "bringsup-for-preview"
+main = "for-preview.js"
+compatibility_date = "2026-09-01"
+account_id = "10b43838f31b9959c8eb61aafdd200f3"
+routes = [{ pattern = "bringsup.com/for/*", zone_name = "bringsup.com" }]
+workers_dev = false

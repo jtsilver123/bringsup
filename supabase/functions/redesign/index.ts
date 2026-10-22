@@ -4,8 +4,10 @@
 // Redesigns run on the Claude subscription, never an API key: an hourly scheduled Claude Code task
 // pulls the queue (GET ?queue=1), designs each homepage with the prompt and schema in prompt.ts,
 // posts it back ({action: "complete"}) and emails the visitor their link. See tools/QUEUE_WORKER.md.
-// Worker calls need the x-worker-token header. {action: "create", url, email, concept, images?, ref?} saves a finished
-// homepage for a cold-email prospect who said "send it over" and returns its private link (tools/email_template.md).
+// Worker calls need the x-worker-token header. {action: "create", url, email, concept, images?, ref?, html?, og_image?} saves a
+// finished homepage for a cold-email prospect who said "send it over" and returns its private short link,
+// bringsup.com/for/<slug>-<8 random chars> (tools/email_template.md). og_image is a base64 JPEG for the link preview card.
+// GET ?for=<short> loads it like ?id=; add &meta=1 for just the name, headline and preview image (the /for/ Cloudflare worker).
 //
 // Secrets (Supabase dashboard -> Edge Functions -> Secrets): IP_SALT, WORKER_TOKEN.
 // Optional: ALLOWED_ORIGINS (comma-separated), DAILY_CAP (default 150), PER_VISITOR_DAILY (default 3).
@@ -19,6 +21,18 @@ const DAILY_CAP = Number(Deno.env.get("DAILY_CAP") || 150);
 const PER_VISITOR_DAILY = Number(Deno.env.get("PER_VISITOR_DAILY") || 3);
 const WORKER_TOKEN = Deno.env.get("WORKER_TOKEN") || "";
 const link = (id: string) => `https://bringsup.com/try/?id=${id}`;
+const shortLink = (short: string) => `https://bringsup.com/for/${short}`;
+const slugify = (s: string) => s.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40) || "preview";
+/** Eight random lowercase letters and digits (no look-alikes like 0/o, 1/l/i): about 40 bits, so a preview can't be guessed
+ *  from the business's name. 256 isn't a multiple of 31, so out-of-range bytes are redrawn to keep every character equally likely. */
+function code(): string {
+  const abc = "abcdefghjkmnpqrstuvwxyz23456789";
+  let out = "";
+  while (out.length < 8) {
+    for (const b of crypto.getRandomValues(new Uint8Array(16))) if (b < 248 && out.length < 8) out += abc[b % abc.length];
+  }
+  return out;
+}
 
 const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
 
@@ -91,11 +105,26 @@ async function work(req: Request, body: any): Promise<Response> {
       concept.html = body.html;
     }
     if (body.ref) concept.ref = String(body.ref);
+    // The link preview card (iMessage, Gmail, WhatsApp): a picture of their homepage, kept in public storage.
+    const base = slugify(String(body.ref || concept.business_name));
+    let short = `${base}-${code()}`;
+    for (let i = 0; i < 3; i++) {
+      const { data: taken } = await db.from("redesigns").select("id").eq("short", short).maybeSingle();
+      if (!taken) break;
+      short = `${base}-${code()}`;
+    }
+    if (typeof body.og_image === "string" && body.og_image.length < 700_000) {
+      const bytes = Uint8Array.from(atob(body.og_image.replace(/^data:image\/\w+;base64,/, "")), (c) => c.charCodeAt(0));
+      const path = `previews/${short}.jpg`;
+      const up = await db.storage.from("project-files").upload(path, bytes, { contentType: "image/jpeg", upsert: true });
+      if (!up.error) concept.og_image = db.storage.from("project-files").getPublicUrl(path).data.publicUrl;
+    }
+    concept.short = short;
     const images = Array.isArray(body.images) ? body.images.filter((u: unknown) => typeof u === "string" && /^https:\/\//.test(u)).slice(0, 12) : [];
     const { data: made, error } = await db.from("redesigns").insert({ url: String(body.url || ""), email: String(body.email || "").toLowerCase(), ip_hash: "outreach",
-      status: "done", business_name: concept.business_name, content: concept, images }).select("id").single();
+      status: "done", business_name: concept.business_name, content: concept, images, short }).select("id").single();
     if (error || !made) return json(req, 500, { error: String(error?.message || "insert failed") });
-    return json(req, 200, { ok: true, id: made.id, link: link(made.id) + (body.ref ? `&ref=${encodeURIComponent(String(body.ref))}` : "") });
+    return json(req, 200, { ok: true, id: made.id, link: shortLink(short), long_link: link(made.id) + (body.ref ? `&ref=${encodeURIComponent(String(body.ref))}` : "") });
   }
   const id = String(body.id || "");
   const { data: row } = await db.from("redesigns").select("id, site, status").eq("id", id).maybeSingle();
@@ -130,9 +159,16 @@ Deno.serve(async (req) => {
     const params = new URL(req.url).searchParams;
     if (params.has("queue")) return isWorker(req) ? queue(req) : json(req, 401, { error: "Not allowed." });
     const id = params.get("id") || "";
-    if (!/^[0-9a-f-]{36}$/i.test(id)) return json(req, 400, { error: "Missing id." });
-    const { data, error } = await db.from("redesigns").select("id, url, status, content, images, site").eq("id", id).maybeSingle();
+    const short = (params.get("for") || "").toLowerCase();
+    if (!/^[0-9a-f-]{36}$/i.test(id) && !/^[a-z0-9-]{3,60}$/.test(short)) return json(req, 400, { error: "Missing id." });
+    const sel = db.from("redesigns").select("id, url, status, content, images, site");
+    const { data, error } = await (short ? sel.eq("short", short) : sel.eq("id", id)).maybeSingle();
     if (error) return json(req, 500, { error: "Something went wrong." });
+    if (short && params.has("meta")) {
+      if (data?.status !== "done") return json(req, 404, { error: "Not found." });
+      const c = data.content || {};
+      return json(req, 200, { business_name: c.business_name, headline: c.headline, og_image: c.og_image || null, id: data.id, ref: c.ref || null });
+    }
     if (data?.status === "done") return json(req, 200, { id: data.id, status: "done", url: data.url, concept: data.content, images: data.images });
     if (data?.status === "queued") return json(req, 202, { id: data.id, status: "queued", url: data.url, preview: preview(data.site as SavedSite) });
     if (data?.status === "skipped") {

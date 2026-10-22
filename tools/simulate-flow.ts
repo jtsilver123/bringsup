@@ -114,9 +114,20 @@ try {
   await expect("a change after approval is applied at launch, free", { status: "approved", todo: "launch", pending_changes: "Spotted a typo after paying" });
   await worker("POST", "", { action: "update", ref, set: { pending_changes: null } });
 
-  await worker("POST", "", { action: "update", ref, set: { status: "live", todo: null, care_plan: true } });
+  // Managed plan ($49/month), as the operator runs it (OPERATOR.md "Managed plan"): live site, subscription recorded.
+  await worker("POST", "", { action: "update", ref, set: { status: "live", todo: null, live_url: "https://www.testbakery.example" } });
+  const live = await (await fetch(`${API}?status=${ref}`)).json();
+  console.log(`${live.status === "live" ? "ok  " : "FAIL"}  /managed/ sees a live site, so checkout opens`);
+  if (live.status !== "live") failures++;
+  await worker("POST", "", { action: "update", ref, set: { care_plan: true, plan_subscription: `sub_test_${ref}` }, event: { kind: "plan_started", summary: "test" } });
+  const plans = await worker("GET", "?plans=1");
+  const listed = plans.projects?.find((x: { ref: string }) => x.ref === ref);
+  console.log(`${listed?.plan_subscription === `sub_test_${ref}` && listed?.domain === "testbakery.example" ? "ok  " : "FAIL"}  the plan list has it, with its subscription and domain, for the daily checks`);
+  if (!(listed?.plan_subscription === `sub_test_${ref}` && listed?.domain === "testbakery.example")) failures++;
   await submit(FORMS.changes, [text("Your email", email), text("What would you like changed?", "New holiday hours")]);
-  await expect("after launch, a Care Plan customer's change is a care edit", { status: "live", todo: "care_edit" });
+  await expect("on the managed plan, a change after launch is an included edit", { status: "live", todo: "care_edit" });
+  await worker("POST", "", { action: "update", ref, applied_seq: (await worker("GET", `?ref=${ref}`)).project.changes_seq, set: { todo: null, pending_changes: null } });
+  await expect("the edit is applied and the job clears", { status: "live", todo: null, pending_changes: null });
 
   // Two submissions at the same moment: both must survive (optimistic locking with retry).
   const before = (await worker("GET", `?ref=${ref}`)).project;
@@ -128,6 +139,15 @@ try {
   const both = after.pending_changes?.includes("Concurrent A") && after.pending_changes?.includes("Concurrent B") && after.changes_seq === before.changes_seq + 2;
   console.log(`${both ? "ok  " : "FAIL"}  two simultaneous change requests both survive`);
   if (!both) failures++;
+
+  // The plan ends (cancelled in Stripe's portal, or the card failed for good): back to $150 a round.
+  await worker("POST", "", { action: "update", ref, applied_seq: (await worker("GET", `?ref=${ref}`)).project.changes_seq, set: { care_plan: false, todo: null, pending_changes: null }, event: { kind: "plan_ended", summary: "test" } });
+  const after2 = await worker("GET", "?plans=1");
+  const gone = !after2.projects?.some((x: { ref: string }) => x.ref === ref);
+  console.log(`${gone ? "ok  " : "FAIL"}  once the plan ends it drops off the plan list`);
+  if (!gone) failures++;
+  await submit(FORMS.changes, [text("Your email", email), text("What would you like changed?", "Change the photo")]);
+  await expect("after the plan ends, a change waits for the $150 offer", { status: "live", todo: "reply_out_of_scope", held_changes: "Change the photo" });
 
   const { events } = await worker("GET", `?ref=${ref}`);
   console.log(`\n${events.length} events logged:`);
