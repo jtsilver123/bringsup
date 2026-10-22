@@ -5,6 +5,7 @@ import { Try } from "../pages/try/Try.tsx";
 import { FlowPage } from "../pages/flow/FlowPage.tsx";
 import { Legal } from "../pages/legal/Legal.tsx";
 import { Brand } from "../pages/brand/Brand.tsx";
+import { Managed } from "../pages/managed/Managed.tsx";
 import { NotFound } from "../pages/notfound/NotFound.tsx";
 
 const pages: Record<string, () => ReactNode> = {
@@ -14,6 +15,7 @@ const pages: Record<string, () => ReactNode> = {
   changes: () => <FlowPage kind="changes" />,
   approve: () => <FlowPage kind="approve" />,
   extra: () => <FlowPage kind="extra" />,
+  managed: () => <Managed />,
   terms: () => <Legal kind="terms" />,
   privacy: () => <Legal kind="privacy" />,
   brand: () => <Brand />,

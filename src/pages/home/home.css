@@ -1,28 +1,46 @@
 /* Homepage. Tokens, type, buttons and forms come from components/site.css. */
-html{scroll-behavior:smooth;scroll-padding-top:84px}
+html{scroll-padding-top:84px}
 
 /* welcome bar (?ref= visitors) */
 .welcome{background:var(--ink);color:#F4F2EC;font-size:16px}
 .welcome .wrap{display:flex;gap:0 16px;align-items:center;justify-content:center;flex-wrap:wrap;padding-top:6px;padding-bottom:6px;text-align:center}
 .welcome a{color:var(--glow);font-weight:700;display:inline-flex;align-items:center;gap:6px;min-height:44px}
 .welcome a:hover{color:#fff}
+.welcome a svg{transition:transform .22s var(--out)}
+.welcome a:hover svg{transform:translateX(4px)}
 
 /* header */
 .site-head{position:sticky;top:0;z-index:50;background:var(--paper);border-bottom:1px solid var(--line)}
 .site-head > .wrap{display:flex;gap:16px;align-items:center;justify-content:space-between;min-height:68px}
 .site-nav{display:flex;gap:4px;align-items:center;font-size:17px}
-.site-nav a.plain{color:var(--ink);text-decoration:none;padding:0 12px;min-height:44px;display:inline-flex;align-items:center;text-underline-offset:.45em;text-decoration-thickness:2px}
-.site-nav a.plain:hover{text-decoration:underline;text-decoration-color:var(--rule)}
-.site-nav a.plain[aria-current]{text-decoration:underline;text-decoration-color:var(--ember)}
+.site-nav a.plain{color:var(--ink);padding:0 12px;min-height:44px;display:inline-flex;align-items:center;text-decoration:underline 2px transparent;text-underline-offset:.45em;transition:text-decoration-color .2s var(--out),text-underline-offset .2s var(--out)}
+.site-nav a.plain:hover{text-decoration-color:var(--rule);text-underline-offset:.38em}
+.site-nav a.plain[aria-current]{text-decoration-color:var(--ember);text-underline-offset:.38em}
 .site-nav .btn{margin-left:12px;white-space:nowrap}
-.menu-btn{display:none;min-height:44px;min-width:64px;padding:0 12px;border:1.5px solid var(--rule);border-radius:var(--r);background:transparent;color:var(--ink);font:inherit;font-size:16px;font-weight:700;cursor:pointer}
+/* the menu button: two bars that turn into a cross, and a sheet that unfolds over the page (no content jumps) */
+.menu-btn{display:none;gap:10px;min-height:44px;min-width:64px;padding:0 12px;border:1.5px solid var(--rule);border-radius:var(--r);background:transparent;color:var(--ink);font:inherit;font-size:16px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:border-color var(--fast),background-color var(--fast),transform .12s var(--out)}
 .menu-btn:hover{border-color:var(--ink)}
-.sheet{border-top:1px solid var(--line)}
-.sheet .wrap{display:flex;flex-direction:column;padding-top:4px;padding-bottom:12px}
-.sheet a{display:flex;align-items:center;min-height:52px;color:var(--ink);text-decoration:none;font-size:20px;font-weight:700;border-bottom:1px solid var(--line)}
+.menu-btn:active{transform:translateY(1px);background:var(--sand)}
+.mb-icon{position:relative;width:14px;height:10px;flex:none}
+.mb-icon i{position:absolute;left:0;right:0;height:2px;border-radius:1px;background:currentColor;transition:transform .22s var(--out)}
+.mb-icon i:first-child{top:1px}.mb-icon i:last-child{bottom:1px}
+.menu-btn[aria-expanded="true"] .mb-icon i:first-child{transform:translateY(3px) rotate(45deg)}
+.menu-btn[aria-expanded="true"] .mb-icon i:last-child{transform:translateY(-3px) rotate(-45deg)}
+.sheet{position:absolute;left:0;right:0;top:100%;background:var(--paper);border-bottom:1px solid var(--line);box-shadow:0 16px 24px -20px rgba(22,24,29,.35);display:grid;grid-template-rows:0fr;visibility:hidden;transition:grid-template-rows .22s var(--out),visibility 0s linear .22s}
+.site-head.open .sheet{grid-template-rows:1fr;visibility:visible;transition-delay:0s}
+.sheet .wrap{display:flex;flex-direction:column;width:100%;min-height:0;overflow:hidden}
+.sheet .wrap::before{content:"";display:block;height:4px;flex:none}
+.sheet .wrap::after{content:"";display:block;height:12px;flex:none}
+.sheet a{display:flex;align-items:center;justify-content:space-between;min-height:52px;color:var(--ink);text-decoration:none;font-size:20px;font-weight:700;border-bottom:1px solid var(--line);opacity:0;transform:translateY(-4px);transition:opacity .18s var(--out),transform .22s var(--out),color var(--fast)}
+.site-head.open .sheet a{opacity:1;transform:none}
+.site-head.open .sheet a:nth-child(2){transition-delay:.03s}.site-head.open .sheet a:nth-child(3){transition-delay:.06s}.site-head.open .sheet a:nth-child(4){transition-delay:.09s}
+.sheet a:hover,.sheet a:active{color:var(--ember-deep)}
 .sheet a:last-child{border-bottom:0}
 @media (min-width:861px){.sheet{display:none!important}}
-@media (max-width:420px){.site-head .brand{font-size:20px}.site-nav .btn{padding:9px 12px}.menu-btn{min-width:0}}
+/* on narrow phones the menu button is just its icon (the label stays for screen readers), so the header never overflows */
+@media (max-width:420px){.site-head .brand{font-size:20px}.site-nav .btn{padding:9px 12px}.menu-btn{min-width:44px;width:44px;padding:0}.mb-lbl{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}.mb-icon{width:16px}}
+@media (max-width:380px){.site-head > .wrap{gap:10px}.site-nav{gap:6px!important}}
+@media (max-width:340px){.site-head .brand span{display:none}}
 @media (max-width:860px){.site-nav a.plain{display:none}.menu-btn{display:inline-flex;align-items:center;justify-content:center}.site-nav{gap:8px}.site-nav .btn{margin-left:0}}
 
 /* sections share one rhythm: a hairline on top, generous space, and a heading that sits with its intro */
@@ -50,18 +68,29 @@ html{scroll-behavior:smooth;scroll-padding-top:84px}
 .ba{margin-top:64px}
 @media (max-width:700px){.ba{margin-top:44px}}
 .ba-labels{display:flex;justify-content:space-between;font-size:16px;font-weight:700;color:var(--subtle);margin-bottom:10px}
-.ba-stage{position:relative;aspect-ratio:16/9;overflow:hidden;--pos:50%;user-select:none;-webkit-user-select:none;touch-action:pan-y;cursor:ew-resize;background:var(--sand);border:1px solid var(--rule);border-radius:var(--r)}
+.ba-stage{position:relative;aspect-ratio:16/9;overflow:hidden;--pos:50%;user-select:none;-webkit-user-select:none;touch-action:pan-y;cursor:grab;background:var(--sand);border:1px solid var(--rule);border-radius:var(--r);-webkit-tap-highlight-color:transparent}
+.ba-stage.dragging{cursor:grabbing}
 .ba-stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:left top;pointer-events:none}
 .ba-after{clip-path:inset(0 calc(100% - var(--pos)) 0 0)}
+/* a click or an arrow key glides the handle to its spot; dragging follows the finger exactly */
+.ba-stage.glide .ba-after{transition:clip-path .22s var(--out)}
+.ba-stage.glide .ba-line,.ba-stage.glide .ba-knob{transition:left .22s var(--out),transform .18s var(--out),box-shadow .18s var(--out)}
 .ba-stage .ba-old{object-position:center top}
 .ba-line{position:absolute;top:0;bottom:0;left:var(--pos);width:2px;margin-left:-1px;background:#fff;box-shadow:0 0 0 1px rgba(22,24,29,.2);pointer-events:none}
-.ba-knob{position:absolute;top:50%;left:var(--pos);width:48px;height:48px;margin:-24px 0 0 -24px;border-radius:50%;background:var(--ink);color:var(--paper);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 3px #fff;pointer-events:none;transition:transform .15s var(--ease)}
+.ba-knob{position:absolute;top:50%;left:var(--pos);width:48px;height:48px;margin:-24px 0 0 -24px;border-radius:50%;background:var(--ink);color:var(--paper);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 3px #fff,0 2px 6px rgba(22,24,29,.25);pointer-events:none;transition:transform .18s var(--out),box-shadow .18s var(--out)}
+.ba-knob svg{transition:transform .18s var(--out)}
 .ba-stage:hover .ba-knob{transform:scale(1.06)}
-.ba-stage.dragging .ba-knob{transform:scale(.95)}
+.ba-stage.dragging .ba-knob{transform:scale(1.16);box-shadow:0 0 0 3px #fff,0 6px 16px rgba(22,24,29,.3)}
+.ba-stage.dragging .ba-knob svg{transform:scale(.86)}
+.ba-stage.dragging .ba-line{width:3px;margin-left:-1.5px}
 .ba-range{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
-.ba-range:focus-visible ~ .ba-knob{outline:3px solid var(--ember-deep);outline-offset:4px}
+.ba-range:focus-visible ~ .ba-knob{outline:3px solid var(--ember-deep);outline-offset:4px;transform:scale(1.06)}
 .ba figcaption{margin-top:12px;max-width:44em}
 @media (max-width:700px){.ba-stage{aspect-ratio:4/3}}
+
+/* images fade in once they've loaded, in space already reserved for them (FadeImg; nothing is hidden without JavaScript) */
+img.pending{opacity:0}
+img.fade{transition:opacity .3s var(--out)}
 
 /* the email from Jake */
 .letter p{margin-top:20px;color:var(--muted)}
@@ -72,7 +101,11 @@ html{scroll-behavior:smooth;scroll-padding-top:84px}
 .mail-head div + div{border-top:1px solid var(--line)}
 .mail-head dt{color:var(--subtle)}
 .mail-head dd{color:var(--ink);overflow-wrap:anywhere}
-.mail-body{padding:24px 28px 28px;font-size:18px;line-height:1.6;color:var(--ink)}
+.mail-head .who{font-weight:700}
+.mail-head .addr{color:var(--subtle)}
+.mail-head .subj{font-weight:700}
+.mail-body{padding:24px 28px 28px;font-size:18px;line-height:1.6;color:var(--ink);text-wrap:pretty}
+.mail-body ::selection,.mail-head ::selection{background:#CFE3FF}
 .mail-body p + p{margin-top:16px}
 .mail-body .mail-foot{color:var(--subtle);font-size:16px;padding-top:16px;border-top:1px solid var(--line)}
 .mail figcaption{margin-top:12px}
@@ -81,14 +114,19 @@ html{scroll-behavior:smooth;scroll-padding-top:84px}
 /* work */
 .work{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:56px 32px}
 @media (max-width:960px){.work{grid-template-columns:minmax(0,1fr);max-width:640px}}
-.shot-view{position:relative;aspect-ratio:4/3.3;overflow:hidden;background:var(--sand);border:1px solid var(--rule);border-radius:var(--r);cursor:zoom-in}
+.shot-view{position:relative;aspect-ratio:4/3.3;overflow:hidden;background:var(--sand);border:1px solid var(--rule);border-radius:var(--r);cursor:zoom-in;-webkit-tap-highlight-color:transparent;transition:border-color var(--fast),transform .12s var(--out)}
+.shot-view:hover{border-color:var(--subtle)}
+.shot-view:active{transform:scale(.995)}
+.shot-view:focus-visible{outline-offset:4px}
 .shot-view .full{position:absolute;left:0;top:0;width:100%;transition:transform 6s cubic-bezier(.45,0,.55,1)}
 .shot-view:hover .full,.shot-view:focus-visible .full{transform:translateY(calc(-100% + var(--h,340px)))}
-.shot-view .phone{position:absolute;right:12px;bottom:12px;width:26%;border-radius:12px;border:3px solid var(--ink);overflow:hidden;background:var(--ink)}
+.shot-view .phone{position:absolute;right:12px;bottom:12px;width:26%;border-radius:12px;border:3px solid var(--ink);overflow:hidden;background:var(--ink);transition:transform .25s var(--out),box-shadow .25s var(--out)}
+.shot-view:hover .phone,.shot-view:focus-visible .phone{transform:translateY(-4px);box-shadow:0 10px 20px -8px rgba(22,24,29,.45)}
 .shot h3{margin-top:20px}
 .shot .k{font-size:16px;color:var(--subtle);margin-top:2px}
 .shot p:not(.k){margin-top:10px;color:var(--muted)}
-.view{margin-top:6px;background:none;border:0;padding:0;font:inherit;font-weight:700;cursor:pointer}
+.view{margin-top:6px}
+.view:hover svg,.view:focus-visible svg{transform:scale(1.12)}
 
 /* how it works: a timeline with the cost at each step */
 .timeline{list-style:none;padding:0;border-top:1.5px solid var(--ink)}
@@ -108,7 +146,8 @@ html{scroll-behavior:smooth;scroll-padding-top:84px}
 .price{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:48px 80px;margin-top:88px;scroll-margin-top:96px}
 @media (max-width:960px){.price{grid-template-columns:minmax(0,1fr);margin-top:64px}}
 .price-main{grid-row:span 2}
-.price-amt{font-family:var(--display);font-weight:800;letter-spacing:-.04em;font-size:clamp(76px,10vw,136px);line-height:.9}
+.price-amt{font-family:var(--display);font-weight:800;letter-spacing:-.04em;font-size:clamp(76px,10vw,136px);line-height:.9;font-variant-numeric:lining-nums}
+.price-amt .cur{font-size:.46em;vertical-align:.86em;letter-spacing:0;margin-right:.06em}
 .price-what{font-size:20px;font-weight:700;margin-top:16px}
 .price-main p:not(.price-amt):not(.price-what){margin-top:12px;color:var(--muted);max-width:28em}
 .inc{margin-top:16px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:32px;border-top:0}
@@ -119,16 +158,23 @@ html{scroll-behavior:smooth;scroll-padding-top:84px}
 /* faq */
 .faq-intro p{margin-top:16px;color:var(--muted)}
 @media (min-width:961px){.faq-intro{position:sticky;top:110px}}
-.faq{border-top:1.5px solid var(--ink)}
+.faq{border-top:1.5px solid var(--ink);interpolate-size:allow-keywords}
 .faq details{border-bottom:1px solid var(--rule)}
-.faq summary{cursor:pointer;font-size:20px;font-weight:700;line-height:1.35;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:24px;min-height:64px;padding:16px 0;transition:color var(--fast)}
+.faq summary{cursor:pointer;font-size:20px;font-weight:700;line-height:1.35;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:24px;min-height:64px;padding:16px 0;transition:color var(--fast);-webkit-tap-highlight-color:transparent}
+.faq summary:focus-visible{outline-offset:-3px;border-radius:2px}
 .faq summary:hover{color:var(--ember-deep)}
 .faq summary::-webkit-details-marker{display:none}
-.faq .pm{position:relative;flex:none;width:16px;height:16px}
-.faq .pm::before,.faq .pm::after{content:'';position:absolute;left:0;top:7px;width:16px;height:2px;background:currentColor;transition:transform .2s var(--ease)}
+/* plus turns a half turn into minus; the answer opens to its height (browsers without ::details-content just open) */
+.faq .pm{position:relative;flex:none;width:16px;height:16px;transition:transform .25s var(--out)}
+.faq .pm::before,.faq .pm::after{content:'';position:absolute;left:0;top:7px;width:16px;height:2px;border-radius:1px;background:currentColor;transition:transform .25s var(--out)}
 .faq .pm::after{transform:rotate(90deg)}
-.faq details[open] .pm::after{transform:rotate(0)}
-.faq details p{padding-bottom:24px;color:var(--muted);max-width:40em}
+.faq details[open] .pm{transform:rotate(180deg)}
+.faq details[open] .pm::after{transform:rotate(180deg) scaleX(0)}
+.faq details::details-content{height:0;overflow:clip;transition:height .25s var(--out),content-visibility .25s allow-discrete}
+.faq details[open]::details-content{height:auto}
+.faq details p{padding-bottom:24px;color:var(--muted);max-width:40em;transition:opacity .2s var(--out),transform .25s var(--out)}
+.faq details:not([open]) p{opacity:0;transform:translateY(-4px)}
+@starting-style{.faq details[open] p{opacity:0;transform:translateY(-4px)}}
 @media (max-width:640px){.faq summary{font-size:18px}}
 
 /* closing: the form */
@@ -137,18 +183,21 @@ html{scroll-behavior:smooth;scroll-padding-top:84px}
 .closing-note,.ask-jake{margin-top:16px;color:var(--muted)}
 .closing .lead + .closing-note{margin-top:28px}
 .closing-act{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
-.copy{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:16px;font-weight:700;color:var(--ink);background:transparent;border:1.5px solid var(--rule);border-radius:var(--r);min-height:44px;padding:0 12px;margin-left:10px;vertical-align:middle;cursor:pointer;transition:border-color var(--fast)}
+.copy{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:16px;font-weight:700;color:var(--ink);background:transparent;border:1.5px solid var(--rule);border-radius:var(--r);min-height:44px;padding:0 12px;margin-left:10px;vertical-align:middle;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:border-color var(--fast),background-color var(--fast),transform .12s var(--out)}
 .copy:hover{border-color:var(--ink)}
+.copy:active{transform:translateY(1px);background:var(--paper)}
+.copy[data-copied]{border-color:var(--ok)}
 .formcard{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:32px}
 @media (max-width:520px){.formcard{padding:22px 18px}}
 .instant{display:flex;flex-direction:column;gap:18px}
 .instant .btn{width:100%;margin-top:4px;padding-left:14px;padding-right:14px;white-space:nowrap}
 #tally{display:block;width:100%;min-height:440px;border:0;margin:-8px 0 0}
-.formcard.sent #tally,.formcard.sent .form-foot{display:none}
+.formcard.sent .tally,.formcard.sent .form-foot{display:none}
 .form-foot{text-align:center;margin-top:4px}
 .done{display:none;padding:8px 0}
 .done:focus{outline:0}
-.formcard.sent .done{display:block}
+.formcard.sent .done{display:block;animation:done-in .3s var(--out)}
+@keyframes done-in{from{opacity:0;transform:translateY(6px)}}
 .done h3{font-size:26px}
 .done p{color:var(--muted);margin-top:8px}
 .done ol{margin:20px 0 12px;padding-left:22px;color:var(--muted);display:grid;gap:6px}
@@ -163,21 +212,33 @@ html{scroll-behavior:smooth;scroll-padding-top:84px}
 .foot-top{display:flex;justify-content:space-between;align-items:flex-start;gap:32px 48px;flex-wrap:wrap;padding-bottom:40px;border-bottom:1px solid rgba(255,255,255,.14)}
 .foot-tag{margin-top:16px;font-family:var(--display);font-weight:800;letter-spacing:-.025em;font-size:clamp(26px,3vw,36px);line-height:1.1;color:#fff;max-width:12em}
 .foot-links{display:grid;grid-template-columns:repeat(2,auto);gap:0 48px;font-size:16px}
-.foot-links a{display:flex;align-items:center;min-height:44px;color:#DAD8D1;text-decoration:none}
+.foot-links a{display:flex;align-items:center;min-height:44px;color:#DAD8D1;text-decoration:underline 1px transparent;text-underline-offset:.3em}
+.foot-links a:hover{text-decoration-color:currentColor}
 .foot-links a:hover{color:var(--glow)}
 .foot-bot{padding-top:24px;font-size:16px;color:#A9A79F}
 
 /* full-page concept viewer */
-dialog.viewer{border:0;padding:0;border-radius:var(--r);width:min(1100px,calc(100vw - 24px));max-height:calc(100vh - 24px);background:var(--paper);color:var(--ink);box-shadow:0 40px 120px rgba(0,0,0,.45);overflow:hidden}
-dialog.viewer::backdrop{background:rgba(22,24,29,.75)}
+/* the viewer rises a few pixels as it fades in, over a dimming backdrop; closing is quicker */
+dialog.viewer{border:0;padding:0;border-radius:var(--r);width:min(1100px,calc(100vw - 24px));max-height:calc(100vh - 24px);background:var(--paper);color:var(--ink);box-shadow:0 40px 120px rgba(0,0,0,.45);overflow:hidden;opacity:0;transform:translateY(10px) scale(.99);transition:opacity .16s ease-in,transform .16s ease-in,overlay .16s allow-discrete,display .16s allow-discrete}
+dialog.viewer[open]{opacity:1;transform:none;transition:opacity .22s var(--out),transform .25s var(--out),overlay .25s allow-discrete,display .25s allow-discrete}
+@starting-style{dialog.viewer[open]{opacity:0;transform:translateY(10px) scale(.99)}}
+dialog.viewer::backdrop{background:rgba(22,24,29,0);transition:background-color .2s,overlay .2s allow-discrete,display .2s allow-discrete}
+dialog.viewer[open]::backdrop{background:rgba(22,24,29,.75)}
+@starting-style{dialog.viewer[open]::backdrop{background:rgba(22,24,29,0)}}
 .v-head{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:12px 12px 12px 20px;border-bottom:1px solid var(--line);background:#fff}
 .v-head b{font-size:18px}
 .v-head small{display:block;font-size:16px;color:var(--subtle)}
-.v-close{width:44px;height:44px;border-radius:var(--r);border:1.5px solid var(--rule);background:transparent;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;flex:none}
+.v-close{width:44px;height:44px;border-radius:var(--r);border:1.5px solid var(--rule);background:transparent;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;flex:none;transition:border-color var(--fast),background-color var(--fast),transform .12s var(--out)}
 .v-close:hover{border-color:var(--ink)}
+.v-close svg{transition:transform .22s var(--out)}
+.v-close:hover svg{transform:rotate(90deg)}
+.v-close:active{transform:scale(.95);background:var(--sand)}
 .v-body{overflow:auto;max-height:calc(100vh - 24px - 70px);background:var(--sand);padding:16px}
-.v-body img{width:100%;border-radius:4px}
+.v-body img{width:100%;height:auto;border-radius:4px}
 
 @media (prefers-reduced-motion:reduce){
   .shot-view:hover .full,.shot-view:focus-visible .full{transform:none}
+  .sheet a{opacity:1;transform:none}
+  .faq details:not([open]) p{opacity:1;transform:none}
 }
+

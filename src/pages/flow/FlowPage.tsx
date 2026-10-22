@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { EMAIL, SubFooter, SubHeader } from "../../components/Chrome.tsx";
+import { Capacity } from "../../components/Capacity.tsx";
 import { TallyEmbed } from "../../components/TallyEmbed.tsx";
 import { PROJECTS_API, STRIPE_LINKS, TALLY } from "../../lib/config.ts";
 import "../../components/site.css";
@@ -149,6 +150,7 @@ export function FlowPage({ kind }: { kind: FlowKind }) {
             <h1 className="t1">{f.h1}</h1>
             <p className="lead">{f.lead}</p>
             <RoundsNote kind={kind} rounds={rounds} />
+            {kind === "start" && <Capacity />}
           </div>
           <div className={sent ? "card sent" : "card"} id="card" ref={card}>
             <TallyEmbed formId={f.form} title={f.title} height={560} onSubmit={onSubmit} />

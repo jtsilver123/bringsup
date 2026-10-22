@@ -17,8 +17,8 @@ export function Letter() {
         <figure className="mail">
           <div className="mail-card">
             <dl className="mail-head">
-              <div><dt>From</dt><dd>Jake Silver &lt;{EMAIL}&gt;</dd></div>
-              <div><dt>Subject</dt><dd>idea for marigold bakery</dd></div>
+              <div><dt>From</dt><dd><span className="who">Jake Silver</span> <span className="addr">&lt;{EMAIL}&gt;</span></dd></div>
+              <div><dt>Subject</dt><dd className="subj">idea for marigold bakery</dd></div>
             </dl>
             <div className="mail-body">
               <p>Hi Rosa,</p>

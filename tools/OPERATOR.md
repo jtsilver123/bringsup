@@ -17,7 +17,7 @@ Anything else that lands in that Stripe account (InstateMe's own sales) is not o
 ## 0. Setup (every run)
 1. Clone `jtsilver123/bringsup` (public) and work from its root: `git clone --depth 1 https://github.com/jtsilver123/bringsup.git && cd bringsup && npm ci --silent`.
 2. Set `BRINGSUP_WORKER_TOKEN` from the task prompt. `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` come from the environment. If they're missing, skip the deploy steps and record a blocker (step 7).
-3. The outreach tracker is the artifact in the task prompt (ArtifactData): `prospects/*` and `meta/pipeline`. Settings live in `meta/pipeline`. There's no Care Plan for now: never offer or mention one. Changes after launch are $150 a round (the /extra/ link), and fixes to our mistakes are free.
+3. The outreach tracker is the artifact in the task prompt (ArtifactData): `prospects/*` and `meta/pipeline`. Settings live in `meta/pipeline`. Changes after launch are $150 a round (the /extra/ link), and fixes to our mistakes are free. The optional managed plan ($49 a month, /managed/) is offered only in emails 8 and 11 and when a customer asks about updates or monthly help; never in cold email or to prospects. (The old Care Plan no longer exists.)
 
 Order every run: **1 inbox → 1b payments → 2 customer jobs → 3 reminders → 4 redesign queue → 5 outreach (once per weekday) → 6 health → 7 finish.** If time runs short, finish what you started, then stop. The next run picks up the rest.
 
@@ -55,9 +55,12 @@ For each of the two payment links, call `STRIPE_LIST_CHECKOUT_SESSIONS` with `pa
 - An approve payment sets `status: approved`, `todo: launch`; an extra payment applies the held changes. A second approve payment on an approved project raises an alert: email the customer that it'll be refunded within 2 business days, and add it to step 7's refund list. (The /approve/ page hides the form once a project is paid, so this should be rare.)
 - `payment_status: "unpaid"` (a bank payment still clearing): do nothing yet; it shows up as paid on a later run.
 
+**Managed plan ($49 a month, `plink_1UTSSeB5nImYYaicwTOnMVrB`, a subscription).** Also list that link's complete sessions (same call). For each paid session: find the project as above. If its `plan_subscription` isn't this session's `subscription`, `update` with `set: {care_plan: true, plan_subscription: "<subscription id>"}`, `event: {kind: "plan_started", payload: {session, subscription}}`, and don't run `payment` (plan payments aren't rounds; the monthly books count them from Stripe). Then send email 12, with the portal link https://billing.stripe.com/p/login/7sY9AS3QO8f9fvd5i43cc00.
+Once a day, for each project in `node tools/projects-worker.ts plans`, retrieve its `plan_subscription`. `active` or `past_due` (Stripe retries the card and emails them itself): nothing. `canceled`, `unpaid` or `incomplete_expired`: `update` with `set: {care_plan: false}`, `event: {kind: "plan_ended", summary: "<status>"}`, and send email 13. A subscription that matches no project: alert in step 7 like any unmatched payment.
+
 **Disputes (first run of each day).** `STRIPE_LIST_DISPUTES` created in the last 30 days. Ignore any whose payment isn't one of our two links' sessions (match the payment intent against `STRIPE_LIST_CHECKOUT_SESSIONS` for the link). For each BringsUp dispute without a tracker doc `disputes/<dispute id>`, write that doc as a ready-to-file evidence packet: the reason and amount, the evidence due date, the customer's name and email, and a timeline from `show <ref>` (start form date, every preview with its URL, each round of changes, the approve form, the payment, the launch and the live URL), the Gmail thread ids, and the terms URL with the clauses that apply. Then push Jake (step 7). Never respond to the dispute in Stripe yourself.
 
-**Monthly books (first run on or after the 1st).** If tracker doc `books/<last month, YYYY-MM>` doesn't exist, list both links' paid sessions created last month. For each: date, ref, business, kind (site or extra round), amount, Stripe fee and net (from the payment's balance transaction, if the Stripe tools return it; otherwise write `fee: "see Stripe"`), and the session id. Add totals and any refunds Jake made (refunded sessions). Write it to `books/<YYYY-MM>`, then push Jake one line (step 7). Read only our two links' sessions, never InstateMe's other payments.
+**Monthly books (first run on or after the 1st).** If tracker doc `books/<last month, YYYY-MM>` doesn't exist, list all three links' paid sessions and the managed plan's paid invoices created last month. For each: date, ref, business, kind (site or extra round), amount, Stripe fee and net (from the payment's balance transaction, if the Stripe tools return it; otherwise write `fee: "see Stripe"`), and the session id. Add totals and any refunds Jake made (refunded sessions). Write it to `books/<YYYY-MM>`, then push Jake one line (step 7). Read only our two links' sessions, never InstateMe's other payments.
 
 ## 2. Customer jobs (every run)
 Run `node tools/projects-worker.ts jobs`. Each job is leased to you for 45 minutes. Work them oldest first. After each one, record the result with `node tools/projects-worker.ts update <ref> <file>`, where the file is `{set, event, applied_seq?}`. Don't record success by any other route: if something fails, run `fail <ref> "<what happened>"` instead (5 failures raise an alert automatically).
@@ -117,6 +120,12 @@ Apply `pending_changes` to `site.json`, run `launch <ref>` (production deploy), 
 ### reply_out_of_scope: a change after launch
 If it's only fixing something we got wrong (a typo, or wrong details that were right in their start form), fix it free like a care_edit. Otherwise send email 11. `update`: `set: {todo: null}`.
 
+### Managed plan: the daily and monthly care
+For every project in `node tools/projects-worker.ts plans` with `status: live` and a `domain` (the plan is only offered to those):
+- **Every day:** fetch the live site (`dns <ref>`) and look up the domain's MX records (`curl -s -H 'accept: application/dns-json' 'https://cloudflare-dns.com/dns-query?name=<domain>&type=MX'`). If the site isn't serving our pages or the MX records differ from the ones recorded at launch (the `launch_steps_sent` event's `mx`), find out why and fix what we control (a redeploy, a Pages domain re-attach). If the fix is in their DNS, email them (or `domain_helper_email`) the exact steps for their provider (Domain steps). Log `event: {kind: "plan_check", summary}` only when something was wrong.
+- **On the 1st of each month:** compare the site's hours, phone and address with their Google listing (web search for the business). If the listing changed and the site didn't, update the site (as a care_edit), deploy, and tell them in one short email what you changed and why. If unsure which is right, ask them instead. Look up the domain's expiry (`curl -s https://rdap.org/domain/<domain>`, the `expiration` event). 30 days or less away and no `renewal_reminder` event for this date yet: send email 14 and log it. At 7 days, if the expiry date hasn't moved, send it again and add it to step 7.
+- **Their updates by email** are care_edits (the function already routes them there for `care_plan` projects). Small means text, hours, prices, menu items, photos, a notice, or a link. A new page or reworking a section isn't small: reply with email 11's $150 option and do nothing until they choose.
+
 ### Domain steps
 Point **www** at the site, and forward the bare domain to www. Never touch MX, TXT or any other record.
 - **Every provider:** add or replace a **CNAME** record. Host/Name `www`, Value/Points to `<pages_project>.pages.dev`, TTL default. If a `www` A record exists, delete only that one.
@@ -127,7 +136,20 @@ Point **www** at the site, and forward the bare domain to www. Never touch MX, T
   - **Wix:** Domains → ⋯ → Manage DNS (or forward from Settings).
   - **Network Solutions / Web.com:** My Domain Names → Manage → Edit DNS / Forward Domain.
   - **Anything else:** describe it in plain words, and ask for a screenshot if they're stuck.
-- Write the steps for their provider only, numbered, with the exact values to type.
+- Write the steps for their provider only, in plain words (customer_emails.md, "Write for someone who isn't technical"): numbered, one click per step, the exact words to click or type in bold, and what they'll see when it worked. Never say CNAME, DNS, A record or 301 on their own; name them only as the label on their screen.
+
+Example for GoDaddy (adapt the clicks for their provider; keep the shape):
+> 1. Go to **godaddy.com** and sign in.
+> 2. Click your name at the top right, then **My Products**.
+> 3. Next to **{domain}**, click **DNS**.
+> 4. Look in the list for a row where the **Name** is **www**. If there is one, click the pencil next to it. If not, click **Add New Record** and choose **CNAME** as the type.
+> 5. In the box called **Points to** (or **Value**), type exactly: **{pages_project}.pages.dev**
+> 6. Click **Save**.
+> 7. Now scroll down to **Forwarding**, click **Add Forwarding**, and type **https://www.{domain}**. Choose **Permanent (301)**, then **Save**.
+>
+> That's it. Don't change anything else on that page: the other rows are what keep your email working. It can take up to an hour to switch over, and I'll check it and email you when it's live.
+>
+> Stuck? Reply with a photo of your screen and I'll tell you exactly what to click. Or forward this email to whoever set up your website.
 
 ## 3. Reminders (every run, cheap)
 `node tools/projects-worker.ts health` lists `quiet_customers` (no activity for 7+ days while waiting on them). For each project in `preview_sent` or `awaiting_extra`, using `last_preview_at`, `last_customer_touch_at` and `events.json`:

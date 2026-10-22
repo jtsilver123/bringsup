@@ -157,6 +157,12 @@ const firstItems = (groups: Group[], n: number): Group[] => {
   return out;
 };
 
+const PHONE_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>';
+/** Progressive touches, a few lines with no dependencies. Without them (or in the sandboxed /try/ preview) everything still works:
+ * images fade in once loaded instead of popping (only ones not yet loaded are hidden, and only by this script), and the
+ * no-JavaScript menu also closes on Escape, on a tap outside it, or when one of its links is used. Left out of the standalone
+ * /try/ concept, whose sandboxed iframe can't run scripts. */
+const ENHANCE = `<script>(function(){var d=document;d.querySelectorAll("main img").forEach(function(i){if(i.complete)return;i.setAttribute("data-fade","");var f=function(){i.removeAttribute("data-fade")};i.addEventListener("load",f,{once:true});i.addEventListener("error",f,{once:true})});var m=d.querySelector(".mnav");if(!m)return;var c=function(){m.open=false};d.addEventListener("click",function(e){if(m.open&&!m.contains(e.target))c()});d.addEventListener("keydown",function(e){if(e.key==="Escape"&&m.open){c();m.querySelector("summary").focus()}});m.querySelectorAll("nav a").forEach(function(a){a.addEventListener("click",c)})})();</script>`;
 const MARK = '<svg width="22" height="22" viewBox="0 0 48 48" aria-hidden="true"><path d="M14 4H34A10 10 0 0 1 44 14V30A10 10 0 0 1 34 40H21L10.6 46.6A1 1 0 0 1 9 45.8V39.3A10 10 0 0 1 4 30V14A10 10 0 0 1 14 4Z" fill="#FBFAF7"/><g fill="none" stroke="#16181D" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 31V13"/><path d="M16 21l8-8 8 8"/></g></svg>';
 
 export function render(c: SiteContent, opts: RenderOptions = {}): Record<string, string> {
@@ -322,7 +328,7 @@ ${visit(d, c.home.final_heading)}`;
       const shown = firstItems(c.offer.groups, 6);
       const story = c.about.paragraphs.length ? `<section class="sec how" id="story"><div class="wrap how-g"><h2 class="d">${esc(c.about.heading)}</h2><div class="prose">${c.about.paragraphs.slice(0, approach ? 1 : 2).map((p) => `<p>${esc(p)}</p>`).join("")}${moreLink("about/", "About the shop", d)}</div></div></section>` : "";
       return `<section class="hero${c.hero_image ? "" : " noimg"}"><div class="wrap">
-${c.tagline || city ? `<p class="kick">${esc([c.tagline, c.city_state].filter(Boolean).join(" — "))}</p>` : ""}
+${c.tagline || city ? `<p class="kick">${esc([c.tagline, c.city_state].filter(Boolean).join(" · "))}</p>` : ""}
 <h1 class="d">${esc(c.home.headline)}</h1>
 <div class="hero-row"><p class="dek">${esc(c.home.subheadline)}</p><div class="ctas">${btn(d)}${c.phone && !ctaIsCall ? callLink("tel alt", "Call ") : ""}</div></div>
 ${c.hero_image ? `<figure class="hero-fig">${img(c.hero_image, "", d, true)}</figure>` : ""}
@@ -459,7 +465,7 @@ ${c.address ? `<iframe class="map" title="Map to ${esc(c.business_name)}" loadin
       : style === "atelier" ? [c.tagline, c.year_founded ? `Est. ${c.year_founded}` : ""].filter(Boolean).join(" · ") : style === "workshop" ? "" : c.tagline;
     const brand = c.logo ? `<img class="logo" src="${esc(asset(c.logo))}" alt="${esc(c.business_name)}">` : `<span class="nm">${esc(c.business_name)}</span>`;
     const act = c.phone || !ctaIsCall
-      ? `<div class="act${c.phone && !ctaIsCall ? "" : " one"}">${c.phone ? `<a class="a-tel" href="${tel(c.phone)}">Call ${esc(c.phone)}</a>` : ""}${ctaIsCall ? "" : `<a class="a-cta" href="${esc(ctaH)}">${esc(c.primary_cta.label)}</a>`}</div>` : "";
+      ? `<div class="act${c.phone && !ctaIsCall ? "" : " one"}">${c.phone ? `<a class="a-tel" href="${tel(c.phone)}">${PHONE_ICON}Call ${esc(c.phone)}</a>` : ""}${ctaIsCall ? "" : `<a class="a-cta" href="${esc(ctaH)}">${esc(c.primary_cta.label)}</a>`}</div>` : "";
     const left = opts.preview ? opts.preview.roundsLeft : 0;
     const pv = opts.preview ? `<div class="pv" role="region" aria-label="BringsUp preview"><div class="pv-in">
 <p class="pv-t">${MARK}<span><b>Private preview</b> <span class="pv-s"><span class="pv-lg">Not live yet · </span>${left > 0 ? `${left} round${left === 1 ? "" : "s"} of changes left` : "included rounds used, one more is $150"}</span></span></p>
@@ -502,6 +508,7 @@ ${p.body(d)}
 </div></footer>
 ${solo ? `<p class="note">${esc(opts.standalone!.note)}</p>` : ""}
 ${act || pv ? `<div class="dock">${act}${pv}</div>` : ""}
+${solo ? "" : ENHANCE}
 </body>
 </html>
 `;
@@ -529,15 +536,20 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--fb);font-s
 img{display:block;max-width:100%;height:auto}
 h1,h2,h3,h4,p,ul,ol,dl,dd,figure,blockquote{margin:0}
 ul,ol{padding:0;list-style:none}
-a{color:inherit;text-decoration-thickness:1px;text-underline-offset:.22em}
-a:hover{text-decoration-thickness:2px}
+a{color:inherit;text-decoration-thickness:1px;text-underline-offset:.22em;-webkit-tap-highlight-color:transparent;transition:color .15s,text-decoration-color .15s,text-decoration-thickness .15s,text-underline-offset .15s}
+a:hover{text-decoration-thickness:2px;text-underline-offset:.18em}
 :focus-visible{outline:2px solid var(--acc-t);outline-offset:3px}
+.ft :focus-visible,.s-workshop .hd :focus-visible,.s-workshop .hero :focus-visible,.s-workshop .say :focus-visible,.s-workshop .ph :focus-visible,.s-craft .visit:not(.flat) :focus-visible,.s-landscape .visit:not(.flat) :focus-visible,.act :focus-visible{outline-color:var(--acc-d)}
+main img{transition:opacity .35s cubic-bezier(.16,1,.3,1)}
+main img[data-fade]{opacity:0}
 .wrap{width:100%;max-width:1240px;margin:0 auto;padding:0 20px}
 @media(min-width:760px){.wrap{padding:0 40px}}
 .skip{position:absolute;left:-9999px;top:8px;background:var(--bg);color:var(--ink);padding:10px 16px;z-index:99}.skip:focus{left:8px}
 .d{font-family:var(--fd);font-weight:var(--dw);letter-spacing:var(--dls);line-height:var(--dlh);font-stretch:var(--dst,100%);text-wrap:balance}
 .lbl,.vh{font-family:var(--fl);font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;line-height:1.4}
-.btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 26px;border-radius:var(--r);background:var(--acc);color:var(--acc-ink);font-family:var(--fl);font-weight:600;font-size:16px;line-height:1.2;text-decoration:none;text-align:center;white-space:nowrap;transition:background-color .15s,color .15s}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 26px;border-radius:var(--r);background:var(--acc);color:var(--acc-ink);font-family:var(--fl);font-weight:600;font-size:16px;line-height:1.2;text-decoration:none;text-align:center;white-space:nowrap;transition:background-color .15s,color .15s,box-shadow .15s,transform .12s cubic-bezier(.16,1,.3,1)}
+.btn:active{transform:translateY(1px) scale(.985);transition-duration:.06s}
+.btn:focus-visible{outline-offset:4px}
 .btn:hover{background:var(--ink);color:var(--bg)}
 .btn.sm{min-height:44px;padding:0 18px;font-size:15px}
 .ctas{display:flex;flex-wrap:wrap;align-items:center;gap:14px 22px;margin-top:32px}
@@ -571,31 +583,44 @@ figcaption{margin-top:10px;font-size:15px;line-height:1.45;color:var(--muted)}
 .note{background:#16181D;color:#D9D6CE;font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;text-align:center;padding:14px 20px;margin:0}
 .hd{position:relative;z-index:30}
 .brand{text-decoration:none;display:inline-block;min-width:0}.brand .logo{height:52px;width:auto;max-width:200px;object-fit:contain}
-.nav{display:flex;gap:30px;align-items:center}.nav a{text-decoration:none;padding:6px 0}.nav a:hover,.nav a[aria-current]{text-decoration:underline}
+.nav{display:flex;gap:30px;align-items:center}.nav a{padding:6px 0;text-decoration:underline 1.5px transparent;text-underline-offset:.4em}.nav a:hover{text-decoration-color:currentColor;text-underline-offset:.3em}.nav a[aria-current]{text-decoration-color:var(--acc-t);text-underline-offset:.3em}
+.hd-tel:hover{text-decoration:underline;text-decoration-thickness:1.5px}
 .hd-act{display:flex;align-items:center;gap:22px}.hd-tel{text-decoration:none;font-weight:600;white-space:nowrap}
 .mnav{display:none}
-.mnav summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 14px;border:1px solid currentColor;border-radius:var(--r);font-family:var(--fl);font-size:15px;font-weight:600}
+/* the phone menu works without JavaScript (details/summary): two bars turn into a cross, and the panel drops in */
+.mnav summary{list-style:none;cursor:pointer;position:relative;display:inline-flex;align-items:center;min-height:44px;padding:0 42px 0 14px;border:1px solid currentColor;border-radius:var(--r);font-family:var(--fl);font-size:15px;font-weight:600;-webkit-tap-highlight-color:transparent;transition:background-color .15s,transform .12s}
 .mnav summary::-webkit-details-marker{display:none}
-.mnav summary::after{content:"";width:14px;height:8px;border-top:2px solid currentColor;border-bottom:2px solid currentColor}
-.mnav[open] summary::after{height:0;border-bottom:0}
+.mnav summary::before,.mnav summary::after{content:"";position:absolute;right:14px;top:50%;width:15px;height:2px;margin-top:-1px;border-radius:1px;background:currentColor;transition:transform .22s cubic-bezier(.16,1,.3,1)}
+.mnav summary::before{transform:translateY(-3.5px)}.mnav summary::after{transform:translateY(3.5px)}
+.mnav[open] summary::before{transform:rotate(45deg)}.mnav[open] summary::after{transform:rotate(-45deg)}
+.mnav summary:active{transform:translateY(1px)}
+.mnav summary:hover{background:color-mix(in srgb,currentColor 8%,transparent)}
 .mnav nav{position:absolute;left:0;right:0;top:100%;background:var(--bg);color:var(--ink);border-bottom:1px solid var(--line);padding:8px 20px 20px;display:flex;flex-direction:column;box-shadow:0 18px 30px -24px rgba(0,0,0,.4)}
-.mnav nav a{padding:14px 0;border-top:1px solid var(--line);text-decoration:none;font-family:var(--fl);font-size:18px}
+.mnav[open] nav{animation:mnav-in .22s cubic-bezier(.16,1,.3,1)}
+@keyframes mnav-in{from{opacity:0;transform:translateY(-6px)}}
+.mnav nav a{padding:14px 0;border-top:1px solid var(--line);text-decoration:none;font-family:var(--fl);font-size:18px;transition:color .15s,padding-left .2s cubic-bezier(.16,1,.3,1)}
+.mnav nav a:hover,.mnav nav a:active{color:var(--acc-t);padding-left:4px}
+.mnav nav a[aria-current]{color:var(--acc-t)}
 @media(max-width:899px){.nav,.hd-act{display:none}.mnav{display:block}}
 .dock{position:sticky;bottom:0;z-index:40}
 .act{display:none}
 @media(max-width:899px){.act{display:grid;grid-template-columns:1fr 1fr;background:var(--dark);border-top:1px solid rgba(255,255,255,.12)}.act.one{grid-template-columns:1fr}
-.act a{display:flex;align-items:center;justify-content:center;min-height:58px;padding:6px 12px;color:var(--on-dark);font-family:var(--fl);font-weight:600;font-size:16px;text-decoration:none;text-align:center;line-height:1.2}
-.act a+a,.act.one a{background:var(--acc);color:var(--acc-ink)}}
+.act a{display:flex;align-items:center;justify-content:center;gap:8px;min-height:58px;padding:6px 12px;color:var(--on-dark);font-family:var(--fl);font-weight:600;font-size:16px;text-decoration:none;text-align:center;line-height:1.2;-webkit-tap-highlight-color:transparent;transition:background-color .12s,filter .12s}
+.act a svg{flex:none;transition:transform .2s cubic-bezier(.16,1,.3,1)}
+.act a:active{background:color-mix(in srgb,var(--dark) 80%,#fff)}.act a:active svg{transform:rotate(-12deg) scale(.92)}
+.act a+a,.act.one a{background:var(--acc);color:var(--acc-ink)}
+.act a+a:active,.act.one a:active{filter:brightness(.9)}}
 .pv{background:#16181D;color:#FBFAF7;font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;border-top:1px solid #2B2E36}
 .pv-in{max-width:1240px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px 24px;flex-wrap:wrap}
 .pv-t{display:flex;align-items:center;gap:12px;margin:0}.pv-t svg{flex:none}.pv-t b{font-weight:650}.pv-s{color:#B9B6AE}
 .pv-b{display:flex;gap:10px;margin:0;flex-wrap:wrap}
-.pv a{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 16px;border-radius:8px;font-weight:600;font-size:14.5px;text-decoration:none;color:#FBFAF7}
+.pv a{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 16px;border-radius:6px;font-weight:600;font-size:14.5px;text-decoration:none;color:#FBFAF7;-webkit-tap-highlight-color:transparent;transition:background-color .15s,box-shadow .15s,transform .12s cubic-bezier(.16,1,.3,1)}
+.pv a:active{transform:translateY(1px) scale(.985)}
 .pv-ch{box-shadow:inset 0 0 0 1px #4A4E58}.pv-ch:hover{box-shadow:inset 0 0 0 1px #FBFAF7}
-.pv .pv-ok{background:#FFB37A;color:#16181D}.pv .pv-ok:hover{background:#FFC597}
+.pv .pv-ok{background:#FFB37A;color:#16181D}.pv .pv-ok:hover{background:#FFC597}.pv .pv-ok:active{background:#F5A266}
 .pv a:focus-visible{outline:2px solid #FFB37A;outline-offset:2px}
 @media(max-width:599px){.pv-in{padding:8px 12px 10px;gap:8px}.pv-t{font-size:13.5px;gap:8px}.pv-t svg{width:18px;height:18px}.pv-lg{display:none}.pv-b{width:100%;flex-wrap:nowrap}.pv-b a{flex:1;min-height:40px;padding:0 8px;font-size:14px;white-space:nowrap}}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
 `;
 }
 /** Last, so it wins over every style: a reviews line on its own when there are no quotes to show. */
@@ -615,7 +640,7 @@ body{font-size:19px;line-height:1.55}
 .sub{grid-column:1/-1;grid-row:2;text-align:center;margin-top:20px;padding:9px 0;border-top:1px solid var(--ink);font-family:var(--fl);font-size:12.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase}
 .nav{grid-column:1;grid-row:1;justify-self:start;font-family:var(--fl);font-size:16px;font-weight:500}
 .hd-act{grid-column:3;grid-row:1;justify-self:end;font-family:var(--fl);font-size:16px}
-.btn{background:var(--ink);color:var(--bg)}.btn:hover{background:var(--acc-t);color:#fff}
+.btn{background:var(--ink);color:var(--bg)}.btn:hover{background:var(--acc-t);color:#fff}.btn:active{background:color-mix(in srgb,var(--acc-t) 85%,#000)}
 .lead{padding:56px 0 96px}
 .lead-g{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:32px;align-items:end}
 .lead-copy{grid-column:1/6}
@@ -700,7 +725,7 @@ body{font-size:18px}
 .nav{margin-left:auto;font-family:var(--fl);font-size:14px;text-transform:uppercase;letter-spacing:.06em}
 .hd-act{gap:26px}.hd-tel{font-family:var(--fd);font-stretch:112%;font-weight:700;font-size:21px;letter-spacing:-.01em}
 .btn{font-family:var(--fd);font-weight:700;font-stretch:108%;letter-spacing:.01em}
-.btn:hover{background:var(--on-dark);color:var(--dark)}
+.btn:hover{background:var(--on-dark);color:var(--dark)}.btn:active{background:color-mix(in srgb,var(--on-dark) 85%,#000)}
 .lbl{font-family:var(--fl);font-weight:500;letter-spacing:.08em}
 .hero{background:linear-gradient(var(--dark),var(--dark)) top/100% calc(100% - 160px) no-repeat;color:var(--on-dark);padding-top:72px}
 .hero.noimg{background:var(--dark);padding-bottom:88px}
@@ -749,7 +774,7 @@ body{font-size:18px}
 .visit-g{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:72px;align-items:start}
 .visit h2{font-size:clamp(34px,4.4vw,60px);max-width:16ch}
 .bigtel{margin:28px 0 20px}.bigtel a{font-family:var(--fd);font-weight:800;font-stretch:112%;font-size:clamp(38px,5.4vw,72px);letter-spacing:-.03em;line-height:1;text-decoration:underline;text-decoration-color:var(--acc-t);text-decoration-thickness:4px;text-underline-offset:.16em}
-.bigtel a:hover{color:var(--acc-t)}
+.bigtel a{transition:color .15s,text-decoration-thickness .15s,text-underline-offset .15s}.bigtel a:hover{color:var(--acc-t);text-decoration-thickness:6px;text-underline-offset:.12em}
 .visit .adr{font-size:19px}.dir{font-family:var(--fl);font-size:15px}
 .vh-col .lbl{padding-bottom:12px;border-bottom:1px solid var(--ink)}
 .vh-col .hrs{font-family:var(--fl);font-size:15.5px}
@@ -870,8 +895,8 @@ body{font-size:17.5px;line-height:1.75;letter-spacing:.005em}
 .nav{grid-column:1/-1;grid-row:3;justify-content:center;gap:48px;margin-top:26px;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font-family:var(--fl);font-size:12.5px;letter-spacing:.22em;text-transform:uppercase}
 .hd-act{grid-column:3;grid-row:1;justify-self:end;font-family:var(--fl);font-size:14px;letter-spacing:.1em}.hd-act .btn{display:none}
 .hd-act .hd-tel{font-weight:400}
-.btn{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);font-weight:500;font-size:13px;letter-spacing:.22em;text-transform:uppercase;padding:0 36px;min-height:54px}
-.btn:hover{background:var(--ink);color:var(--bg)}
+.btn{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);font-weight:500;font-size:13px;letter-spacing:.22em;text-transform:uppercase;padding:0 36px;min-height:54px;transition:background-color .25s,color .25s,transform .12s cubic-bezier(.16,1,.3,1)}
+.btn:hover{background:var(--ink);color:var(--bg)}.btn:active{transform:none;background:color-mix(in srgb,var(--ink) 88%,var(--bg))}
 .lbl,.vh{font-weight:500;font-size:12px;letter-spacing:.28em;color:var(--muted)}
 .hero{text-align:center;padding:112px 0 0}
 .hero h1{font-size:clamp(44px,6.2vw,88px);max-width:15ch;margin:0 auto}

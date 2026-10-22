@@ -4,7 +4,15 @@ Sent by the operator task from **jake@bringsup.com** only (Composio `GMAIL_SEND_
 
 Fill every `{field}` from the project (`node tools/projects-worker.ts show <ref>`). If a field is missing, rewrite the sentence so it reads naturally. Never leave a placeholder or a gap. Reply in the customer's existing thread when one exists (`GMAIL_REPLY_TO_THREAD`), so each customer has a single conversation.
 
+**Write for someone who isn't technical.** Most owners run a shop all day and read email on their phone. Every email:
+- Short sentences, everyday words. Say "your web address", not "domain"; "your email keeps working", not "MX records"; "the padlock", not "SSL". Use a technical word only when it's the exact label they'll see on their screen, and then say what it is ("a box called **Points to**").
+- One thing to do per email, said in the first two lines. If they have nothing to do, say "There's nothing you need to do."
+- Steps are numbered, one click per step, with the exact words to click or type in **bold**, and what they should see when it worked.
+- Always give an easy way out: "Stuck? Reply with a photo of your screen and I'll tell you exactly what to tap," and "Or forward this email to whoever set up your website."
+- Read it back as the owner would on a phone. If any sentence needs a second read, rewrite it.
+
 Links (always with the project's ref):
+- Managed plan: `https://bringsup.com/managed/?ref={ref}`
 - Changes: `https://bringsup.com/changes/?ref={ref}`
 - Extra round: `https://bringsup.com/extra/?ref={ref}`
 - Approve: `https://bringsup.com/approve/?ref={ref}`
@@ -116,7 +124,7 @@ Thank you. Your site is approved and paid, and Stripe has emailed your receipt (
 
 The last step is pointing {domain} at your new site. It takes about 10 minutes at {provider}. {If someone else has the login: "We've sent the steps to {helper email}, so there's nothing for you to do."}
 
-{Provider-specific steps. See tools/OPERATOR.md, "Domain steps".}
+{Provider-specific steps, written like the GoDaddy example in tools/OPERATOR.md, "Domain steps".}
 
 Your email won't be affected. The steps only touch the two settings that point your web address at the new site. Nothing about your email is changed, and we check it still works before we say it's live.
 
@@ -150,7 +158,7 @@ It's live: https://www.{domain}
 
 We checked it on phones and computers, and your email still works the way it did. Hosting is included, so there's no monthly bill. If you were paying for your old site, you can cancel that plan now. Keep your domain and email with whoever provides them.
 
-If anything on the site is wrong, reply and we'll fix it free. For other updates later on, like new hours, specials or photos, just reply anytime: a round of changes is $150. Your own web person can also edit the files, since they're yours.
+If anything on the site is wrong, reply and we'll fix it free. For other updates later on, like new hours, specials or photos, just reply anytime: a round of changes is $150. {Only if the project has a `domain`:} Or, if you'd rather never think about it, the managed plan is $49 a month: updates by email are included, and we keep watch on your web address, email settings and renewal. Details: https://bringsup.com/managed/?ref={ref}. Your own web person can also edit the files, since they're yours.
 
 Thanks for trusting us with it. If a customer says something nice about the new site, we'd love to hear it.
 
@@ -190,8 +198,48 @@ Hi {first name},
 Thanks, happy to do this. Just so there are no surprises: changes after launch aren't included in the $1,000, so here are the options.
 
 - A round of changes is $150, and it covers everything you sent in this email. Pay here and we'll get on it; you don't need to type it again: {extra link}
+- {Only if the project has a `domain`:} Or join the managed plan, $49 a month, and this and future updates by email are included: https://bringsup.com/managed/?ref={ref}
 - If this is something we got wrong, like a typo or details that were right on your start form, ignore the above. We'll fix it free and email you when it's done.
 
 {If it's only a small fix to something we got wrong (a typo, a wrong phone number or wrong hours that were right in their start form), skip this email: fix it for free, redeploy, and send a one-line "Fixed" reply.}
+
+Jake
+
+## 12. Managed plan: welcome
+Sent when a managed-plan subscription is first recorded (OPERATOR.md "Managed plan").
+
+**Subject:** You're on the managed plan
+
+Hi {first name},
+
+Thanks for joining. From now on, when something changes at {business}, like hours, prices, the menu, photos or a holiday notice, just reply to any of my emails and I'll update the site, usually within a day. I also check every day that {domain} leads to your site and your email settings are intact, and I'll remind you before your domain's renewal date.
+
+Bigger work, like a new page, is still $150 a round, and I'll always ask first. You can update your card or cancel anytime here, with the email you signed up with: {portal link}
+
+Jake
+
+## 13. Managed plan: ended
+Sent when the subscription is cancelled or Stripe gives up on a failed card.
+
+**Subject:** Your managed plan has ended
+
+Hi {first name},
+
+Your managed plan for {business} has ended{, as you asked | , because the card on file couldn't be charged}. Nothing changes on your site: it stays up and hosting stays included. Updates are $150 a round again, and you can rejoin anytime at https://bringsup.com/managed/?ref={ref}.
+
+Jake
+
+## 14. Managed plan: renewal coming up
+Sent 30 days before the domain's registration expires (and again at 7 days if it still hasn't renewed).
+
+**Subject:** {domain} renews on {date}
+
+Hi {first name},
+
+A heads-up: your web address, {domain}, needs to be renewed by {date}. You pay for it once a year at {registrar}, the company where you bought it.
+
+If it renews by itself with a card that still works, there's nothing you need to do. If you're not sure, log in to {registrar} and check before {date}. If it lapses, your website and your email stop working that day.
+
+Stuck? Reply and I'll tell you exactly where to click.
 
 Jake

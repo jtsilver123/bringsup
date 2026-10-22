@@ -9,6 +9,7 @@
 // GET  /projects?ref=<ref>          Builder: one project and its history.                            (x-worker-token)
 // GET  /projects?health=1           Health check: alerts, stuck projects, failing jobs.               (x-worker-token)
 // GET  /projects?email=<address>    Inbox triage: the projects an email address belongs to.          (x-worker-token)
+// GET  /projects?plans=1            Managed plan: every project with care_plan on, for the daily checks. (x-worker-token)
 // POST /projects {action, ref, ...} Builder: "update" (set fields, log an event), "fail", "email_changes",
 //                                   or "payment" (a Stripe Checkout payment the builder found; exactly once per stripe_id). (x-worker-token)
 //
@@ -311,7 +312,7 @@ async function onApprove(sub: Submission): Promise<Project> {
   const paid = sub.paidCents >= APPROVE_PRICE_CENTS;
   p = await save(p, {
     last_customer_touch_at: now(),
-    // Interest only. care_plan itself is set by the builder once a Care Plan subscription exists.
+    // Interest only. care_plan itself is set by the builder once a managed-plan subscription is paid (OPERATOR.md "Managed plan").
     ...(pick(a, "Want us to handle updates", "Want the Care Plan") ? { care_plan_requested: /^yes/i.test(pick(a, "Want us to handle updates", "Want the Care Plan")) } : {}),
     ...(pick(a, "Who should connect your domain") ? { domain_helper: pick(a, "Who should connect your domain") } : {}),
     ...(pick(a, "Your web person's email") ? { domain_helper_email: pick(a, "Your web person's email").toLowerCase() } : {}),
@@ -371,7 +372,7 @@ async function webhook(req: Request): Promise<Response> {
 
 const SETTABLE = new Set([
   "status", "todo", "preview_url", "live_url", "next_check_at", "pending_changes", "held_changes", "domain", "domain_provider",
-  "domain_helper", "domain_helper_email", "care_plan", "care_plan_requested", "brief", "site", "pages_project", "last_customer_touch_at", "last_preview_at",
+  "domain_helper", "domain_helper_email", "care_plan", "care_plan_requested", "plan_subscription", "brief", "site", "pages_project", "last_customer_touch_at", "last_preview_at",
 ]);
 const TRANSITIONS: Record<string, string[]> = {
   started: ["preview_sent", "cancelled"],
@@ -512,6 +513,12 @@ Deno.serve(async (req) => {
     if (error) return json(500, { error: error.message });
     return json(200, { jobs: data });
   }
+  if (url.searchParams.has("plans")) {
+    const { data, error } = await db.from("projects").select("ref,business_name,owner_name,email,domain,domain_helper_email,status,live_url,pages_project,plan_subscription,todo")
+      .eq("care_plan", true).order("created_at");
+    if (error) return json(500, { error: error.message });
+    return json(200, { projects: data || [] });
+  }
   const email = url.searchParams.get("email");
   if (email) {
     // Inbox triage: match a sender to their project(s), newest first.
@@ -526,5 +533,5 @@ Deno.serve(async (req) => {
     const { data: events } = await db.from("project_events").select("*").eq("project_id", p.id).order("created_at");
     return json(200, { project: p, events });
   }
-  return json(400, { error: "Use ?jobs=1, ?ref=, ?health=1 or ?status=" });
+  return json(400, { error: "Use ?jobs=1, ?ref=, ?health=1, ?plans=1 or ?status=" });
 });

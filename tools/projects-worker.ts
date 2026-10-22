@@ -12,6 +12,7 @@
 //   node tools/projects-worker.ts payment <ref> <approve|extra> <cents> <stripe-session-id>  record a completed Stripe payment (once per session)
 //   node tools/projects-worker.ts find <email>                 which project an email address belongs to
 //   node tools/projects-worker.ts health                       alerts, failing jobs, stuck projects, quiet customers
+//   node tools/projects-worker.ts plans                        every project on the managed plan (for the daily checks)
 //   node tools/projects-worker.ts heartbeat "<run summary>"    the last step of every run: tells the outside watchdog we're alive
 //
 // Env: BRINGSUP_WORKER_TOKEN, CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID.
@@ -170,8 +171,9 @@ else if (cmd === "payment" && ref && process.argv[4] && process.argv[5] && proce
 else if (cmd === "email-changes" && ref && file) console.log(JSON.stringify(await api("POST", "", { action: "email_changes", ref, text: readFileSync(file, "utf8") }), null, 2));
 else if (cmd === "find" && ref) console.log(JSON.stringify(await api("GET", `?email=${encodeURIComponent(ref)}`), null, 2));
 else if (cmd === "health") console.log(JSON.stringify(await api("GET", "?health=1"), null, 2));
+else if (cmd === "plans") console.log(JSON.stringify(await api("GET", "?plans=1"), null, 2));
 else if (cmd === "heartbeat") console.log(JSON.stringify(await api("POST", "", { action: "heartbeat", text: ref || "" })));
 else {
-  console.error("Usage: node tools/projects-worker.ts jobs | show <ref> | preview <ref> | launch <ref> | dns <ref> | update <ref> <json-file> | fail <ref> <msg> | email-changes <ref> <txt-file> | payment <ref> <approve|extra> <cents> <stripe-session-id> | find <email> | health | heartbeat <summary>");
+  console.error("Usage: node tools/projects-worker.ts jobs | show <ref> | preview <ref> | launch <ref> | dns <ref> | update <ref> <json-file> | fail <ref> <msg> | email-changes <ref> <txt-file> | payment <ref> <approve|extra> <cents> <stripe-session-id> | find <email> | health | plans | heartbeat <summary>");
   process.exit(1);
 }

@@ -51,7 +51,7 @@ export const FAQ: FaqItem[] = [
   { q: "What if I want more changes?", a: "Two rounds of changes are included, and I keep count for you. Anything you send within two days of an updated preview is part of the same round. After that, extra rounds are $150 each, and I always ask before charging." },
   { q: "What if I decide not to go ahead?", a: "Then you owe nothing. If I don't hear from you for 60 days after a preview, I take it down and delete your photos. Reply anytime before then to pick it back up." },
   { q: "Who owns the website?", a: "You do. The design, the files and the domain are yours." },
-  { q: "Is there a monthly fee?", a: "No. Hosting is included, so your site stays up with no monthly bill." },
+  { q: "Is there a monthly fee?", a: "No. Hosting is included, so your site stays up with no monthly bill. If you'd rather never think about updates, there's an optional managed plan for $49 a month: changes by email are included, and I keep watch on your web address, email settings and renewal." },
   { q: "What about updates after launch?", a: "Anything I got wrong is fixed free. Other updates, like new hours, specials or photos, are $150 a round, the same as an extra round of changes. Just reply by email. The files are yours, so your own web person can edit them too." },
   { q: "What if I already have a web person?", a: "Good. Share the homepage with them. I'm happy to hand over the design, or to work alongside them." },
 ];

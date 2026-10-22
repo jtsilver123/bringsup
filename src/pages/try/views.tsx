@@ -10,8 +10,14 @@ export const Header = () => <SubHeader />;
 
 export const Footer = () => <SubFooter note="Concepts are ideas, not live sites, and aren't affiliated with the businesses shown." />;
 
-export function Toast({ message, show }: { message: string; show: boolean }) {
-  return <div className={show ? "toast show" : "toast"} id="toast" role="status" aria-live="polite">{message}</div>;
+/** The status toast. `ok` adds a check for confirmations; quiet messages (show false) are only announced. */
+export function Toast({ message, show, ok }: { message: string; show: boolean; ok?: boolean }) {
+  return (
+    <div className={show ? "toast show" : "toast"} id="toast" role="status" aria-live="polite">
+      {ok && <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>}
+      <span>{message}</span>
+    </div>
+  );
 }
 
 export interface AskFields {
@@ -32,15 +38,17 @@ interface AskProps {
   fields: AskFields;
   onField: (name: keyof AskFields, value: string) => void;
   error: FormError | null;
+  /** Fields that were flagged and have since been fixed (they show a small green check). */
+  fixed: Partial<Record<FormError["field"], boolean>>;
   onSubmit: () => void;
   urlRef: Ref<HTMLInputElement>;
   emailRef: Ref<HTMLInputElement>;
 }
 
-export function AskView({ hidden, soon, fields, onField, error, onSubmit, urlRef, emailRef }: AskProps) {
+export function AskView({ hidden, soon, fields, onField, error, fixed, onSubmit, urlRef, emailRef }: AskProps) {
   const change = (e: ChangeEvent<HTMLInputElement>) => onField(e.target.name as keyof AskFields, e.target.value);
   const submit = (e: FormEvent<HTMLFormElement>) => { e.preventDefault(); onSubmit(); };
-  const invalid = (f: FormError["field"]) => (error?.field === f ? { "aria-invalid": true, "aria-describedby": "form-err" } : {});
+  const invalid = (f: FormError["field"]) => (error?.field === f ? { "aria-invalid": true, "aria-describedby": "form-err" } : fixed[f] ? { "data-ok": "" } : {});
   return (
     <section className="wrap ask" id="ask" hidden={hidden}>
       <div>
@@ -128,7 +136,8 @@ export interface ResultData {
 interface ResultProps {
   hidden: boolean;
   data: ResultData | null;
-  onCopy: () => void;
+  /** Copies the page's link; resolves true when it worked (the button then shows its checkmark). */
+  onCopy: () => Promise<boolean>;
   onFullScreen: () => void;
   onAgain: () => void;
 }
@@ -142,6 +151,8 @@ function SizeButton({ size, current, onPick, children }: { size: Size; current: 
 /** The desktop design is always laid out at this width and scaled to fit; the phone at this one. */
 const DESKTOP_WIDTH = 1280;
 const PHONE_WIDTH = 390;
+/** How long the Desktop/Phone morph takes (keep in step with --morph in try.css). */
+const MORPH_MS = 320;
 
 /** Width of an element, kept current. 0 until measured (and during prerender). */
 function useWidth(el: RefObject<HTMLElement | null>, active: boolean): number {
@@ -158,12 +169,14 @@ function useWidth(el: RefObject<HTMLElement | null>, active: boolean): number {
   return w;
 }
 
-/** One live, scaled copy of the page: laid out at `layoutWidth`, shrunk to `width`, `height` tall on screen. */
+/** One live, scaled copy of the page: laid out at `layoutWidth`, shrunk to `width`, `height` tall on screen. Fades in once loaded. */
 function Screen({ html, scripts, layoutWidth, width, height, title }: { html: string; scripts: boolean; layoutWidth: number; width: number; height: number; title: string }) {
+  const [ready, setReady] = useState(false);
   const scale = width > 0 ? Math.min(1, width / layoutWidth) : 1;
   return (
-    <div className="screen" style={{ height }}>
+    <div className={ready ? "screen ready" : "screen"} style={{ height }}>
       <iframe title={title} sandbox={scripts ? "allow-scripts allow-popups allow-popups-to-escape-sandbox" : "allow-popups"} srcDoc={html}
+        onLoad={() => setReady(true)}
         style={{ width: layoutWidth, height: height / scale, transform: `scale(${scale})` }}></iframe>
     </div>
   );
@@ -182,15 +195,86 @@ function Better({ items, where }: { items?: string[]; where: "wide" | "narrow" }
   );
 }
 
+const LinkIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7" /><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7" /></svg>;
+const CheckIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>;
+
+/** A copy-link button that confirms in place: the link icon turns into a check and the label into "Copied". */
+export function CopyButton({ className, id, label, onCopy }: { className: string; id: string; label: string; onCopy: () => Promise<boolean> }) {
+  const [copied, setCopied] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  useEffect(() => () => clearTimeout(timer.current), []);
+  const click = () => {
+    void onCopy().then((ok) => {
+      if (!ok) return;
+      setCopied(true);
+      clearTimeout(timer.current);
+      timer.current = setTimeout(() => setCopied(false), 2000);
+    });
+  };
+  return (
+    <button className={className} type="button" id={id} data-copied={copied ? "" : undefined} onClick={click}>
+      <span className="copied-swap" aria-hidden="true"><LinkIcon /><CheckIcon /></span>
+      <span className="copy-lbl"><span aria-hidden={copied}>{label}</span><span aria-hidden={!copied}>Copied</span></span>
+    </button>
+  );
+}
+
+interface Box { x: number; y: number; w: number; h: number; shown: boolean }
+
+/**
+ * Where each frame sits for a view. Both frames stay mounted and are positioned absolutely, so switching views
+ * morphs: on a wide screen the phone slides from the browser's corner to the middle and grows, while the browser
+ * steps back and fades. A hidden frame shrinks to fit the stage so it never adds height.
+ */
+function layout(stageW: number, view: Size) {
+  const small = stageW < 720;
+  const chrome = small ? 30 : 38;
+  const pad = small ? 6 : 8;
+  const deskW = small ? stageW : Math.round(stageW * 0.86);
+  const deskH = Math.round(deskW * (small ? 1.25 : 0.62));
+  const browser: Box = { x: 0, y: 0, w: deskW, h: deskH + chrome + 2, shown: view === "desktop" };
+  const overlap = view === "desktop" && !small;
+  const phoneW = overlap ? Math.max(220, Math.round(stageW * 0.22)) : Math.min(stageW - pad * 2, 420);
+  const screenH = view === "phone" && small ? Math.round(phoneW * 1.7) : Math.round(phoneW * (844 / PHONE_WIDTH));
+  const phoneOuterW = phoneW + pad * 2, phoneOuterH = screenH + pad * 2;
+  const stageH = view === "desktop" ? browser.h + (overlap ? 48 : 0) : phoneOuterH;
+  const phone: Box = overlap
+    ? { x: stageW - phoneOuterW, y: stageH - phoneOuterH, w: phoneW, h: screenH, shown: true }
+    : { x: Math.round((stageW - phoneOuterW) / 2), y: 0, w: phoneW, h: screenH, shown: view === "phone" };
+  return { small, overlap, browser, phone, deskW, deskH, stageH, pad };
+}
+
+/** A hidden frame steps back a little and, if it's taller than the stage, shrinks until it fits. */
+const place = (b: Box, outerH: number, stageH: number) => {
+  const s = b.shown ? 1 : Math.min(0.96, stageH / outerH);
+  return `translate(${b.x}px, ${b.y}px) scale(${s})`;
+};
+
 export function ResultView({ hidden, data, onCopy, onFullScreen, onAgain }: ResultProps) {
-  const [size, setSize] = useState<Size>("desktop");
+  /** null until the visitor picks: phones then open on the phone view, which is what the owner's customers will see. */
+  const [choice, setChoice] = useState<Size | null>(null);
+  const [morphing, setMorphing] = useState(false);
+  const morphTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  useEffect(() => () => clearTimeout(morphTimer.current), []);
   const stage = useRef<HTMLDivElement>(null);
   const stageW = useWidth(stage, !hidden);
   const small = stageW > 0 && stageW < 720;
-  // Phones open on the phone view, which is what the owner's customers will see.
-  const picked = useRef(false);
-  useEffect(() => { if (small && !picked.current) setSize("phone"); }, [small]);
-  const pick = (s: Size) => { picked.current = true; setSize(s); };
+  const size: Size = choice ?? (small ? "phone" : "desktop");
+  const pick = (s: Size) => {
+    if (s === size) return;
+    setMorphing(true);
+    clearTimeout(morphTimer.current);
+    morphTimer.current = setTimeout(() => setMorphing(false), MORPH_MS + 80);
+    setChoice(s);
+  };
+
+  // Each frame mounts the first time it's needed and then stays, so switching back is instant.
+  const seen = useRef({ desktop: false, phone: false });
+  const L = stageW > 0 ? layout(stageW, size) : null;
+  if (L) {
+    if (L.browser.shown) seen.current.desktop = true;
+    if (L.phone.shown) seen.current.phone = true;
+  }
 
   const html = data?.html || "";
   const scripts = Boolean(data?.handmade);
@@ -198,13 +282,6 @@ export function ResultView({ hidden, data, onCopy, onFullScreen, onAgain }: Resu
   // Outreach concepts carry the prospect's tracker slug, so the start form lands on their row.
   const startHref = data ? "/start/?ref=" + encodeURIComponent(data.ref || "redesign-" + data.id) : "/start/";
   const forProspect = Boolean(data?.ref);
-
-  // Desktop view on a wide screen: the desktop page with the phone overlapping its corner. Elsewhere, one screen.
-  const showcase = size === "desktop" && !small && stageW > 0;
-  const deskW = showcase ? Math.round(stageW * 0.86) : stageW;
-  const deskH = Math.round(deskW * (showcase ? 0.62 : small ? 1.25 : 0.62));
-  const phoneW = showcase ? Math.max(220, Math.round(stageW * 0.22)) : Math.min(stageW, 420);
-  const phoneH = Math.round(phoneW * (844 / PHONE_WIDTH));
 
   return (
     <section className="result" id="result" hidden={hidden}>
@@ -224,33 +301,38 @@ export function ResultView({ hidden, data, onCopy, onFullScreen, onAgain }: Resu
       <div className="r-stage">
         <div className="wrap">
           <div className="bar">
-            <div className="seg" role="group" aria-label="Preview size">
+            <div className={morphing ? "seg moving" : "seg"} role="group" aria-label="Preview size" data-at={size}>
               <SizeButton size="desktop" current={size} onPick={pick}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2" /><path d="M8 20h8M12 16v4" /></svg>Desktop</SizeButton>
               <SizeButton size="phone" current={size} onPick={pick}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2" /><path d="M11 18h2" /></svg>Phone</SizeButton>
             </div>
             <div className="tools">
-              <button className="ghost" type="button" id="copy" onClick={onCopy}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7" /><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7" /></svg>Copy link</button>
-              <button className="ghost" type="button" id="full" onClick={onFullScreen}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 3h6v6" /><path d="M9 21H3v-6" /><path d="M21 3l-7 7" /><path d="M3 21l7-7" /></svg>Full screen</button>
+              <CopyButton className="ghost" id="copy" label="Copy link" onCopy={onCopy} />
+              <button className="ghost" type="button" id="full" onClick={onFullScreen}><svg className="full-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><g><path d="M15 3h6v6" /><path d="M21 3l-7 7" /></g><g><path d="M9 21H3v-6" /><path d="M3 21l7-7" /></g></svg>Full screen</button>
             </div>
           </div>
-          <div className={`stage ${showcase ? "showcase" : size}`} id="stage" ref={stage}>
-            {stageW > 0 && html && (size === "desktop" ? (
+          <div className={["stage", L?.overlap && "showcase", `view-${size}`, morphing && "morphing"].filter(Boolean).join(" ")} id="stage" ref={stage}
+            style={L ? { height: L.stageH } : undefined}>
+            {L && html && (
               <>
-                <div className="browser" style={{ width: deskW }}>
-                  <div className="chrome" aria-hidden="true"><i></i><i></i><i></i><span id="r-host">{data?.address}</span></div>
-                  <Screen html={html} scripts={scripts} layoutWidth={DESKTOP_WIDTH} width={deskW} height={deskH} title={`${name} homepage, desktop`} />
-                </div>
-                {showcase && (
-                  <div className="phone" style={{ width: phoneW + 16 }}>
-                    <Screen html={html} scripts={scripts} layoutWidth={PHONE_WIDTH} width={phoneW} height={phoneH} title={`${name} homepage, phone`} />
+                {seen.current.desktop && (
+                  <div className={L.browser.shown ? "frame f-browser" : "frame f-browser off"} inert={!L.browser.shown}
+                    style={{ width: L.browser.w, transform: place(L.browser, L.browser.h, L.stageH) }}>
+                    <div className="browser">
+                      <div className="chrome" aria-hidden="true"><i></i><i></i><i></i><span id="r-host">{data?.address}</span></div>
+                      <Screen html={html} scripts={scripts} layoutWidth={DESKTOP_WIDTH} width={L.deskW} height={L.deskH} title={`${name} homepage, desktop`} />
+                    </div>
+                  </div>
+                )}
+                {seen.current.phone && (
+                  <div className={["frame f-phone", L.overlap && "overlap", !L.phone.shown && "off"].filter(Boolean).join(" ")} inert={!L.phone.shown}
+                    style={{ width: L.phone.w + L.pad * 2, transform: place(L.phone, L.phone.h + L.pad * 2, L.stageH) }}>
+                    <div className="phone">
+                      <Screen html={html} scripts={scripts} layoutWidth={PHONE_WIDTH} width={L.phone.w} height={L.phone.h} title={`${name} homepage, phone`} />
+                    </div>
                   </div>
                 )}
               </>
-            ) : (
-              <div className="phone solo" style={{ width: phoneW + 16 }}>
-                <Screen html={html} scripts={scripts} layoutWidth={PHONE_WIDTH} width={phoneW} height={small ? Math.round(phoneW * 1.7) : phoneH} title={`${name} homepage, phone`} />
-              </div>
-            ))}
+            )}
           </div>
         </div>
       </div>
@@ -283,7 +365,7 @@ export interface QueuedData {
   draft: string | null;
 }
 
-export function QueuedView({ hidden, data, onCopy }: { hidden: boolean; data: QueuedData | null; onCopy: () => void }) {
+export function QueuedView({ hidden, data, onCopy }: { hidden: boolean; data: QueuedData | null; onCopy: () => Promise<boolean> }) {
   const draft = data?.draft;
   return (
     <section className="wrap queued" id="queued" hidden={hidden} aria-live="polite">
@@ -294,7 +376,7 @@ export function QueuedView({ hidden, data, onCopy }: { hidden: boolean; data: Qu
           <h1 className="t2">I'm redesigning <span id="q-host">{data?.host || "your website"}</span>.</h1>
           <p className="lead">A careful homepage takes a little longer than a minute. I'll email it to <span id="q-email">{data?.email ? <b>{data.email}</b> : "you"}</span> the same day, usually within the hour. This page updates on its own if you keep it open.</p>
           <div className="acts">
-            <button className="btn btn-line" type="button" id="q-copy" onClick={onCopy}>Copy this page's link</button>
+            <CopyButton className="btn btn-line" id="q-copy" label="Copy this page's link" onCopy={onCopy} />
             <a className="btn btn-primary" href="/try/?demo">See a sample while you wait</a>
           </div>
         </div>

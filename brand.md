@@ -69,11 +69,16 @@ Typography carries the page. No decorative icons, badges or illustrations.
 - Borders over shadows. A shadow is allowed only on the email artifact, to read as a sheet of paper.
 
 ## Motion
-Almost none. Motion explains something or confirms an action; it is never decoration.
-- Hovers and presses: 150 to 200ms color changes. The sample homepages scroll inside their frame on hover.
-- The before/after sways once the first time it's seen, to show it can be dragged.
-- No reveals on scroll, no drawn underlines, no lighting-up stars.
-- Everything respects `prefers-reduced-motion`.
+Almost none. Motion explains something or confirms an action; it is never decoration. Quick and ease-out (120 to 250ms), CSS first, and nothing ever makes someone wait to read.
+- Hovers: 150 to 200ms color changes. Link underlines thicken and settle closer; they never draw in. The sample homepages scroll inside their frame on hover.
+- Presses: a button settles 1px (and to 98.5%) while held. The arrow in a button leans 4px toward where it goes. No bounce, no ripple.
+- Confirmations happen in place: a copy button turns its icon into a check and says "Copied" for two seconds; a fixed form field gets a small Success check.
+- Opening and closing: FAQ answers open to their height, menus unfold over the page (never pushing it down), dialogs rise a few pixels as they fade in. Closing is a little quicker than opening.
+- The before/after sways once the first time it's seen, to show it can be dragged. Its handle grows while held, and a click or arrow key glides it to the spot.
+- On /try/, Desktop and Phone morph into each other instead of swapping, and the phone overlapping the browser lifts a little on hover.
+- Images fade in once loaded, in space that was already reserved. Nothing shifts.
+- No reveals on scroll, no parallax, no hand-drawn underlines, no lighting-up stars, no glow.
+- Everything respects `prefers-reduced-motion`, and everything that works without JavaScript today still does.
 
 ## Color in UI states
 Functional colors are allowed only for form feedback: Error `#B42318` (border + message), Success `#1F7A4D` (check mark). Nothing decorative.

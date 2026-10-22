@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
+import { FadeImg } from "../../../components/FadeImg.tsx";
 import { WORK, type WorkSample } from "../data.ts";
 import { ExpandIcon } from "../icons.tsx";
 
@@ -45,8 +46,8 @@ function Shot({ work, onOpen }: { work: WorkSample; onOpen: Open }) {
         onClick={open}
         onKeyDown={onKeyDown}
       >
-        <img className="full" src={full} width={1200} height={work.height} loading="lazy" alt="" />
-        <img className="phone" src={`/assets/work/${work.slug}-phone.jpg`} width={390} height={844} loading="lazy" alt="" />
+        <FadeImg className="full" src={full} width={1200} height={work.height} loading="lazy" alt="" />
+        <FadeImg className="phone" src={`/assets/work/${work.slug}-phone.jpg`} width={390} height={844} loading="lazy" alt="" />
       </div>
       <h3>{work.name}</h3>
       <p className="k">{work.kind}</p>

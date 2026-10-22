@@ -53,6 +53,12 @@ export const META: Record<string, PageMeta> = {
     ...START_IMAGE,
     noindex: true,
   },
+  managed: {
+    path: "/managed/",
+    title: "Managed website plan · BringsUp",
+    description: "$49 a month: we run your website for you. Hosting, your domain and email settings watched, renewal reminders, and updates by email.",
+    ...HOME_IMAGE,
+  },
   extra: {
     path: "/extra/",
     title: "One more round of changes · BringsUp",
