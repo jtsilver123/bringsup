@@ -10,7 +10,7 @@ Hi {OwnerFirstName or "there"},
 
 I came across {Business} while looking at family-owned {industry, plural} in {City}. {Rating} stars across {ReviewCount} reviews is a reputation most places never build. {One short sentence on what customers praise, in your own words}.
 
-Your website doesn't show any of that yet, so I mocked up what a new homepage could look like, using your real {menu / services} and reviews. {If link: "Here it is: {Concept link}" | If attached: "It's attached, desktop and phone."}
+Your website doesn't show any of that yet, so I mocked up what a new homepage could look like, using your real {menu / services} and reviews. {If link: "Here it is: {Concept link}" | If attached: "It's attached."}
 
 If you like it, we'll build the whole site for a flat $1,000: refreshed logo and colors, works on any phone, with {online ordering / online booking / a quote form} built in. Live in about two weeks. If it's not for you, no hard feelings.
 

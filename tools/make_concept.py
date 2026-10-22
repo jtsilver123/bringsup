@@ -102,16 +102,23 @@ def main(src, out_dir):
     bh = hp.replace("-concept.html", "-board.html"); open(bh, "w").write(board_html)
     board = hp.replace("-concept.html", "-board.png")
     asyncio.run(render_board(bh, board))
-    from PIL import Image
-    def page(path, max_w):
-        im = Image.open(path).convert("RGB")
-        if im.width > max_w:
-            im = im.resize((max_w, round(im.height * max_w / im.width)))
-        return im
-    imgs = [page(board, 1600), page(d, 1200), page(ph, 600)]
+    # The PDF is the desktop homepage only: one continuous page, crisp vector text.
     pdf = hp.replace(".html", ".pdf")
-    imgs[0].save(pdf, save_all=True, append_images=imgs[1:], resolution=110, quality=82)
+    asyncio.run(render_pdf(hp, pdf))
     print(json.dumps({"html": hp, "board": board, "desktop": d, "phone": ph, "pdf": pdf, "pdf_kb": os.path.getsize(pdf) // 1024}))
+
+async def render_pdf(html_path, out):
+    from playwright.async_api import async_playwright
+    async with async_playwright() as pw:
+        b = await pw.chromium.launch()
+        pg = await b.new_page(viewport={"width": 1440, "height": 900})
+        await pg.goto("file://" + html_path)
+        await pg.emulate_media(media="screen")
+        await pg.wait_for_timeout(1200)
+        h = await pg.evaluate("document.documentElement.scrollHeight")
+        await pg.pdf(path=out, width="1440px", height=f"{h + 2}px", print_background=True,
+                     margin={"top": "0", "right": "0", "bottom": "0", "left": "0"}, page_ranges="1")
+        await b.close()
 
 async def render_board(html_path, out):
     from playwright.async_api import async_playwright
