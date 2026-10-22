@@ -21,6 +21,7 @@ BringsUp
 bringsup.com
 
 Not interested? Reply "no thanks" and I won't email again.
+BringsUp · 2195 Kipling Lane, Highland Park, IL 60035
 
 ## Email 2 (4 business days later, only if no reply)
 
@@ -35,8 +36,10 @@ Happy to change the colors or layout if you'd like to see a different direction.
 Jake
 
 Reply "no thanks" and I won't follow up again.
+BringsUp · 2195 Kipling Lane, Highland Park, IL 60035
 
 ## Rules
+- Every cold email ends with the postal address line above (US CAN-SPAM). It's also in the tracker as `meta/pipeline.mailingAddress`; if they ever differ, use the tracker's.
 - Link to the start page as `https://bringsup.com/start/?ref={slug}` (the tracker slug), so the start form submission matches the prospect's row. Never promise a call; offer one only if the owner asks.
 - Never ask for payment before the owner has approved their finished site.
 - Two emails maximum per business. Never a third.
