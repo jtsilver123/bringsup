@@ -1,5 +1,5 @@
 // The site builder's toolbox: read jobs, save content, build and deploy customer sites, record what happened.
-// Runs inside the scheduled "BringsUp site builder" Claude Code task (see tools/SITE_BUILDER.md).
+// Runs inside the scheduled "BringsUp site builder" Claude Code task (see tools/OPERATOR.md).
 //
 //   node tools/projects-worker.ts jobs                         save each job to work/projects/<ref>/ and list them
 //   node tools/projects-worker.ts show <ref>                   print a project and its history
@@ -9,6 +9,7 @@
 //   node tools/projects-worker.ts update <ref> <json-file>     apply {set?, event?, applied_seq?} from a file (see SETTABLE in the projects function)
 //   node tools/projects-worker.ts fail <ref> "<what went wrong>"  record a failed job (5 failures raise an alert)
 //   node tools/projects-worker.ts email-changes <ref> <txt-file>  a change request that came by email: same round rules as the form
+//   node tools/projects-worker.ts payment <ref> <approve|extra> <cents> <stripe-session-id>  record a completed Stripe payment (once per session)
 //   node tools/projects-worker.ts find <email>                 which project an email address belongs to
 //   node tools/projects-worker.ts health                       alerts, failing jobs, stuck projects, quiet customers
 //
@@ -30,7 +31,7 @@ interface Project {
   id: string; ref: string; status: string; todo: string | null; business_name: string; email: string; owner_name: string;
   rounds_included: number; rounds_extra: number; rounds_used: number; pending_changes: string | null; held_changes: string | null;
   preview_url: string | null; live_url: string | null; domain: string; domain_provider: string; domain_helper_email: string;
-  care_plan: boolean; brief: Record<string, string>; files: { name: string; url: string }[]; site: SiteContent | null; pages_project: string;
+  care_plan: boolean; care_plan_requested: boolean; brief: Record<string, string>; files: { name: string; url: string }[]; site: SiteContent | null; pages_project: string;
 }
 
 async function api(method: "GET" | "POST", query: string, body?: unknown): Promise<any> {
@@ -164,9 +165,10 @@ else if (cmd === "update" && ref && file) {
   const { set, event, applied_seq } = JSON.parse(readFileSync(file, "utf8"));
   console.log(JSON.stringify(await api("POST", "", { action: "update", ref, set, event, applied_seq }), null, 2));
 } else if (cmd === "fail" && ref) console.log(await api("POST", "", { action: "fail", ref, error: file || "failed" }));
+else if (cmd === "payment" && ref && process.argv[4] && process.argv[5] && process.argv[6]) console.log(JSON.stringify(await api("POST", "", { action: "payment", ref, kind: process.argv[4], cents: Number(process.argv[5]), stripe_id: process.argv[6] }), null, 2));
 else if (cmd === "email-changes" && ref && file) console.log(JSON.stringify(await api("POST", "", { action: "email_changes", ref, text: readFileSync(file, "utf8") }), null, 2));
 else if (cmd === "find" && ref) console.log(JSON.stringify(await api("GET", `?email=${encodeURIComponent(ref)}`), null, 2));
 else if (cmd === "health") console.log(JSON.stringify(await api("GET", "?health=1"), null, 2)); else {
-  console.error("Usage: node tools/projects-worker.ts jobs | show <ref> | preview <ref> | launch <ref> | dns <ref> | update <ref> <json-file> | fail <ref> <msg> | email-changes <ref> <txt-file> | find <email> | health");
+  console.error("Usage: node tools/projects-worker.ts jobs | show <ref> | preview <ref> | launch <ref> | dns <ref> | update <ref> <json-file> | fail <ref> <msg> | email-changes <ref> <txt-file> | payment <ref> <approve|extra> <cents> <stripe-session-id> | find <email> | health");
   process.exit(1);
 }

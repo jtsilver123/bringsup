@@ -5,7 +5,8 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:'DM Sans',sys
 ::selection{background:var(--tint)}
 a{color:var(--ember-deep)}a:hover{color:var(--ink)}
 h1,h2,p,ul{margin:0}
-:focus-visible{outline:3px solid var(--glow);outline-offset:3px}
+:focus-visible{outline:3px solid var(--ember-deep);outline-offset:3px}
+footer :focus-visible{outline-color:var(--glow)}
 .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
 header .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;padding-top:18px;padding-bottom:18px}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);font-family:var(--display);font-weight:800;font-size:24px;letter-spacing:-.02em}

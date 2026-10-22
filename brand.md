@@ -8,8 +8,8 @@ One source of truth for the website, cold emails, prospect concept mockups and a
 - **Descriptor:** For the businesses your town already loves. (Supporting line, never the headline.)
 - **Promise:** Your reviews say you're the best in town. Your website should too.
 - **Offer:** Free homepage concept first. Then the owner fills in one 10-minute form (no calls), we build the full site and brand refresh, and they pay one flat $1,000 only when they approve the finished site. Preview in about two weeks, two rounds of changes. Optional Care Plan $79/mo.
-- **The promise behind it:** See it first. Pay only if you love it. Nothing is charged before approval, and there are no calls unless the owner asks for one.
-- **Who we serve:** family-owned local businesses with strong reviews and an outdated website (bakeries, diners and delis, auto shops, florists, plumbers and HVAC, hardware stores).
+- **The promise behind it:** See it first. Pay only if you love it. Nothing is charged before approval, and everything happens by email, so there's nothing to schedule.
+- **Who we serve:** family-owned local businesses with strong reviews and an outdated website (European auto specialists, remodelers and custom carpenters, landscapers, upholsterers, framers, jewelers, tailors, high-end bakeries; see tools/RUNBOOK.md step 6 for the current list).
 
 ## Logo
 - **Mark: the review bubble.** A speech bubble (what your customers say) with an up arrow inside (we bring it up). Ink `#16181D` bubble, Glow `#FFB37A` arrow. 48-unit grid: bubble body 40×36 with 10-unit corners, tail at the bottom left; arrow stroke 3.6 with round caps and joins, centered on the body.
@@ -92,7 +92,7 @@ Quick, warm, purposeful. Motion explains something or confirms an action; it is 
 ## Email signature
 ```
 Jake Silver
-BringsUp — websites as good as your reviews
+BringsUp, websites as good as your reviews
 bringsup.com
 ```
 

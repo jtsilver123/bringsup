@@ -13,7 +13,7 @@ export const TERMS: LegalDoc = {
   title: "Terms of Service",
   summary: [
     "The homepage concept we send you is free. You never owe anything for it.",
-    "We build your full site for free. You pay the flat $1,000 only if you approve it.",
+    "Nothing to pay while we build. You pay the flat $1,000 only if you approve the finished site.",
     "Once you pay, the site, its files and its design are yours.",
     "Hosting is included with no monthly fee. The Care Plan for edits is optional, and you can cancel anytime.",
     "Two rounds of changes are included. Extra rounds are $150, and we always ask first.",
@@ -29,7 +29,7 @@ export const TERMS: LegalDoc = {
     },
     {
       title: "Building your website",
-      body: <><p>When you fill in our start form, you're asking us to build your full website. We aim to send a private preview within about two weeks. Your project includes two rounds of changes after that preview, requested by form or email, and we keep count for you. Anything you send within two days of an updated preview is part of the same round. Extra rounds are $150 each, and we always ask before charging. Brand-new pages or features that weren't in scope get a flat price before any work starts.</p><p>If you don't approve your site within 60 days of your last preview, we take the preview down and delete the photos you sent us. You owe nothing, and you can reply anytime before then to pick it back up.</p></>,
+      body: <><p>When you fill in our start form, you're asking us to build your full website. We aim to send a private preview within about two weeks. Your project includes two rounds of changes after that preview, requested by form or email, and we keep count for you. Anything you send within two days of an updated preview is part of the same round. Fixing something we got wrong, like a typo or a wrong phone number, never counts as a round. Extra rounds are $150 each, and we always ask before charging. Brand-new pages or features that weren't in scope get a flat price before any work starts.</p><p>If we don't hear from you for 60 days after a preview, we take the preview down and delete the photos you sent us. You owe nothing, and you can reply anytime before then to pick it back up.</p></>,
     },
     {
       title: "Approval and payment",
@@ -85,7 +85,7 @@ export const PRIVACY: LegalDoc = {
     },
     {
       title: "How we use it",
-      body: <><p>To design, build, launch and look after your website; to send you previews, receipts and project emails; to answer your questions; and to keep our site and tools safe from abuse. We may send a business a short email about a free concept. Every one of those emails says how to opt out, and we honor it right away.</p></>,
+      body: <><p>To design, build, launch and look after your website; to send you previews, receipts and project emails; to answer your questions; and to keep our site and tools safe from abuse. We may send a business up to three short emails about a free concept, then we stop. Every one of those emails says how to opt out, and we honor it right away.</p></>,
     },
     {
       title: "Who helps us",

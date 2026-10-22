@@ -102,21 +102,22 @@ export function pick(answers: Record<string, string>, ...prefixes: string[]): st
 // GET  /projects?ref=<ref>          Builder: one project and its history.                            (x-worker-token)
 // GET  /projects?health=1           Health check: alerts, stuck projects, failing jobs.               (x-worker-token)
 // GET  /projects?email=<address>    Inbox triage: the projects an email address belongs to.          (x-worker-token)
-// POST /projects {action, ref, ...} Builder: "update" (set fields, log an event) or "fail".          (x-worker-token)
+// POST /projects {action, ref, ...} Builder: "update" (set fields, log an event), "fail", "email_changes",
+//                                   or "payment" (a Stripe Checkout payment the builder found; exactly once per stripe_id). (x-worker-token)
 //
 // Rounds: ROUNDS_INCLUDED (2) rounds of changes after the first preview. A request past that is held and the
 // builder offers a $150 extra round; paying for it applies the held request. Requests before the first preview
 // are added to the brief; requests after approval become Care Plan edits or a polite out-of-scope reply.
 //
 // Secrets: TALLY_SIGNING_SECRET, WORKER_TOKEN; optional TALLY_EXTRA_FORM, APPROVE_PRICE_CENTS (100000).
-// See tools/SITE_BUILDER.md.
+// See tools/OPERATOR.md.
 
 declare const EdgeRuntime: { waitUntil(p: Promise<unknown>): void } | undefined;
 
 const FORMS = {
   start: Deno.env.get("TALLY_START_FORM") || "Ar7yBl",
   changes: Deno.env.get("TALLY_CHANGES_FORM") || "EqkMlA",
-  extra: Deno.env.get("TALLY_EXTRA_FORM") || "",
+  extra: Deno.env.get("TALLY_EXTRA_FORM") || "5XBMpd",
   approve: Deno.env.get("TALLY_APPROVE_FORM") || "VpLDP6",
 };
 const WORKER_TOKEN = Deno.env.get("WORKER_TOKEN") || "";
@@ -132,7 +133,7 @@ const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SE
 export interface Project {
   id: string; ref: string; updated_at: string; status: string; todo: string | null; email: string; business_name: string; current_site: string;
   rounds_included: number; rounds_extra: number; rounds_used: number; changes_seq: number;
-  pending_changes: string | null; held_changes: string | null; care_plan: boolean; last_preview_at: string | null; paid_cents: number; attempts: number;
+  pending_changes: string | null; held_changes: string | null; care_plan: boolean; care_plan_requested: boolean; last_preview_at: string | null; paid_cents: number; attempts: number;
   brief: Record<string, string>; files: TallyFile[];
 }
 
@@ -145,6 +146,11 @@ const background = (p: Promise<unknown>) => (typeof EdgeRuntime !== "undefined" 
 function slugify(s: string): string {
   return s.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60) || "project";
 }
+
+/** Hosts that are a profile page, not a domain the owner controls: no launch on these. */
+const NOT_THEIR_DOMAIN = ["facebook.com", "instagram.com", "yelp.com", "google.com", "business.site", "wixsite.com", "squarespace.com", "godaddysites.com",
+  "weebly.com", "linktr.ee", "nextdoor.com", "tiktok.com", "x.com", "twitter.com", "linkedin.com", "wordpress.com", "square.site", "toasttab.com"];
+const ownDomain = (url: string) => { const h = hostOf(url); return NOT_THEIR_DOMAIN.some((d) => h === d || h.endsWith("." + d)) ? "" : h; };
 
 function hostOf(url: string): string {
   try {
@@ -242,7 +248,7 @@ async function onStart(sub: Submission): Promise<Project> {
   const email = pick(a, "Your email").toLowerCase();
   const fields = {
     business_name: business, owner_name: pick(a, "Your name"), email, phone: pick(a, "Phone"),
-    current_site: site, domain: hostOf(site), domain_provider: pick(a, "Who manages your web address"),
+    current_site: site, domain: ownDomain(site), domain_provider: pick(a, "Who manages your web address"),
     domain_helper: pick(a, "Who can log in to your domain"), domain_helper_email: pick(a, "Their email").toLowerCase(),
     last_customer_touch_at: now(),
   };
@@ -309,6 +315,10 @@ async function onChanges(sub: Submission, paidExtra: boolean): Promise<Project> 
     return p;
   };
 
+  if (sub.formId === FORMS.extra && !paidExtra) {
+    // The extra-round form without a payment: they're on their way to Stripe. Keep the text; the payment applies it.
+    return write({ held_changes: join(p.held_changes, request) }, "note", "Extra-round form sent; waiting for the $150 payment");
+  }
   if (!request.trim()) return write({}, "note", "A change form arrived with no changes listed");
 
   switch (p.status) {
@@ -318,6 +328,9 @@ async function onChanges(sub: Submission, paidExtra: boolean): Promise<Project> 
         "changes", "Arrived before the first preview; added to the brief (no round used)");
     case "approved":
     case "launching":
+      // Paid, not live yet: anything they spot now is applied at launch, free.
+      return write({ pending_changes: join(p.pending_changes, request), changes_seq: p.changes_seq + 1 },
+        "changes", "Arrived after approval, before launch; applied at launch (no charge)");
     case "live":
       if (p.care_plan || paidExtra) {
         return write({ pending_changes: join(p.pending_changes, request), changes_seq: p.changes_seq + 1, todo: "care_edit" },
@@ -364,7 +377,8 @@ async function onApprove(sub: Submission): Promise<Project> {
   const paid = sub.paidCents >= APPROVE_PRICE_CENTS;
   p = await save(p, {
     last_customer_touch_at: now(),
-    care_plan: /^yes/i.test(pick(a, "Want us to handle updates", "Want the Care Plan")),
+    // Interest only. care_plan itself is set by the builder once a Care Plan subscription exists.
+    ...(pick(a, "Want us to handle updates", "Want the Care Plan") ? { care_plan_requested: /^yes/i.test(pick(a, "Want us to handle updates", "Want the Care Plan")) } : {}),
     ...(pick(a, "Who should connect your domain") ? { domain_helper: pick(a, "Who should connect your domain") } : {}),
     ...(pick(a, "Your web person's email") ? { domain_helper_email: pick(a, "Your web person's email").toLowerCase() } : {}),
     paid_cents: p.paid_cents + sub.paidCents,
@@ -373,9 +387,12 @@ async function onApprove(sub: Submission): Promise<Project> {
   if (paid) {
     await log(p, "approve", `Approved and paid $${(sub.paidCents / 100).toFixed(2)}`, { answers: a });
     await log(p, "payment", `$${(sub.paidCents / 100).toFixed(2)} through Stripe`);
-  } else {
+  } else if (sub.paidCents) {
     await log(p, "approve", "Approval arrived without the full payment; not launching", { paidCents: sub.paidCents });
     await alert("projects", p.ref, `Approval with $${(sub.paidCents / 100).toFixed(2)} paid (expected $${(APPROVE_PRICE_CENTS / 100).toFixed(2)})`);
+  } else {
+    // The approve form itself carries no payment any more: the page sends them on to Stripe, and the builder posts the payment.
+    await log(p, "approve", "Approve form received; waiting for the $1,000 payment", { answers: a });
   }
   return p;
 }
@@ -404,7 +421,10 @@ async function webhook(req: Request): Promise<Response> {
     else if (sub.formId === FORMS.changes) p = await withRetry(() => onChanges(sub, false));
     else if (FORMS.extra && sub.formId === FORMS.extra) p = await withRetry(() => onChanges(sub, sub.paidCents > 0));
     else if (sub.formId === FORMS.approve) p = await withRetry(() => onApprove(sub));
-    else return json(200, { ignored: sub.formId });
+    else {
+      await alert("projects", sub.ref || null, `Submission from an unknown form ${sub.formId}`, { responseId: sub.responseId });
+      return json(200, { ignored: sub.formId });
+    }
     if (sub.files.length) background(keepFiles(p.ref, sub.files));
     return json(200, { ok: true, ref: p.ref });
   } catch (err) {
@@ -417,7 +437,7 @@ async function webhook(req: Request): Promise<Response> {
 
 const SETTABLE = new Set([
   "status", "todo", "preview_url", "live_url", "next_check_at", "pending_changes", "held_changes", "domain", "domain_provider",
-  "domain_helper", "domain_helper_email", "care_plan", "brief", "site", "pages_project", "last_customer_touch_at", "last_preview_at",
+  "domain_helper", "domain_helper_email", "care_plan", "care_plan_requested", "brief", "site", "pages_project", "last_customer_touch_at", "last_preview_at",
 ]);
 const TRANSITIONS: Record<string, string[]> = {
   started: ["preview_sent", "cancelled"],
@@ -455,6 +475,20 @@ async function work(req: Request): Promise<Response> {
     await log(updated, "email", "Change request received by email");
     return json(200, { ok: true, project: updated });
   }
+  if (body.action === "payment") {
+    // A completed Stripe Checkout the builder found (tools/OPERATOR.md step 2a). Exactly once per Stripe session id.
+    const pay = body as { stripe_id?: string; kind?: string; cents?: number };
+    if (!pay.stripe_id || !["approve", "extra"].includes(pay.kind || "") || !pay.cents) return json(400, { error: "payment needs stripe_id, kind (approve|extra) and cents" });
+    const receipt = await db.from("webhook_receipts").insert({ response_id: pay.stripe_id, form_id: "stripe", ref: p.ref, payload: body });
+    if (receipt.error) {
+      if (receipt.error.code === "23505") return json(200, { duplicate: true });
+      throw receipt.error;
+    }
+    const sub: Submission = { formId: pay.kind === "extra" ? FORMS.extra : FORMS.approve, responseId: pay.stripe_id, ref: p.ref, files: [], paidCents: pay.cents,
+      answers: { "Your email": p.email, "What would you like changed?": "" } };
+    const updated = await withRetry(() => pay.kind === "extra" ? onChanges(sub, true) : onApprove(sub));
+    return json(200, { ok: true, project: updated });
+  }
   if (body.action === "delete") {
     // Only for tools/simulate-flow.ts test projects.
     if (!p.ref.startsWith("test-")) return json(403, { error: "Only test- projects can be deleted" });
@@ -463,7 +497,7 @@ async function work(req: Request): Promise<Response> {
     await db.from("projects").delete().eq("id", p.id);
     return json(200, { ok: true, deleted: p.ref });
   }
-  if (body.action !== "update") return json(400, { error: 'Use {action: "update" | "fail" | "email_changes" | "delete", ref, ...}' });
+  if (body.action !== "update") return json(400, { error: 'Use {action: "update" | "fail" | "email_changes" | "payment" | "delete", ref, ...}' });
 
   // Re-read on every attempt: a webhook may have changed the project while the builder worked.
   const result = await withRetry(async () => {
@@ -475,7 +509,7 @@ async function work(req: Request): Promise<Response> {
     if ("pending_changes" in set && set.pending_changes === null && body.applied_seq !== undefined && body.applied_seq !== cur.changes_seq) {
       // New requests arrived while the builder worked: keep them and keep the job.
       delete set.pending_changes;
-      set.todo = cur.todo === "care_edit" ? "care_edit" : "revise";
+      set.todo = cur.todo || "revise";
       if (set.status === "preview_sent") set.status = "changes_requested";
     }
     if (set.status === "preview_sent" && !("last_preview_at" in set)) set.last_preview_at = now();

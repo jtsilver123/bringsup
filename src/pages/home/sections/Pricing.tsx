@@ -39,7 +39,7 @@ export function Pricing() {
               <div style={{ marginTop: 12, display: "flex", alignItems: "baseline", gap: 10 }}><span className="amt">$1,000</span><span className="per">flat</span></div>
               <p>That's the whole price, including hosting, and you pay it only after you've seen your finished site and approved it. No monthly fee, no contract.</p>
               <div className="split-pay"><div><b>$0</b>to start</div><div><b>$1,000</b>when you approve</div></div>
-              <a className="btn btn-glow" href="#concept">Start with a free concept <Arrow /></a>
+              <a className="btn btn-glow" href="#concept">Get my free concept <Arrow /></a>
             </div>
             <div className="care">
               <div className="care-top"><h3>Optional Care Plan</h3><span className="amt">$79<small>/mo</small></span></div>

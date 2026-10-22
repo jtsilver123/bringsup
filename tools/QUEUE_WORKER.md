@@ -32,7 +32,7 @@ Visitors at bringsup.com/try/ (or the homepage form) submit their website and em
 
      Look at it on your phone too, since that's where most of your customers will see it.
 
-     If you like it, we'll build the whole site: every page, your logo and colors refreshed, live on your own domain in about two weeks. No calls, and nothing to pay unless you approve the finished site. Then it's one flat $1,000.
+     If you like it, we'll build the whole site: every page, ready for you to review in about two weeks, then live on your own domain once you approve it. No calls, and nothing to pay unless you approve the finished site. Then it's one flat $1,000.
 
      Start here when you're ready (about 10 minutes): https://bringsup.com/start/?ref=redesign-<id>
 

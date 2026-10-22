@@ -39,7 +39,7 @@ function useScrollspy(main: ElRef): string {
 }
 
 /** Mobile CTA bar: shows once the hero has scrolled away, hides while the form is on screen. */
-function MobileCta({ hero, concept }: { hero: ElRef; concept: ElRef }) {
+function MobileCta({ hero, concept, startHref }: { hero: ElRef; concept: ElRef; startHref?: string }) {
   const [pastHero, setPastHero] = useState(false);
   const [formVisible, setFormVisible] = useState(false);
   useEffect(() => {
@@ -55,7 +55,9 @@ function MobileCta({ hero, concept }: { hero: ElRef; concept: ElRef }) {
   }, [hero, concept]);
   return (
     <div className={pastHero && !formVisible ? "mcta show" : "mcta"} id="mcta">
-      <span>Free homepage concept</span><a className="btn btn-glow" href="#concept">Get mine</a>
+      {startHref
+        ? <><span>Your concept is ready</span><a className="btn btn-glow" href={startHref}>Start my website</a></>
+        : <><span>Free homepage concept</span><a className="btn btn-glow" href="#concept">Get mine</a></>}
     </div>
   );
 }
@@ -76,7 +78,7 @@ export function Home() {
       <a className="skip" href="#main">Skip to content</a>
       {fromEmail && (
         <div className="welcome" role="region" aria-label="Welcome">
-          <div className="wrap"><span>Welcome. The homepage concept Jake sent you was made for you, free.</span><a href={startHref}>Start my website <Arrow size={16} /></a></div>
+          <div className="wrap"><span>The homepage concept in Jake's email was made just for you, free. Like it?</span><a href={startHref}>Start my website <Arrow size={16} /></a></div>
         </div>
       )}
       <Header active={active} />
@@ -93,7 +95,7 @@ export function Home() {
         <Concept live={LIVE} search={search} say={toast.say} ref={concept} />
       </main>
       <WorkViewer ref={viewer} />
-      <MobileCta hero={hero} concept={concept} />
+      <MobileCta hero={hero} concept={concept} startHref={fromEmail ? startHref : undefined} />
       <Toast msg={toast.msg} show={toast.show} />
       <Footer />
     </>

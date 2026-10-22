@@ -1,6 +1,6 @@
 // Renders a customer's full website from one SiteContent object: home, menu or services, about, contact, 404,
 // plus sitemap, robots, favicon and social preview tags. Pure function: content in, { path: html } out.
-// The site builder (tools/SITE_BUILDER.md) writes the content; tools/site-kit/build.ts downloads images and writes files.
+// The operator (tools/OPERATOR.md) writes the content; tools/site-kit/build.ts downloads images and writes files.
 
 /** Match the concept the owner was sent (tools/make_concept.py theme_for): "home" for remodelers, carpenters, upholsterers,
  * framers and furniture restorers; "boutique" for jewelers, watch repair, tailors and bridal. */
@@ -191,7 +191,7 @@ ${c.city_state || c.phone ? `<div class="util"><div class="wrap"><span>${esc(c.c
 ${p.body.replace(/\{\{root\}\}/g, "../".repeat(p.depth)).replace(/\{\{cta\}\}/g, esc(ctaHref))}
 </main>
 <footer><div class="wrap"><span><b>${esc(c.business_name)}</b></span><span>${[c.address, c.phone ? `<a href="${tel(c.phone)}">${esc(c.phone)}</a>` : "", c.email ? `<a href="mailto:${esc(c.email)}">${esc(c.email)}</a>` : ""].filter(Boolean).join(" · ")}</span><span>${c.social.map((s) => `<a href="${esc(s.url)}">${esc(s.label)}</a>`).join(" · ")}${c.social.length ? " · " : ""}© ${new Date().getFullYear()} ${esc(c.business_name)}</span></div></footer>
-${opts.preview ? `<div class="pv" role="region" aria-label="Preview"><div class="wrap"><span><b>Preview</b> of your new website from BringsUp. Nothing is live yet.${opts.preview.roundsLeft > 0 ? ` You have ${opts.preview.roundsLeft} round${opts.preview.roundsLeft === 1 ? "" : "s"} of changes left.` : ""}</span><span style="display:flex;gap:10px;flex-wrap:wrap"><a class="ch" href="https://bringsup.com/changes/?ref=${encodeURIComponent(opts.preview.ref)}">Request changes</a><a class="ok" href="https://bringsup.com/approve/?ref=${encodeURIComponent(opts.preview.ref)}">Approve and launch</a></span></div></div>` : ""}
+${opts.preview ? `<div class="pv" role="region" aria-label="Preview"><div class="wrap"><span><b>Private preview</b> from BringsUp. Not live yet.${opts.preview.roundsLeft > 0 ? ` ${opts.preview.roundsLeft} round${opts.preview.roundsLeft === 1 ? "" : "s"} of changes left.` : " Your included rounds are used; one more is $150."}</span><span style="display:flex;gap:10px;flex-wrap:wrap"><a class="ch" href="https://bringsup.com/${opts.preview.roundsLeft > 0 ? "changes" : "extra"}/?ref=${encodeURIComponent(opts.preview.ref)}">${opts.preview.roundsLeft > 0 ? "Request changes" : "One more round ($150)"}</a><a class="ok" href="https://bringsup.com/approve/?ref=${encodeURIComponent(opts.preview.ref)}">Approve and pay $1,000</a></span></div></div>` : ""}
 </body>
 </html>
 `;
@@ -202,7 +202,7 @@ ${opts.preview ? `<div class="pv" role="region" aria-label="Preview"><div class=
   const card = (it: SiteContent["offer"]["groups"][number]["items"][number], depth: number) =>
     `<article class="card">${it.image ? `<img src="${esc(src(it.image, depth))}" alt="${esc(it.name)}" loading="lazy">` : ""}<div class="bd"><h3><span>${esc(it.name)}</span>${it.price ? `<small>${esc(it.price)}</small>` : ""}</h3>${it.description ? `<p>${esc(it.description)}</p>` : ""}</div></article>`;
   const facts: [string, string][] = [];
-  if (c.year_founded) facts.push([c.year_founded, "Serving customers since"]);
+  if (c.year_founded) facts.push(["Since " + c.year_founded, "Family owned and run"]);
   if (c.rating) facts.push([c.rating + "★", "Average rating"]);
   if (c.review_count) facts.push([c.review_count + "+", "Customer reviews"]);
   if (c.city_state) facts.push(["Local", "Independent, in " + c.city_state.split(",")[0]]);
