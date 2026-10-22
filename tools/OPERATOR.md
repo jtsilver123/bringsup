@@ -48,6 +48,7 @@ The files are in `work/projects/<ref>/`: `project.json` (brief, files, state), `
    - **Logo:** use their uploaded logo. If there isn't one, leave `logo` empty and the wordmark renders.
    - **Main button (`primary_cta`):** take it from "What should the main button on your site do?" A link to their existing ordering, booking or quote tool (Square, Toast, Calendly…) if they have one. Otherwise `{"label": "Call to order", "href": "tel:..."}` or a quote/contact link to `contact/`. Never promise online ordering they don't have.
    - **Copy:** warm, specific, in their words where possible. Use "Extra notes from the owner" in the brief and "Anything to change from the concept we sent?".
+   - **Theme:** use the same theme as the concept they were sent (`theme_for` in `tools/make_concept.py`): `home` for remodelers, carpenters, upholsterers, framers and furniture restorers; `boutique` for jewelers, watch repair, tailors and bridal; `garden` for landscapers and tree services.
    - `domain` = `project.domain` (no www).
 3. Run `node tools/projects-worker.ts preview <ref>`. It builds and deploys `https://preview.<pages_project>.pages.dev` and saves `site` and `preview_url`.
 4. Check the preview yourself with Playwright at 390px and 1280px (`/opt/node-tools/node_modules/playwright/index.mjs`, `executablePath: '/opt/pw-browsers/chromium'`): no broken images, no placeholder text, nothing overflowing, and the phone, hours and button all correct. Fix and redeploy until it's right.

@@ -2,7 +2,9 @@
 // plus sitemap, robots, favicon and social preview tags. Pure function: content in, { path: html } out.
 // The site builder (tools/SITE_BUILDER.md) writes the content; tools/site-kit/build.ts downloads images and writes files.
 
-export type Theme = "bakery" | "restaurant" | "auto" | "garden" | "trades" | "beauty" | "retail" | "health" | "professional";
+/** Match the concept the owner was sent (tools/make_concept.py theme_for): "home" for remodelers, carpenters, upholsterers,
+ * framers and furniture restorers; "boutique" for jewelers, watch repair, tailors and bridal. */
+export type Theme = "bakery" | "restaurant" | "auto" | "garden" | "trades" | "beauty" | "retail" | "health" | "professional" | "home" | "boutique";
 
 export interface SiteContent {
   business_name: string;
@@ -46,6 +48,7 @@ export interface RenderOptions {
 
 interface ThemeStyle { display: string; displayQ: string; body: string; bodyQ: string; primary: string; accent: string; radius: string }
 const SERIF = { display: "Fraunces", displayQ: "Fraunces:opsz,wght@9..144,600;9..144,700" };
+const CORMORANT = { display: "Cormorant Garamond", displayQ: "Cormorant+Garamond:wght@600;700", body: "Jost", bodyQ: "Jost:wght@400;500;600;700" };
 const THEMES: Record<Theme, ThemeStyle> = {
   bakery: { ...SERIF, body: "Work Sans", bodyQ: "Work+Sans:wght@400;500;600;700", primary: "#3B2416", accent: "#F2A65A", radius: "999px" },
   restaurant: { ...SERIF, body: "Work Sans", bodyQ: "Work+Sans:wght@400;500;600;700", primary: "#1F3A2B", accent: "#E8B64C", radius: "999px" },
@@ -55,6 +58,8 @@ const THEMES: Record<Theme, ThemeStyle> = {
   beauty: { ...SERIF, body: "DM Sans", bodyQ: "DM+Sans:wght@400;500;700", primary: "#3A2433", accent: "#E8A6A1", radius: "999px" },
   retail: { ...SERIF, body: "DM Sans", bodyQ: "DM+Sans:wght@400;500;700", primary: "#22313F", accent: "#F2B880", radius: "999px" },
   health: { display: "Manrope", displayQ: "Manrope:wght@600;700;800", body: "Manrope", bodyQ: "Manrope:wght@400;500;600;700", primary: "#123B4A", accent: "#7BD3C4", radius: "12px" },
+  home: { ...CORMORANT, primary: "#2A2622", accent: "#C9A46A", radius: "6px" },
+  boutique: { ...CORMORANT, primary: "#151515", accent: "#D8B67A", radius: "2px" },
   professional: { display: "Manrope", displayQ: "Manrope:wght@600;700;800", body: "Inter", bodyQ: "Inter:wght@400;500;600;700", primary: "#1C2A3A", accent: "#F2C14E", radius: "10px" },
 };
 
