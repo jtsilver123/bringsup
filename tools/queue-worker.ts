@@ -7,7 +7,9 @@
 //   node tools/queue-worker.ts outreach <slug> <dir> publish <dir>/concept.json as a cold-email prospect's private
 //                                                   preview (bringsup.com/for/<slug>-<code>); <dir>/meta.json may
 //                                                   hold {url, email, images: [https urls]}; a hand-built <dir>/index.html
-//                                                   (self-contained) is published as is
+//                                                   (self-contained) is published as is. Add the current short code
+//                                                   (e.g. scoops-and-cookies-ff8hnwge) to update that preview in place,
+//                                                   keeping its link
 //   node tools/queue-worker.ts views                opens and start clicks for every /for/ preview
 //   node tools/queue-worker.ts delete <short|id>    delete a preview and its pictures
 //
@@ -86,12 +88,17 @@ async function complete(id: string): Promise<void> {
   console.log(res.status === "skipped" ? "Skipped (not a business)." : `Published: ${res.link}`);
 }
 
-type Shots = { before: { desktop?: string; phone?: string }; after: { desktop?: string; phone?: string } };
+type Shots = { before: { desktop?: string; phone?: string }; after: { desktop?: string; phone?: string }; tall?: TallShots };
+/** Long pictures of whole pages (up to TALL_MAX CSS pixels) for the scrollable "Today and new" slider. */
+type Tall = { data: string; width: number; height: number };
+type TallShots = { before: { desktop?: Tall; phone?: Tall }; after: { desktop?: Tall; phone?: Tall } };
+const TALL_MAX = { desktop: 4200, phone: 5200 };
 
 /** Pictures for the preview, all base64 JPEG, made in one browser run:
  *  - og: the link preview card (iMessage, Gmail, WhatsApp), 1200x630: their homepage in a browser frame beside
  *    "This could be your new website. Made for <name>" (tools/worker/og-card.html);
- *  - shots: their site today (from `currentUrl`) and the new one, at desktop and phone size, for the /try/ reveal and compare.
+ *  - shots: their site today (from `currentUrl`) and the new one, at desktop and phone size, for the /try/ reveal, plus
+ *    shots.tall: the same pages top to bottom (cut off at TALL_MAX) for the scrollable "Today and new" slider.
  *  Anything that fails is left out; the preview still publishes. */
 async function previewImages(file: string, name: string, currentUrl?: string): Promise<{ og?: string; shots?: Shots }> {
   let browser: any;
@@ -99,16 +106,39 @@ async function previewImages(file: string, name: string, currentUrl?: string): P
   try {
     const { chromium } = await import("/opt/node-tools/node_modules/playwright/index.mjs" as string);
     browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" }).catch(() => chromium.launch());
-    const shoot = async (url: string, phone: boolean): Promise<Buffer | undefined> => {
+    const open = async (url: string, phone: boolean, tall: boolean) => {
+      // Tall pictures use a lower pixel density so a whole page stays a reasonable download.
       const page = await browser.newPage(phone
-        ? { viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true }
-        : { viewport: { width: 1280, height: 800 }, deviceScaleFactor: 1.3 });
+        ? { viewport: { width: 390, height: 844 }, deviceScaleFactor: tall ? 1.5 : 2, isMobile: true, hasTouch: true }
+        : { viewport: { width: 1280, height: 800 }, deviceScaleFactor: tall ? 1.5 : 1.3 });
+      // A page that didn't load (bad address, site down, error status) must never be shown as "Your site today".
+      const res = await page.goto(url, { waitUntil: "networkidle", timeout: 30_000 }).catch(() => null);
+      if (!url.startsWith("file:") && (!res || !res.ok())) { await page.close().catch(() => {}); return null; }
+      await page.waitForTimeout(1200);
+      return page;
+    };
+    const shoot = async (url: string, phone: boolean): Promise<Buffer | undefined> => {
+      const page = await open(url, phone, false).catch(() => null);
+      if (!page) return undefined;
+      try { return await page.screenshot({ type: "jpeg", quality: 76 }); } catch { return undefined; } finally { await page.close().catch(() => {}); }
+    };
+    const shootTall = async (url: string, phone: boolean): Promise<Tall | undefined> => {
+      const page = await open(url, phone, true).catch(() => null);
+      if (!page) return undefined;
       try {
-        // A page that didn't load (bad address, site down, error status) must never be shown as "Your site today".
-        const res = await page.goto(url, { waitUntil: "networkidle", timeout: 30_000 }).catch(() => null);
-        if (!url.startsWith("file:") && (!res || !res.ok())) return undefined;
-        await page.waitForTimeout(1200);
-        return await page.screenshot({ type: "jpeg", quality: 76 });
+        // Scroll down once so lazy images and scroll effects load, then back to the top for the picture.
+        const h: number = await page.evaluate(async (max: number) => {
+          for (let y = 0; y < Math.min(document.documentElement.scrollHeight, max); y += 600) {
+            scrollTo(0, y);
+            await new Promise((r) => setTimeout(r, 120));
+          }
+          scrollTo(0, 0);
+          await new Promise((r) => setTimeout(r, 600));
+          return Math.min(document.documentElement.scrollHeight, max);
+        }, TALL_MAX[phone ? "phone" : "desktop"]);
+        const vw = phone ? 390 : 1280, dsf = 1.5;
+        const buf: Buffer = await page.screenshot({ type: "jpeg", quality: 70, fullPage: true, clip: { x: 0, y: 0, width: vw, height: h } });
+        return { data: buf.toString("base64"), width: Math.round(vw * dsf), height: Math.round(h * dsf) };
       } catch { return undefined; } finally { await page.close().catch(() => {}); }
     };
     const page = "file://" + resolve(file);
@@ -117,6 +147,10 @@ async function previewImages(file: string, name: string, currentUrl?: string): P
     if (currentUrl) {
       shots.before.desktop = (await shoot(currentUrl, false))?.toString("base64");
       shots.before.phone = (await shoot(currentUrl, true))?.toString("base64");
+      shots.tall = {
+        before: { desktop: await shootTall(currentUrl, false), phone: await shootTall(currentUrl, true) },
+        after: { desktop: await shootTall(page, false), phone: await shootTall(page, true) },
+      };
     }
     if (shots.before.desktop && shots.after.desktop) out.shots = shots;
     if (afterDesktop) {
@@ -136,7 +170,7 @@ async function previewImages(file: string, name: string, currentUrl?: string): P
   return out;
 }
 
-async function outreach(slug: string, dir: string): Promise<void> {
+async function outreach(slug: string, dir: string, replace?: string): Promise<void> {
   const concept = JSON.parse(readFileSync(join(dir, "concept.json"), "utf8"));
   let html: string | undefined;
   try { html = readFileSync(join(dir, "index.html"), "utf8"); } catch { /* optional: a hand-built page */ }
@@ -163,7 +197,8 @@ async function outreach(slug: string, dir: string): Promise<void> {
   }
   const pics = html ? await previewImages(join(dir, "index.html"), String(concept.business_name), meta.url) : {};
   if (html && !pics.shots) console.error("No Today/New pictures (is meta.json's url their current site?). The preview publishes without the reveal.");
-  const res = await call("POST", "", { action: "create", ref: slug, concept, ...(html ? { html } : {}), ...(pics.og ? { og_image: pics.og } : {}), ...(pics.shots ? { shots: pics.shots } : {}), ...meta });
+  const res = await call("POST", "", { action: "create", ref: slug, concept, ...(html ? { html } : {}), ...(pics.og ? { og_image: pics.og } : {}), ...(pics.shots ? { shots: pics.shots } : {}), ...meta,
+    ...(replace ? { replace_short: replace } : {}) });
   if (!res.link) { console.error(JSON.stringify(res)); process.exit(1); }
   console.log(res.link);
 }
@@ -174,10 +209,10 @@ if (cmd === "pull") await pull();
 else if (cmd === "complete" && id) await complete(id);
 else if (cmd === "fail" && id) console.log(await call("POST", "", { action: "fail", id, error: reason || "failed" }));
 else if (cmd === "emailed" && id) console.log(await call("POST", "", { action: "emailed", id }));
-else if (cmd === "outreach" && id && reason) await outreach(id, reason);
+else if (cmd === "outreach" && id && reason) await outreach(id, reason, process.argv[5]);
 else if (cmd === "views") console.log(JSON.stringify(await call("GET", "?views=1"), null, 2));
 else if (cmd === "delete" && id) console.log(JSON.stringify(await call("POST", "", /^[0-9a-f-]{36}$/i.test(id) ? { action: "delete", id } : { action: "delete", short: id })));
 else {
-  console.error("Usage: node tools/queue-worker.ts pull | complete <id> | fail <id> \"<why>\" | emailed <id> | outreach <slug> <dir> | views | delete <short|id>");
+  console.error("Usage: node tools/queue-worker.ts pull | complete <id> | fail <id> \"<why>\" | emailed <id> | outreach <slug> <dir> [short-to-replace] | views | delete <short|id>");
   process.exit(1);
 }

@@ -7,6 +7,7 @@ import { BeforeAfter } from "../home/BeforeAfter.tsx";
 import { BrandCard, type BrandPreview } from "./BrandCard.tsx";
 
 export type View = "ask" | "working" | "result" | "queued" | "failed";
+type TallShot = { src: string; width: number; height: number };
 
 export const Header = () => <SubHeader />;
 
@@ -136,7 +137,11 @@ export interface ResultData {
   /** Only when we made a logo refresh: their logo now and refreshed, and the colors (concept.brand). */
   brand?: BrandPreview;
   /** Their site today and the new one, as pictures (concept.compare): the first-visit reveal and the side-by-side slider. */
-  compare?: { before: { desktop?: string; phone?: string }; after: { desktop?: string; phone?: string } };
+  compare?: {
+    before: { desktop?: string; phone?: string }; after: { desktop?: string; phone?: string };
+    /** Whole pages, top to bottom, for the scrollable slider. Older previews don't have them. */
+    tall?: { before: { desktop?: TallShot; phone?: TallShot }; after: { desktop?: TallShot; phone?: TallShot } };
+  };
 }
 
 interface ResultProps {
@@ -288,6 +293,25 @@ const place = (b: Box, outerH: number, stageH: number) => {
   return `translate(${b.x}px, ${b.y}px) scale(${s})`;
 };
 
+/** "Today and new, side by side": whole pages that scroll when the preview has them, else the top of each page. */
+function CompareSlider({ compare, small, name }: { compare: NonNullable<ResultData["compare"]>; small: boolean; name: string }) {
+  const kind = small && compare.before.phone && compare.after.phone ? "phone" : "desktop";
+  const tallBefore = compare.tall?.before[kind], tallAfter = compare.tall?.after[kind];
+  const alts = kind === "phone"
+    ? [`The new ${name} homepage on a phone, top to bottom`, `The ${name} homepage today, on a phone`]
+    : [`The new ${name} homepage, top to bottom`, `The ${name} homepage today`];
+  const top = kind === "phone" ? { width: 780, height: 1688 } : { width: 1664, height: 1040 };
+  return (
+    <div className={kind === "phone" ? "rc-phone" : "rc-desktop"}>
+      {tallBefore && tallAfter
+        ? <BeforeAfter scroll labels={["New", "Today"]} caption="Drag the handle to compare. Scroll inside to see the whole page."
+            after={{ ...tallAfter, alt: alts[0] }} before={{ ...tallBefore, alt: alts[1] }} />
+        : <BeforeAfter labels={["New", "Today"]} caption="Drag the handle to compare."
+            after={{ src: compare.after[kind]!, ...top, alt: alts[0] }} before={{ src: compare.before[kind]!, ...top, alt: alts[1] }} />}
+    </div>
+  );
+}
+
 export function ResultView({ hidden, data, onCopy, onFullScreen, onAgain }: ResultProps) {
   /** null until the visitor picks: phones then open on the phone view, which is what the owner's customers will see. */
   const [choice, setChoice] = useState<Size | null>(null);
@@ -424,15 +448,7 @@ export function ResultView({ hidden, data, onCopy, onFullScreen, onAgain }: Resu
       {compare?.before.desktop && compare.after.desktop && (
         <section className="wrap r-compare" aria-labelledby="r-compare-h">
           <h2 className="t3" id="r-compare-h">Today and new, side by side</h2>
-          <div className={small && compare.before.phone && compare.after.phone ? "rc-phone" : "rc-desktop"}>
-            {small && compare.before.phone && compare.after.phone
-              ? <BeforeAfter labels={["New", "Today"]} caption="Drag the handle to compare."
-                  after={{ src: compare.after.phone, width: 780, height: 1688, alt: `The new ${name} homepage on a phone` }}
-                  before={{ src: compare.before.phone, width: 780, height: 1688, alt: `The ${name} homepage today, on a phone` }} />
-              : <BeforeAfter labels={["New", "Today"]} caption="Drag the handle to compare."
-                  after={{ src: compare.after.desktop, width: 1664, height: 1040, alt: `The new ${name} homepage` }}
-                  before={{ src: compare.before.desktop, width: 1664, height: 1040, alt: `The ${name} homepage today` }} />}
-          </div>
+          <CompareSlider compare={compare} small={small} name={name} />
         </section>
       )}
 

@@ -335,7 +335,7 @@ ${site.text}
 // Redesigns run on the Claude subscription, never an API key: an hourly scheduled Claude Code task
 // pulls the queue (GET ?queue=1), designs each homepage with the prompt and schema in prompt.ts,
 // posts it back ({action: "complete"}) and emails the visitor their link. See tools/QUEUE_WORKER.md.
-// Worker calls need the x-worker-token header. {action: "create", url, email, concept, images?, ref?, html?, og_image?, shots?} saves a
+// Worker calls need the x-worker-token header. {action: "create", url, email, concept, images?, ref?, html?, og_image?, shots?, replace_short?} saves a
 // finished homepage for a cold-email prospect who said "send it over" and returns its private short link,
 // bringsup.com/for/<slug>-<8 random chars> (tools/email_template.md). og_image is a base64 JPEG for the link preview card;
 // shots = {before: {desktop, phone}, after: {desktop, phone}} (base64 JPEGs of their site today and the new one) power the
@@ -470,18 +470,26 @@ async function work(req: Request, body: any): Promise<Response> {
     }
     if (body.ref) concept.ref = String(body.ref);
     const base = slugify(String(body.ref || concept.business_name));
-    let short = `${base}-${code()}`;
-    for (let i = 0; i < 3; i++) {
+    // replace_short updates an existing preview in place, so a link already sent keeps working and shows the new version.
+    let replacing: { id: string } | null = null;
+    if (body.replace_short) {
+      const { data: old } = await db.from("redesigns").select("id").eq("short", String(body.replace_short).toLowerCase()).maybeSingle();
+      if (!old) return json(req, 404, { error: "No preview with that short link." });
+      replacing = old;
+    }
+    let short = replacing ? String(body.replace_short).toLowerCase() : `${base}-${code()}`;
+    for (let i = 0; i < 3 && !replacing; i++) {
       const { data: taken } = await db.from("redesigns").select("id").eq("short", short).maybeSingle();
       if (!taken) break;
       short = `${base}-${code()}`;
     }
     const store = async (b64: unknown, name: string): Promise<string | undefined> => {
-      if (typeof b64 !== "string" || b64.length > 1_400_000) return undefined;
+      if (typeof b64 !== "string" || b64.length > 2_800_000) return undefined;
       const bytes = Uint8Array.from(atob(b64.replace(/^data:image\/\w+;base64,/, "")), (c) => c.charCodeAt(0));
       const path = `previews/${short}${name}.jpg`;
       const up = await db.storage.from("project-files").upload(path, bytes, { contentType: "image/jpeg", upsert: true });
-      return up.error ? undefined : db.storage.from("project-files").getPublicUrl(path).data.publicUrl;
+      // ?v= so a preview updated in place (replace_short) never shows a cached old picture.
+      return up.error ? undefined : `${db.storage.from("project-files").getPublicUrl(path).data.publicUrl}?v=${Date.now()}`;
     };
     // The link preview card (iMessage, Gmail, WhatsApp): a picture of their homepage, kept in public storage.
     const og = await store(body.og_image, "");
@@ -491,11 +499,27 @@ async function work(req: Request, body: any): Promise<Response> {
       before: { desktop: await store(shots.before?.desktop, "-before-desktop"), phone: await store(shots.before?.phone, "-before-phone") },
       after: { desktop: await store(shots.after?.desktop, "-after-desktop"), phone: await store(shots.after?.phone, "-after-phone") },
     };
-    if (compare.before.desktop && compare.after.desktop) concept.compare = compare;
+    // Whole-page pictures for the scrollable slider: {data, width, height} each, stored with their size.
+    const tallOf = async (t: { data?: unknown; width?: unknown; height?: unknown } | undefined, name: string) => {
+      const src = await store(t?.data, name);
+      return src && Number(t?.width) > 0 && Number(t?.height) > 0 ? { src, width: Number(t!.width), height: Number(t!.height) } : undefined;
+    };
+    const tall = shots.tall || {};
+    const tallSet = {
+      before: { desktop: await tallOf(tall.before?.desktop, "-tall-before-desktop"), phone: await tallOf(tall.before?.phone, "-tall-before-phone") },
+      after: { desktop: await tallOf(tall.after?.desktop, "-tall-after-desktop"), phone: await tallOf(tall.after?.phone, "-tall-after-phone") },
+    };
+    if (compare.before.desktop && compare.after.desktop) concept.compare = { ...compare, ...(tallSet.before.desktop && tallSet.after.desktop ? { tall: tallSet } : {}) };
     concept.short = short;
     const images = Array.isArray(body.images) ? body.images.filter((u: unknown) => typeof u === "string" && /^https:\/\//.test(u)).slice(0, 12) : [];
-    const { data: made, error } = await db.from("redesigns").insert({ url: String(body.url || ""), email: String(body.email || "").toLowerCase(), ip_hash: "outreach",
-      status: "done", business_name: concept.business_name, content: concept, images, short }).select("id").single();
+    // Replacing keeps the stored url, email and images unless this publish brings new ones.
+    const row: Record<string, unknown> = { ip_hash: "outreach", status: "done", business_name: concept.business_name, content: concept, short };
+    if (!replacing || body.url) row.url = String(body.url || "");
+    if (!replacing || body.email) row.email = String(body.email || "").toLowerCase();
+    if (!replacing || images.length) row.images = images;
+    const { data: made, error } = replacing
+      ? await db.from("redesigns").update(row).eq("id", replacing.id).select("id").single()
+      : await db.from("redesigns").insert(row).select("id").single();
     if (error || !made) return json(req, 500, { error: String(error?.message || "insert failed") });
     return json(req, 200, { ok: true, id: made.id, link: shortLink(short), long_link: link(made.id) + (body.ref ? `&ref=${encodeURIComponent(String(body.ref))}` : "") });
   }
@@ -505,7 +529,8 @@ async function work(req: Request, body: any): Promise<Response> {
     const { data: gone } = await (short ? sel.eq("short", short) : sel.eq("id", String(body.id || ""))).maybeSingle();
     if (!gone) return json(req, 404, { error: "No such redesign." });
     if (gone.short) {
-      const names = ["", "-before-desktop", "-before-phone", "-after-desktop", "-after-phone"].map((n) => `previews/${gone.short}${n}.jpg`);
+      const names = ["", "-before-desktop", "-before-phone", "-after-desktop", "-after-phone",
+        "-tall-before-desktop", "-tall-before-phone", "-tall-after-desktop", "-tall-after-phone"].map((n) => `previews/${gone.short}${n}.jpg`);
       const rm = await db.storage.from("project-files").remove(names);
       if (rm.error) return json(req, 500, { error: `Couldn't delete the pictures: ${rm.error.message}` });
     }

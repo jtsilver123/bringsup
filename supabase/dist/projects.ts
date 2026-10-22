@@ -638,6 +638,19 @@ Deno.serve(async (req) => {
     if (error) return json(500, { error: error.message });
     return json(200, { jobs: data });
   }
+  if (url.searchParams.has("summary")) {
+    // Counts for the tracker page (meta/pipeline.customers). Read-only: unlike ?jobs=1 it claims nothing.
+    const { data, error } = await db.from("projects").select("status,care_plan").not("ref", "like", "test-%");
+    if (error) return json(500, { error: error.message });
+    const n = (f: (p: { status: string; care_plan: boolean }) => boolean) => (data || []).filter(f).length;
+    return json(200, {
+      building: n((p) => ["started", "changes_requested"].includes(p.status)),
+      previewing: n((p) => ["preview_sent", "awaiting_extra"].includes(p.status)),
+      launching: n((p) => ["approved", "launching"].includes(p.status)),
+      live: n((p) => p.status === "live"),
+      onPlan: n((p) => p.status === "live" && p.care_plan),
+    });
+  }
   if (url.searchParams.has("plans")) {
     const { data, error } = await db.from("projects").select("ref,business_name,owner_name,email,domain,domain_helper_email,status,live_url,pages_project,plan_subscription,todo")
       .eq("care_plan", true).order("created_at");
@@ -658,5 +671,5 @@ Deno.serve(async (req) => {
     const { data: events } = await db.from("project_events").select("*").eq("project_id", p.id).order("created_at");
     return json(200, { project: p, events });
   }
-  return json(400, { error: "Use ?jobs=1, ?ref=, ?email=, ?health=1, ?plans=1, ?status=, ?capacity=1 or ?pulse=1" });
+  return json(400, { error: "Use ?jobs=1, ?ref=, ?email=, ?health=1, ?plans=1, ?status=, ?summary=1, ?capacity=1 or ?pulse=1" });
 });
