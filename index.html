@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script>document.documentElement.classList.add('js')</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BringsUp — Websites for the businesses your town already loves</title>
 <meta name="description" content="Your reviews say you're the best in town. Your website should too. We mock up your new homepage for free, then build the whole site and refresh your brand for one flat $1,000.">
@@ -70,38 +71,50 @@ h1,h2,h3,p,ul,ol,figure{margin:0}
 @media (max-width:900px){.site-nav a.plain{display:none}}
 @media (max-width:420px){.pill{font-size:12px;padding:7px 12px}.brand-name{font-size:21px}.brand-mark{width:32px;height:32px}.site-nav .btn{padding:10px 14px;font-size:15px}}
 /* hero */
-.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);gap:56px;align-items:center;padding-top:56px;padding-bottom:88px}
+.hero{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:64px;align-items:center;padding-top:56px;padding-bottom:72px}
 .pill{display:inline-flex;align-items:center;gap:8px;background:var(--tint);color:var(--ember-deep);font-weight:700;font-size:14px;letter-spacing:.04em;text-transform:uppercase;padding:8px 14px;border-radius:999px;margin-bottom:22px}
-.hero h1{font-size:clamp(42px,5.6vw,80px);line-height:.98;letter-spacing:-.035em;text-wrap:balance}
+.pill i{width:8px;height:8px;border-radius:50%;background:var(--ember);box-shadow:0 0 0 4px rgba(194,65,12,.18)}
+.hero h1{font-size:clamp(42px,5.2vw,76px);line-height:.98;letter-spacing:-.035em;text-wrap:balance}
 .hero h1 span{color:var(--ember)}
-.hero .lead{font-size:20px;line-height:1.55;margin-top:26px;max-width:560px}
+.hero .lead{font-size:20px;line-height:1.55;margin-top:24px;max-width:540px}
 .hero .lead strong{color:var(--ink)}
-.ctas{margin-top:34px;display:flex;flex-wrap:wrap;gap:12px}
-.checks{margin-top:28px;display:flex;flex-wrap:wrap;gap:10px 22px;padding:0;list-style:none;font-size:16px;font-weight:500;color:var(--muted)}
+.ctas{margin-top:32px;display:flex;flex-wrap:wrap;gap:12px}
+.checks{margin-top:26px;display:flex;flex-wrap:wrap;gap:10px 22px;padding:0;list-style:none;font-size:16px;font-weight:500;color:var(--muted)}
 .checks li{display:flex;align-items:center;gap:8px}
 .checks svg{color:var(--ember)}
-@media (max-width:980px){.hero{grid-template-columns:1fr;gap:44px;padding-top:32px}}
+@media (max-width:1100px){.hero{grid-template-columns:minmax(0,1fr);gap:48px;padding-top:32px}.hero .lead{max-width:640px}}
 /* before / after */
 .ba{position:relative}
-.ba-frame{border-radius:16px;overflow:hidden;background:#fff;box-shadow:var(--shadow);border:1px solid var(--line)}
+.ba-frame{border-radius:16px;overflow:hidden;background:#fff;box-shadow:0 1px 2px rgba(22,24,29,.06),0 30px 80px rgba(22,24,29,.18);border:1px solid var(--line)}
 .ba-bar{display:flex;align-items:center;gap:7px;padding:10px 14px;background:#EEECE6;border-bottom:1px solid var(--line)}
 .ba-bar i{width:10px;height:10px;border-radius:50%;background:#CFCBC1}
-.ba-url{margin-left:10px;flex:1;min-width:0;background:#fff;border-radius:999px;padding:4px 12px;font-size:13px;color:var(--subtle);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ba-stage{position:relative;aspect-ratio:16/10;overflow:hidden;--pos:50%;user-select:none;-webkit-user-select:none;touch-action:pan-y}
-.ba-stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top}
-.ba-after{clip-path:inset(0 0 0 var(--pos))}
-.ba-line{position:absolute;top:0;bottom:0;left:var(--pos);width:3px;margin-left:-1.5px;background:#fff;box-shadow:0 0 0 1px rgba(22,24,29,.15);pointer-events:none}
-.ba-knob{position:absolute;top:50%;left:var(--pos);width:48px;height:48px;margin:-24px 0 0 -24px;border-radius:50%;background:var(--ink);color:var(--glow);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(0,0,0,.3);pointer-events:none}
-.ba-tag{position:absolute;top:14px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:6px 10px;border-radius:8px;pointer-events:none}
-.ba-tag.b{left:14px;background:var(--ink);color:#fff}
-.ba-tag.a{right:14px;background:var(--glow);color:var(--ink)}
-.ba-range{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:ew-resize}
-.ba-range:focus-visible + .ba-line + .ba-knob{outline:3px solid var(--glow);outline-offset:3px}
-.ba-note{margin-top:14px;font-size:14px;color:var(--subtle);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.ba-review{position:absolute;left:-28px;bottom:58px;background:#fff;border-radius:16px;padding:14px 16px;box-shadow:var(--shadow);max-width:250px;font-size:14px;line-height:1.4;border:1px solid var(--line)}
-.ba-review .stars{color:var(--ember);letter-spacing:2px;font-size:15px}
-.ba-review b{display:block;font-size:15px;margin-top:2px}
-@media (max-width:1100px){.ba-review{display:none}}
+.ba-url{margin-left:10px;flex:1 1 auto;min-width:0;max-width:300px;background:#fff;border-radius:999px;padding:4px 12px;font-size:13px;color:var(--subtle);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ba-stage{position:relative;aspect-ratio:16/10;overflow:hidden;--pos:50%;user-select:none;-webkit-user-select:none;touch-action:pan-y;cursor:ew-resize;background:var(--sand)}
+.ba-stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;pointer-events:none}
+.ba-after{clip-path:inset(0 calc(100% - var(--pos)) 0 0)}
+.ba-line{position:absolute;top:0;bottom:0;left:var(--pos);width:3px;margin-left:-1.5px;background:#fff;box-shadow:0 0 0 1px rgba(22,24,29,.15),0 0 24px rgba(0,0,0,.25);pointer-events:none}
+.ba-knob{position:absolute;top:50%;left:var(--pos);width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;background:var(--ink);color:var(--glow);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 4px #fff,0 8px 24px rgba(0,0,0,.35);pointer-events:none;transition:transform .15s}
+.ba-stage:hover .ba-knob,.ba-stage.dragging .ba-knob{transform:scale(1.08)}
+.ba-legend{margin-left:auto;display:flex;gap:6px;flex:none}
+.ba-legend b{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 9px;border-radius:6px}
+.ba-legend .a{background:var(--glow);color:var(--ink)}
+.ba-legend .b{background:var(--ink);color:#fff}
+.ba-range{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.ba-range:focus-visible ~ .ba-knob{outline:3px solid var(--glow);outline-offset:6px}
+.ba-note{margin-top:16px;font-size:14px;color:var(--subtle)}
+@media (max-width:560px){.ba-bar i{display:none}.ba-url{margin-left:0}.ba-knob{width:44px;height:44px;margin:-22px 0 0 -22px}}
+/* facts strip */
+.facts{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:#fff}
+.facts-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+.fact{padding:28px 24px;border-left:1px solid var(--line)}
+.fact:first-child{border-left:0;padding-left:0}
+.fact b{display:block;font-family:var(--display);font-weight:800;letter-spacing:-.03em;font-size:clamp(32px,3.4vw,44px);line-height:1}
+.fact span{display:block;margin-top:8px;font-size:16px;color:var(--muted);line-height:1.4}
+.trades{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;padding:18px 0 22px;border-top:1px solid var(--line);font-size:15px;color:var(--subtle)}
+.trades b{color:var(--ink);font-weight:700;margin-right:6px}
+.trades span{background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-weight:500;color:var(--muted)}
+@media (max-width:860px){.facts-row{grid-template-columns:repeat(2,minmax(0,1fr))}.fact:nth-child(3){border-left:0;padding-left:0}.fact:nth-child(n+3){border-top:1px solid var(--line)}}
+@media (max-width:420px){.fact{padding:22px 14px}.fact span{font-size:15px}}
 /* inbox band */
 .inbox{background:var(--ink);color:#F4F2EC}
 .inbox .wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:48px;align-items:center;padding-top:72px;padding-bottom:72px}
@@ -113,8 +126,37 @@ h1,h2,h3,p,ul,ol,figure{margin:0}
 .next li::before{content:counter(n);display:flex;width:34px;height:34px;border-radius:50%;background:var(--glow);color:var(--ink);font-weight:800;align-items:center;justify-content:center;font-size:16px}
 .next b{display:block;margin-top:14px;font-size:18px}
 .next span{display:block;margin-top:6px;font-size:16px;line-height:1.5;color:#C9C7C0}
-@media (max-width:980px){.inbox .wrap{grid-template-columns:1fr}}
+@media (max-width:1100px){.inbox .wrap{grid-template-columns:1fr}}
 @media (max-width:700px){.next{grid-template-columns:1fr}}
+/* moment */
+.moment{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:64px;align-items:center}
+@media (max-width:1100px){.moment{grid-template-columns:1fr;gap:48px}.journey{max-width:680px}}
+.pains{display:grid;gap:18px;margin-top:32px;padding:0;list-style:none}
+.pains li{display:flex;gap:16px;align-items:flex-start}
+.pains .icon{flex:none;width:44px;height:44px}
+.pains div b{display:block;font-size:18px}
+.pains div span{display:block;font-size:16px;color:var(--muted);line-height:1.5;margin-top:2px}
+.journey{background:var(--sand);border-radius:var(--r-lg);padding:36px 28px;display:grid;grid-template-columns:minmax(0,1.15fr) auto minmax(0,.8fr);gap:16px;align-items:center}
+.j-label{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;margin-bottom:14px}
+.j-label i{font-style:normal;width:26px;height:26px;border-radius:50%;background:var(--ink);color:var(--glow);display:flex;align-items:center;justify-content:center;font-size:13px}
+.listing{background:#fff;border-radius:16px;box-shadow:var(--shadow);overflow:hidden;font-family:Arial,Helvetica,sans-serif;color:#202124}
+.l-photo{height:110px;background:url(assets/work/bakery-photo.jpg) center/cover}
+.l-body{padding:14px 16px 16px}
+.l-body b{font-size:19px;font-weight:400;display:block}
+.l-rate{display:flex;gap:6px;align-items:center;margin-top:4px;font-size:14px;color:#4d5156}
+.l-rate .stars{color:#F4A30F;letter-spacing:1px}
+.l-meta{font-size:13px;color:#4d5156;margin-top:3px}
+.l-meta em{font-style:normal;color:#188038}
+.l-btns{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.l-btns span{border:1px solid #dadce0;border-radius:999px;padding:6px 12px;font-size:13px;color:#1a5fb4;position:relative}
+.l-btns .hot{background:#e8f0fe;border-color:#c6dafc}
+.l-btns .hot i{position:absolute;right:-8px;bottom:-10px;width:26px;height:26px;border-radius:50%;background:rgba(22,24,29,.25);box-shadow:0 0 0 6px rgba(22,24,29,.1);animation:tap 2.4s ease-in-out infinite}
+@keyframes tap{0%,100%{transform:scale(.85);opacity:.6}50%{transform:scale(1.1);opacity:1}}
+.j-arrow{color:var(--ember);padding-top:28px}
+.j-phone{border:6px solid var(--ink);border-radius:26px;overflow:hidden;background:var(--ink);box-shadow:var(--shadow);aspect-ratio:9/17}
+.j-phone img{width:100%;height:100%;object-fit:cover;object-position:28% 0}
+@media (max-width:560px){.journey{grid-template-columns:1fr;padding:24px 20px}.j-arrow{padding:0;justify-self:center;transform:rotate(90deg)}.j-phone{width:72%;max-width:240px;justify-self:center}.journey .j-step:last-child{display:flex;flex-direction:column;align-items:center}}
+@media (prefers-reduced-motion:reduce){.l-btns .hot i{animation:none}}
 /* sections */
 .pad{padding-top:104px;padding-bottom:104px}
 @media (max-width:700px){.pad{padding-top:72px;padding-bottom:72px}}
@@ -140,7 +182,8 @@ h1,h2,h3,p,ul,ol,figure{margin:0}
 .shot-meta .k{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--subtle)}
 .shot-meta h3{font-size:21px;margin-top:4px}
 .shot-meta p{font-size:16px;color:var(--muted);margin-top:6px;line-height:1.5}
-.shot-meta a{display:inline-flex;gap:6px;align-items:center;margin-top:12px;font-weight:700;font-size:16px;text-decoration:none}
+.view{display:inline-flex;gap:8px;align-items:center;margin-top:14px;font:inherit;font-weight:700;font-size:16px;color:var(--ember-deep);background:none;border:0;padding:6px 0;cursor:pointer}
+.view:hover{color:var(--ink)}
 .work-note{margin-top:22px;font-size:15px;color:var(--subtle)}
 /* steps */
 .steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px;margin-top:52px;padding:0;list-style:none}
@@ -241,10 +284,23 @@ footer .wrap{padding-top:64px;padding-bottom:40px}
 .foot-links a{display:block;color:#C9C7C0;text-decoration:none;padding:4px 0}
 .foot-links a:hover{color:var(--glow)}
 .foot-bot{display:flex;justify-content:space-between;gap:12px 32px;flex-wrap:wrap;padding-top:24px;font-size:14px;color:#9A988F}
+/* viewer */
+dialog.viewer{border:0;padding:0;border-radius:var(--r-md);width:min(1100px,calc(100vw - 32px));max-height:calc(100vh - 32px);background:var(--paper);color:var(--ink);box-shadow:0 40px 120px rgba(0,0,0,.45);overflow:hidden}
+dialog.viewer::backdrop{background:rgba(22,24,29,.72);backdrop-filter:blur(4px)}
+.v-head{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 16px 14px 24px;border-bottom:1px solid var(--line);background:#fff}
+.v-head b{font-size:18px}
+.v-head small{display:block;font-size:14px;color:var(--subtle)}
+.v-close{width:44px;height:44px;border-radius:50%;border:0;background:var(--sand);color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;flex:none}
+.v-close:hover{background:var(--line)}
+.v-body{overflow:auto;max-height:calc(100vh - 32px - 73px);background:var(--sand);padding:20px}
+.v-body img{width:100%;border-radius:10px;box-shadow:var(--shadow)}
+/* mobile CTA bar */
+.mcta{display:none}
+@media (max-width:700px){.mcta{display:flex;position:fixed;left:12px;right:12px;bottom:12px;z-index:60;gap:10px;align-items:center;justify-content:space-between;background:var(--ink);color:#fff;border-radius:999px;padding:8px 8px 8px 20px;box-shadow:0 12px 32px rgba(0,0,0,.3);transform:translateY(140%);transition:transform .3s ease}.mcta.show{transform:none}.mcta span{font-weight:700;font-size:15px}.mcta .btn{min-height:44px;padding:10px 18px;font-size:15px}footer{padding-bottom:72px}}
 /* reveal */
-.rv{opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s ease}
-.rv.in{opacity:1;transform:none}
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.rv{opacity:1;transform:none;transition:none}.shot-view .full{transition:none}.shot:hover .shot-view .full{transform:none}}
+.js .rv{opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s ease}
+.js .rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.js .rv{opacity:1;transform:none;transition:none}.mcta{transition:none}.shot-view .full{transition:none}.shot:hover .shot-view .full{transform:none}}
 </style>
 </head>
 <body>
@@ -269,13 +325,13 @@ footer .wrap{padding-top:64px;padding-bottom:40px}
 <main id="main">
   <section class="wrap hero">
     <div>
-      <p class="pill">Websites for family-owned businesses</p>
+      <p class="pill"><i aria-hidden="true"></i>For family-owned businesses</p>
       <h1 class="display">Your reviews say you're the best in town. <span>Your website should too.</span></h1>
-      <p class="lead">We redesign websites for local shops that customers already love. First we mock up your new homepage, free. If you like it, we build the whole site and refresh your brand for one flat <strong>$1,000</strong>, live in about two weeks.</p>
+      <p class="lead">We redesign websites for local businesses that customers already love. We'll mock up your new homepage for free. Like it? We build the whole site and refresh your brand for one flat <strong>$1,000</strong>.</p>
       <div class="ctas">
-        <a class="btn btn-ember" href="#concept">See my business, redone
+        <a class="btn btn-ember" href="#concept">Get my free concept
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></a>
-        <a class="btn btn-outline" href="#work">See sample concepts</a>
+        <a class="btn btn-outline" href="#work">See sample work</a>
       </div>
       <ul class="checks">
         <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Free concept first</li>
@@ -286,19 +342,29 @@ footer .wrap{padding-top:64px;padding-bottom:40px}
 
     <figure class="ba">
       <div class="ba-frame">
-        <div class="ba-bar" aria-hidden="true"><i></i><i></i><i></i><span class="ba-url">marigoldbakery.example</span></div>
+        <div class="ba-bar"><i></i><i></i><i></i><span class="ba-url">marigoldbakery.example</span><span class="ba-legend"><b class="a">After</b><b class="b">Before</b></span></div>
         <div class="ba-stage" id="ba">
-          <img src="assets/work/bakery-before.jpg" width="1200" height="750" alt="An outdated bakery homepage: a 2009 layout with a broken image, 'call for hours' and no way to order online.">
-          <img class="ba-after" src="assets/work/bakery-hero.jpg" width="1200" height="750" alt="The same bakery redesigned: a full-width photo, 4.9 stars from 412 Google reviews up top, and an Order for pickup button.">
-          <span class="ba-tag b">Before</span><span class="ba-tag a">After</span>
-          <input class="ba-range" type="range" min="0" max="100" value="50" aria-label="Drag to compare the old and new homepage">
+          <img src="assets/work/bakery-before.jpg" width="1664" height="1040" alt="An outdated bakery homepage: a 2009 layout, a broken image, 'please call for hours' and no way to order online.">
+          <img class="ba-after" src="assets/work/bakery-hero.jpg" width="1664" height="1040" fetchpriority="high" alt="The same bakery redesigned: a full-width photo, 4.9 stars from 412 Google reviews up top, and an Order for pickup button.">
+                    <input class="ba-range" type="range" min="0" max="100" step="1" value="50" aria-label="Compare the new and old homepage. Higher shows more of the new site.">
           <span class="ba-line" aria-hidden="true"></span>
           <span class="ba-knob" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l-6 6 6 6"/><path d="M15 6l6 6-6 6"/></svg></span>
         </div>
       </div>
-      <div class="ba-review" aria-hidden="true"><span class="stars">★★★★★</span><b>Reviews, front and center</b>Your best marketing is already written. We put it where new customers look.</div>
       <figcaption class="ba-note">Drag to compare. A sample concept for a fictional bakery, made the same way we'd make yours.</figcaption>
     </figure>
+  </section>
+
+  <section class="facts" aria-label="The offer at a glance">
+    <div class="wrap">
+      <div class="facts-row">
+        <div class="fact"><b>$0</b><span>until you've seen your design and said yes</span></div>
+        <div class="fact"><b>48 hrs</b><span>to get your free homepage concept</span></div>
+        <div class="fact"><b>~2 weeks</b><span>from yes to a live website</span></div>
+        <div class="fact"><b>$1,000</b><span>flat, brand refresh included</span></div>
+      </div>
+      <p class="trades"><b>Made for</b><span>Bakeries</span><span>Diners &amp; delis</span><span>Auto shops</span><span>Plumbers &amp; HVAC</span><span>Garden centers</span><span>Hardware stores</span></p>
+    </div>
   </section>
 
   <section class="inbox" id="hello" aria-labelledby="hello-h">
@@ -317,28 +383,36 @@ footer .wrap{padding-top:64px;padding-bottom:40px}
   </section>
 
   <section class="wrap pad" aria-labelledby="problem-h">
-    <div class="sec-head rv">
-      <div>
+    <div class="moment">
+      <div class="rv">
         <p class="eyebrow">Why it matters</p>
         <h2 class="display h2" id="problem-h">Word of mouth got you here. Then people look you up.</h2>
+        <p class="lead" style="margin-top:20px">New customers find you on Google, see the stars, and tap your website. They decide in a few seconds. An outdated site can make a busy shop look closed.</p>
+        <ul class="pains">
+          <li><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg></span><div><b>Hard to use on a phone</b><span>Tiny text and pinch-to-zoom menus send people to the next result.</span></div></li>
+          <li><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div><b>Hours and info out of date</b><span>Wrong hours or a dead link make people wonder if you're still open.</span></div></li>
+          <li><span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.1-5.4 3.1 1.3-6L3.3 9.2l6.1-.6z"/></svg></span><div><b>Your best asset is hidden</b><span>Hundreds of glowing reviews, and none of them on your site.</span></div></li>
+        </ul>
       </div>
-      <p class="lead">New customers find you on Google, tap through to your site, and decide in a few seconds. An outdated site can make a busy shop look closed.</p>
-    </div>
-    <div class="grid3">
-      <div class="card rv">
-        <div class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg></div>
-        <h3>Hard to use on a phone</h3>
-        <p>Most people look you up on their phone. Tiny text and pinch-to-zoom menus send them to the next result.</p>
-      </div>
-      <div class="card rv">
-        <div class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
-        <h3>Hours and info out of date</h3>
-        <p>Wrong hours, an old menu or a dead link make people wonder if you're still open.</p>
-      </div>
-      <div class="card rv">
-        <div class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.1-5.4 3.1 1.3-6L3.3 9.2l6.1-.6z"/></svg></div>
-        <h3>Your best asset is hidden</h3>
-        <p>Hundreds of glowing reviews, and none of them on your site. We put your reputation where new customers can see it.</p>
+      <div class="journey rv" role="img" aria-label="A search listing showing 4.9 stars from 412 reviews. Tapping Website opens an outdated site that is hard to read on a phone.">
+        <div class="j-step">
+          <p class="j-label"><i>1</i>They look you up</p>
+          <div class="listing" aria-hidden="true">
+            <div class="l-photo"></div>
+            <div class="l-body">
+              <b>Marigold Bakery</b>
+              <div class="l-rate"><span>4.9</span><span class="stars">★★★★★</span><span class="n">(412)</span></div>
+              <div class="l-meta">Bakery · Westbrook, CT</div>
+              <div class="l-meta"><em>Open</em> · Closes 3 PM</div>
+              <div class="l-btns"><span>Directions</span><span>Call</span><span class="hot">Website<i></i></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="j-arrow" aria-hidden="true"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></div>
+        <div class="j-step">
+          <p class="j-label"><i>2</i>Then they see this</p>
+          <div class="j-phone" aria-hidden="true"><img src="assets/work/bakery-before.jpg" width="1664" height="1040" alt="" loading="lazy"></div>
+        </div>
       </div>
     </div>
   </section>
@@ -362,7 +436,7 @@ footer .wrap{padding-top:64px;padding-bottom:40px}
             <p class="k">Bakery · Westbrook, CT</p>
             <h3>Marigold Bakery</h3>
             <p>Warm, family-run feel with online ordering for pickup and holiday trays.</p>
-            <a href="assets/work/bakery-full.jpg" target="_blank" rel="noopener">View full page <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a>
+            <button class="view" type="button" data-src="assets/work/bakery-full.jpg" data-name="Marigold Bakery">View the full homepage <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg></button>
           </div>
         </article>
         <article class="shot rv">
@@ -374,7 +448,7 @@ footer .wrap{padding-top:64px;padding-bottom:40px}
             <p class="k">Auto repair · Mesa, AZ</p>
             <h3>Delgado Auto Repair</h3>
             <p>Straightforward and trustworthy, with booking online in under a minute.</p>
-            <a href="assets/work/auto-full.jpg" target="_blank" rel="noopener">View full page <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a>
+            <button class="view" type="button" data-src="assets/work/auto-full.jpg" data-name="Delgado Auto Repair">View the full homepage <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg></button>
           </div>
         </article>
         <article class="shot rv">
@@ -386,7 +460,7 @@ footer .wrap{padding-top:64px;padding-bottom:40px}
             <p class="k">Plumbing &amp; HVAC · Dayton, OH</p>
             <h3>Whitfield Plumbing &amp; Heating</h3>
             <p>Clean and dependable, with a free-quote request and the phone number always in reach.</p>
-            <a href="assets/work/plumbing-full.jpg" target="_blank" rel="noopener">View full page <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a>
+            <button class="view" type="button" data-src="assets/work/plumbing-full.jpg" data-name="Whitfield Plumbing &amp; Heating">View the full homepage <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg></button>
           </div>
         </article>
       </div>
@@ -403,9 +477,9 @@ footer .wrap{padding-top:64px;padding-bottom:40px}
       <p class="lead">No sales calls to get started, no long questionnaires. We do the homework.</p>
     </div>
     <ol class="steps">
-      <li class="step rv"><div class="num">01</div><h3>We mock up your homepage</h3><p>Using your real name, services or menu, and the things your reviews keep mentioning.</p><span class="when">Free</span></li>
+      <li class="step rv"><div class="num">01</div><h3>We mock it up</h3><p>Using your real name, services or menu, and the things your reviews keep mentioning.</p><span class="when">Free</span></li>
       <li class="step rv"><div class="num">02</div><h3>You say yes</h3><p>A 20-minute call to get the details right. We take your photos, hours and story from there.</p><span class="when">$500 to start</span></li>
-      <li class="step rv"><div class="num">03</div><h3>We build every page</h3><p>Full site plus a refreshed logo and colors. You get two rounds of changes to make it yours.</p><span class="when">About 2 weeks</span></li>
+      <li class="step rv"><div class="num">03</div><h3>We build it</h3><p>Full site plus a refreshed logo and colors. You get two rounds of changes to make it yours.</p><span class="when">About 2 weeks</span></li>
       <li class="step rv"><div class="num">04</div><h3>You go live</h3><p>On the domain you already have. Your email keeps working exactly as it does today.</p><span class="when">$500 at launch</span></li>
     </ol>
   </section>
@@ -524,6 +598,14 @@ footer .wrap{padding-top:64px;padding-bottom:40px}
   </section>
 </main>
 
+<dialog class="viewer" id="viewer" aria-labelledby="v-title">
+  <div class="v-head"><div><b id="v-title">Concept</b><small>Sample concept · fictional business · stock photos</small></div>
+    <button class="v-close" type="button" aria-label="Close"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="v-body"><img id="v-img" alt=""></div>
+</dialog>
+
+<div class="mcta" id="mcta"><span>Free homepage concept</span><a class="btn btn-glow" href="#concept">Get mine</a></div>
+
 <footer>
   <div class="wrap">
     <div class="foot-top">
@@ -554,12 +636,55 @@ footer .wrap{padding-top:64px;padding-bottom:40px}
   var onScroll = function () { head.classList.toggle('scrolled', window.scrollY > 8); };
   window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
 
-  // Before/after slider
+  // Before/after slider: drag anywhere on the image, or use arrow keys on the hidden range
   var stage = document.getElementById('ba');
   var range = stage.querySelector('.ba-range');
-  var set = function (v) { stage.style.setProperty('--pos', v + '%'); };
-  range.addEventListener('input', function () { set(range.value); });
-  set(range.value);
+  var set = function (v) { v = Math.round(Math.max(0, Math.min(100, v)) * 10) / 10; range.value = v; stage.style.setProperty('--pos', v + '%'); };
+  var fromX = function (x) { var r = stage.getBoundingClientRect(); set((x - r.left) / r.width * 100); };
+  var dragging = false, touched = false;
+  stage.addEventListener('pointerdown', function (e) { e.preventDefault(); dragging = touched = true; stage.classList.add('dragging'); stage.setPointerCapture(e.pointerId); fromX(e.clientX); range.focus({ preventScroll: true }); });
+  stage.addEventListener('pointermove', function (e) { if (dragging) fromX(e.clientX); });
+  ['pointerup', 'pointercancel'].forEach(function (t) { stage.addEventListener(t, function () { dragging = false; stage.classList.remove('dragging'); }); });
+  range.addEventListener('input', function () { touched = true; set(+range.value); });
+  set(50);
+  // One gentle sweep the first time the slider is seen, so people know it moves
+  if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    var hint = new IntersectionObserver(function (en) {
+      if (!en[0].isIntersecting) return; hint.disconnect();
+      var t0 = null;
+      var step = function (t) {
+        if (touched) return;
+        if (!t0) t0 = t; var k = (t - t0) / 1800;
+        if (k >= 1) { set(50); return; }
+        set(50 + 22 * Math.sin(k * Math.PI * 2) * (1 - k * .3)); requestAnimationFrame(step);
+      };
+      setTimeout(function () { requestAnimationFrame(step); }, 700);
+    }, { threshold: .6 });
+    hint.observe(stage);
+  }
+
+  // Full-page concept viewer
+  var viewer = document.getElementById('viewer');
+  var vImg = document.getElementById('v-img');
+  document.querySelectorAll('.view').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      vImg.src = btn.dataset.src; vImg.alt = 'Full homepage concept for ' + btn.dataset.name.replace('&amp;', '&');
+      document.getElementById('v-title').textContent = btn.dataset.name.replace('&amp;', '&');
+      if (viewer.showModal) { viewer.showModal(); viewer.querySelector('.v-body').scrollTop = 0; } else { window.open(btn.dataset.src, '_blank'); }
+    });
+  });
+  viewer.querySelector('.v-close').addEventListener('click', function () { viewer.close(); });
+  viewer.addEventListener('click', function (e) { if (e.target === viewer) viewer.close(); });
+
+  // Mobile CTA bar: show after the hero, hide once the form is on screen
+  var mcta = document.getElementById('mcta');
+  var heroEl = document.querySelector('.hero'), formSec = document.getElementById('concept');
+  var pastHero = false, formVisible = false;
+  var upd = function () { mcta.classList.toggle('show', pastHero && !formVisible); };
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (en) { pastHero = !en[0].isIntersecting; upd(); }).observe(heroEl);
+    new IntersectionObserver(function (en) { formVisible = en[0].isIntersecting; upd(); }).observe(formSec);
+  }
 
   // Scroll the full-page shots by exactly their overflow
   var sizeShots = function () {
