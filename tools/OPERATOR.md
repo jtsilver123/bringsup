@@ -136,7 +136,20 @@ Point **www** at the site, and forward the bare domain to www. Never touch MX, T
   - **Wix:** Domains → ⋯ → Manage DNS (or forward from Settings).
   - **Network Solutions / Web.com:** My Domain Names → Manage → Edit DNS / Forward Domain.
   - **Anything else:** describe it in plain words, and ask for a screenshot if they're stuck.
-- Write the steps for their provider only, numbered, with the exact values to type.
+- Write the steps for their provider only, in plain words (customer_emails.md, "Write for someone who isn't technical"): numbered, one click per step, the exact words to click or type in bold, and what they'll see when it worked. Never say CNAME, DNS, A record or 301 on their own; name them only as the label on their screen.
+
+Example for GoDaddy (adapt the clicks for their provider; keep the shape):
+> 1. Go to **godaddy.com** and sign in.
+> 2. Click your name at the top right, then **My Products**.
+> 3. Next to **{domain}**, click **DNS**.
+> 4. Look in the list for a row where the **Name** is **www**. If there is one, click the pencil next to it. If not, click **Add New Record** and choose **CNAME** as the type.
+> 5. In the box called **Points to** (or **Value**), type exactly: **{pages_project}.pages.dev**
+> 6. Click **Save**.
+> 7. Now scroll down to **Forwarding**, click **Add Forwarding**, and type **https://www.{domain}**. Choose **Permanent (301)**, then **Save**.
+>
+> That's it. Don't change anything else on that page: the other rows are what keep your email working. It can take up to an hour to switch over, and I'll check it and email you when it's live.
+>
+> Stuck? Reply with a photo of your screen and I'll tell you exactly what to click. Or forward this email to whoever set up your website.
 
 ## 3. Reminders (every run, cheap)
 `node tools/projects-worker.ts health` lists `quiet_customers` (no activity for 7+ days while waiting on them). For each project in `preview_sent` or `awaiting_extra`, using `last_preview_at`, `last_customer_touch_at` and `events.json`:

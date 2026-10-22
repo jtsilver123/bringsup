@@ -9,7 +9,7 @@ import "./managed.css";
 const INCLUDED: [string, string][] = [
   ["Your web address, watched", "Every day I check that your address still leads to your site and your email settings are intact. If anything breaks, I fix it, or send you or your web person the exact two-minute fix."],
   ["Renewals watched", "I keep an eye on your domain's renewal date and remind you well before it runs out, so your site never goes dark by accident."],
-  ["Hosting and security", "Fast hosting and the padlock (SSL) stay on, and I check every day that your site is up."],
+  ["Hosting and security", "Your site stays fast, keeps the little padlock in the address bar that tells visitors it's safe, and I check every day that it's up."],
   ["Updates by email", "New hours, prices, menu items, photos, a holiday notice: reply with what changed and it's live, usually within a day."],
   ["A monthly check", "Once a month I compare your site with your Google listing (hours, phone, address) and fix anything that's drifted."],
 ];
