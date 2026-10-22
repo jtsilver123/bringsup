@@ -9,6 +9,7 @@
 // GET  /projects?ref=<ref>          Builder: one project and its history.                            (x-worker-token)
 // GET  /projects?health=1           Health check: alerts, stuck projects, failing jobs.               (x-worker-token)
 // GET  /projects?email=<address>    Inbox triage: the projects an email address belongs to.          (x-worker-token)
+// GET  /projects?plans=1            Managed plan: every project with care_plan on, for the daily checks. (x-worker-token)
 // POST /projects {action, ref, ...} Builder: "update" (set fields, log an event), "fail", "email_changes",
 //                                   or "payment" (a Stripe Checkout payment the builder found; exactly once per stripe_id). (x-worker-token)
 //
@@ -512,6 +513,12 @@ Deno.serve(async (req) => {
     if (error) return json(500, { error: error.message });
     return json(200, { jobs: data });
   }
+  if (url.searchParams.has("plans")) {
+    const { data, error } = await db.from("projects").select("ref,business_name,owner_name,email,domain,domain_helper_email,status,live_url,pages_project,plan_subscription,todo")
+      .eq("care_plan", true).order("created_at");
+    if (error) return json(500, { error: error.message });
+    return json(200, { projects: data || [] });
+  }
   const email = url.searchParams.get("email");
   if (email) {
     // Inbox triage: match a sender to their project(s), newest first.
@@ -526,5 +533,5 @@ Deno.serve(async (req) => {
     const { data: events } = await db.from("project_events").select("*").eq("project_id", p.id).order("created_at");
     return json(200, { project: p, events });
   }
-  return json(400, { error: "Use ?jobs=1, ?ref=, ?health=1 or ?status=" });
+  return json(400, { error: "Use ?jobs=1, ?ref=, ?health=1, ?plans=1 or ?status=" });
 });

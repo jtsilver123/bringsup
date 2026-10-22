@@ -12,3 +12,4 @@
 .m-notes{border-top:1.5px solid var(--ink)}
 .m-notes li{padding:16px 0}
 @media (max-width:800px){.managed .wrap{padding-top:32px;padding-bottom:64px}.m-price{font-size:38px}}
+.m-buy .m-who{flex-basis:auto;flex:1 1 260px;color:var(--muted);font-size:15px}

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { EMAIL, SubFooter, SubHeader } from "../../components/Chrome.tsx";
-import { STRIPE_LINKS, STRIPE_PORTAL } from "../../lib/config.ts";
+import { PROJECTS_API, STRIPE_LINKS, STRIPE_PORTAL } from "../../lib/config.ts";
 import "../../components/site.css";
 import "../flow/flow.css";
 import "./managed.css";
@@ -18,11 +18,19 @@ const INCLUDED: [string, string][] = [
 export function Managed() {
   const [paid, setPaid] = useState(false);
   const [ref, setRef] = useState("");
+  // Checkout opens only for a live BringsUp site (the ?ref= in their launch email); anyone else would pay for nothing.
+  const [eligible, setEligible] = useState<boolean | null>(null);
   const done = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const q = new URLSearchParams(location.search);
+    const r = q.get("ref") || "";
     setPaid(q.get("paid") === "1");
-    setRef(q.get("ref") || "");
+    setRef(r);
+    if (!r) { setEligible(false); return; }
+    fetch(`${PROJECTS_API}?status=${encodeURIComponent(r)}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((d) => setEligible(d?.status === "live"))
+      .catch(() => setEligible(false));
   }, []);
   useEffect(() => { if (paid) done.current?.focus({ preventScroll: true }); }, [paid]);
   const buy = `${STRIPE_LINKS.managed}${ref ? `?client_reference_id=${encodeURIComponent(ref)}` : ""}`;
@@ -48,8 +56,9 @@ export function Managed() {
           ) : (
             <div className="m-buy">
               <p className="m-price"><span className="cur">$</span>49<span className="per">a month</span></p>
-              <a className="btn btn-primary" href={buy}>Start the plan</a>
-              <p className="small">Secure checkout with Stripe. Cancel anytime, in two clicks.</p>
+              {eligible
+                ? <><a className="btn btn-primary" href={buy}>Start the plan</a><p className="small">Secure checkout with Stripe. Cancel anytime, in two clicks.</p></>
+                : <p className="small m-who">{eligible === null ? "Checking your site…" : <>The plan is for BringsUp sites that are already live. Start it from the link in your launch email, or email <a href={`mailto:${EMAIL}`}>{EMAIL}</a>. New here? <a href="/">See how BringsUp works</a>.</>}</p>}
             </div>
           )}
 
