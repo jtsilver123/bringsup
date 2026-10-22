@@ -28,7 +28,7 @@ const FLOWS: Record<FlowKind, Flow> = {
     lead: "Ten minutes, no call, nothing to pay. I build your whole website from this form. You pay the flat $1,000 only once you've seen it and approved it.",
     steps: [
       ["Fill in this form", "Hours, services, a few photos and your logo if you have them. Don't know who looks after your web address? Skip it, I'll sort that out at the end. The last question is one tick box to say go ahead."],
-      ["I build your full site", "Every page. Your logo stays as it is unless you ask me to tidy it. About two weeks."],
+      ["I build your full site", "Every page. Your logo and colors stay as they are unless you ask me to tidy them or make new ones. About two weeks."],
       ["Review and request changes", "A private preview link, and two rounds of changes by form."],
       ["Approve, pay, go live", "Love it? Pay the flat $1,000 and it goes live on your domain. If not, you owe nothing."],
     ],

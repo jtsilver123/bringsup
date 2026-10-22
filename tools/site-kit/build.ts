@@ -14,6 +14,8 @@ export function check(c: SiteContent): string[] {
   if (!c.offer?.groups?.some((g) => g.items.length)) errors.push("offer has no items");
   if (!c.primary_cta?.label || !c.primary_cta?.href) errors.push("primary_cta needs a label and an href");
   if (!c.about?.paragraphs?.length) errors.push("about.paragraphs is empty");
+  if (c.style && !["editorial", "workshop", "craft", "atelier", "landscape"].includes(c.style)) errors.push(`unknown style "${c.style}"`);
+  if (c.gallery?.some((g) => !g.image)) errors.push("every gallery entry needs an image");
   return errors;
 }
 
@@ -50,6 +52,7 @@ async function localize(c: SiteContent, out: string, base: string): Promise<Site
   copy.hero_image = await grab(copy.hero_image);
   copy.about.images = await Promise.all(copy.about.images.map(grab));
   for (const g of copy.offer.groups) for (const it of g.items) it.image = await grab(it.image);
+  for (const g of copy.gallery || []) g.image = await grab(g.image);
   return copy;
 }
 

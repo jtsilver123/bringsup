@@ -1,5 +1,5 @@
 // The site builder's toolbox: read jobs, save content, build and deploy customer sites, record what happened.
-// Runs inside the scheduled "BringsUp site builder" Claude Code task (see tools/OPERATOR.md).
+// Runs inside the scheduled "BringsUp operator" Claude Code task (see tools/OPERATOR.md).
 //
 //   node tools/projects-worker.ts jobs                         save each job to work/projects/<ref>/ and list them
 //   node tools/projects-worker.ts show <ref>                   print a project and its history

@@ -1,0 +1,48 @@
+{
+  "business_name": "Halloran & Daughters",
+  "theme": "boutique",
+  "tagline": "Watchmakers",
+  "city_state": "Providence, RI",
+  "phone": "(401) 555-0178",
+  "email": "bench@halloranwatch.example",
+  "address": "118 Wickenden Street, Providence, RI 02903",
+  "hours": [
+    { "days": "Tuesday to Friday", "time": "10am to 6pm" },
+    { "days": "Saturday", "time": "10am to 4pm" }
+  ],
+  "year_founded": "1962",
+  "rating": "",
+  "review_count": "",
+  "reviews_url": "",
+  "brand_primary": "#1B1F2A",
+  "brand_accent": "#9A7B4F",
+  "logo": "",
+  "hero_image": "https://images.unsplash.com/photo-1587836374828-4dbafa94cf0e?fm=jpg&fit=crop&w=1800&q=68",
+  "primary_cta": { "label": "Book an appointment", "href": "contact/" },
+  "home": {
+    "headline": "Mechanical watches, serviced by hand.",
+    "subheadline": "Three generations at the same bench on Wickenden Street. We service, restore and size fine mechanical watches, and we'll tell you honestly what yours needs.",
+    "final_heading": "Bring it in. We'll take a look while you wait."
+  },
+  "offer": {
+    "title": "Services",
+    "intro": "",
+    "groups": [{ "name": "", "items": [
+      { "name": "Full service", "description": "Movement disassembled, cleaned, oiled and regulated, with a water test and a two-year warranty.", "price": "from $450", "image": "" },
+      { "name": "Restoration", "description": "Vintage pieces brought back carefully, keeping original dials and hands wherever we can.", "price": "Quoted", "image": "" },
+      { "name": "Crystals & bracelets", "description": "Sapphire crystals, links, sizing and clasps, usually the same day.", "price": "from $40", "image": "" }
+    ]}]
+  },
+  "about": {
+    "heading": "Sixty years at one bench.",
+    "paragraphs": ["Frank Halloran opened the shop in 1962 after an apprenticeship in Biel. His daughter Maureen and granddaughter Clare run it now."],
+    "images": []
+  },
+  "gallery": [
+    { "image": "https://images.unsplash.com/photo-1547996160-81dfa63595aa?fm=jpg&fit=crop&w=1200&q=72", "caption": "" },
+    { "image": "https://images.unsplash.com/photo-1585123334904-845d60e97b29?fm=jpg&fit=crop&w=1200&q=72", "caption": "" }
+  ],
+  "testimonials": [{ "quote": "Clare brought my grandfather's watch back to life and kept every scratch that mattered.", "author": "Sean B." }],
+  "domain": "halloranwatch.example",
+  "social": []
+}

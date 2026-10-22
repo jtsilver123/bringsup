@@ -80,7 +80,7 @@ export function BeforeAfter() {
         onPointerCancel={stop}
       >
         <img className="ba-old" src="/assets/work/bakery-before.jpg" width={1664} height={1040} alt="An outdated bakery homepage: an old layout, a broken image, 'please call for hours' and no way to order online." />
-        <img className="ba-after" src="/assets/work/bakery-hero.jpg" width={1664} height={1040} fetchPriority="high" alt="The same bakery redesigned: a full-width photo, 4.9 stars from 412 Google reviews up top, and an Order for pickup button." />
+        <img className="ba-after" src="/assets/work/bakery-hero.jpg" width={1664} height={1040} fetchPriority="high" alt="The same bakery redesigned: a printed-menu look with a serif nameplate, a big photo of the bread, the hours, and an Order for pickup button." />
         <input
           ref={range}
           className="ba-range"

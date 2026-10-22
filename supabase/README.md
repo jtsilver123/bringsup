@@ -1,6 +1,6 @@
 # Instant redesigns backend
 
-Powers `bringsup.com/try/`: a visitor enters their website and email, and gets an AI-redesigned homepage in about a minute.
+Powers `bringsup.com/try/`: a visitor enters their website and email, and gets a redesigned homepage by email, usually within the hour.
 
 ```
 /try/ (browser)  --POST {url, email}-->  functions/redesign  --> reads their site (extract.ts)
@@ -15,7 +15,7 @@ Supabase project `bringsup` (ref `rgeeynodxvusivfbaxfu`, Personal Projects org).
 `https://rgeeynodxvusivfbaxfu.supabase.co/functions/v1/redesign`.
 
 ## How redesigns get made
-Only on the Claude subscription, never an API key. Requests are saved as `queued`, and an hourly scheduled Claude Code task designs them and emails each visitor. See `tools/QUEUE_WORKER.md`.
+Only on the Claude subscription, never an API key. Requests are saved as `queued`, and the hourly "BringsUp operator" task designs them (OPERATOR.md step 4) and emails each visitor. See `tools/QUEUE_WORKER.md`.
 
 ## Deploying changes
 Run `tools/bundle_function.sh`, push, then deploy `supabase/dist/redesign.ts` (dashboard editor, CLI, or the Management API). Deploys through the API turn JWT verification back on, so switch it off again afterwards.
@@ -32,4 +32,4 @@ Run `tools/bundle_function.sh`, push, then deploy `supabase/dist/redesign.ts` (d
 ## Day to day
 - Every request is a row in `redesigns` (email, website, status, the generated content). Filter `status = 'done'` for leads.
 - `/try/?id=<id>` shows any saved redesign. `/try/?demo` shows a sample without calling the backend.
-- Cost is roughly 5–10 cents per redesign (Claude Opus 5.5). The daily cap bounds the worst case.
+- Redesigns run on the Claude subscription (no per-request cost). The daily cap bounds the queue.

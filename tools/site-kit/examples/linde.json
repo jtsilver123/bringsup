@@ -1,0 +1,72 @@
+{
+  "business_name": "Linde Motorwerk",
+  "theme": "auto",
+  "tagline": "Porsche & BMW specialists",
+  "city_state": "Boulder, CO",
+  "phone": "(303) 555-0164",
+  "email": "shop@lindemotorwerk.example",
+  "address": "4410 Valmont Road, Boulder, CO 80301",
+  "hours": [
+    { "days": "Monday to Friday", "time": "7:30am to 5:30pm" },
+    { "days": "Saturday", "time": "By appointment" },
+    { "days": "Sunday", "time": "Closed" }
+  ],
+  "year_founded": "1991",
+  "rating": "4.9",
+  "review_count": "287",
+  "reviews_url": "https://www.google.com/maps/search/?api=1&query=Linde+Motorwerk+Boulder",
+  "brand_primary": "#15171A",
+  "brand_accent": "#D6402B",
+  "logo": "",
+  "hero_image": "https://images.unsplash.com/photo-1611821064430-0d40291d0f0b?fm=jpg&fit=crop&w=1800&q=68",
+  "primary_cta": { "label": "Book a service", "href": "contact/" },
+  "specialties": ["Porsche", "BMW", "Audi", "Mini", "Volkswagen"],
+  "home": {
+    "headline": "Dealer-level work on your Porsche or BMW.",
+    "subheadline": "An independent shop in Boulder run by former factory technicians. The same diagnostic tools and OEM parts as the dealer, a written estimate before anything is touched, and a technician you can actually talk to.",
+    "final_heading": "Call the shop. You'll talk to a technician."
+  },
+  "offer": {
+    "title": "Service & repair",
+    "intro": "Everything from an oil service to a full engine rebuild, on air-cooled classics and new models alike.",
+    "groups": [
+      { "name": "", "items": [
+        { "name": "Scheduled maintenance", "description": "Factory service intervals with OEM fluids and filters, recorded in your service book.", "price": "from $189", "image": "" },
+        { "name": "Diagnostics", "description": "PIWIS and ISTA dealer scan tools, plus a road test with the technician who'll do the work.", "price": "$165", "image": "" },
+        { "name": "Engine & drivetrain", "description": "IMS bearings, rear main seals, timing chains, clutches, and rebuilds on air-cooled and water-cooled 911s.", "price": "Quoted", "image": "" },
+        { "name": "Brakes & suspension", "description": "Pads, rotors, fluid, alignments and coilover setups for the street or the track.", "price": "from $420", "image": "" },
+        { "name": "Pre-purchase inspection", "description": "Two hours on the lift and a written report with photos before you buy.", "price": "$295", "image": "" },
+        { "name": "Track preparation", "description": "Fluids, brakes, corner balancing and a signed tech inspection for HPDE days.", "price": "from $350", "image": "" }
+      ]}
+    ]
+  },
+  "approach": {
+    "heading": "How a job goes here",
+    "paragraphs": [
+      "You talk to the technician who'll work on your car, not a service writer. We drive it with you if we can, then put it on the lift and call before we touch anything.",
+      "Every estimate is written and itemized, with the parts we'd use and why. If something can wait, we say so and note it, so you can plan for it instead of being surprised by it.",
+      "When you pick up, you get photos of what we found, the old parts if you want them, and a stamped service book."
+    ]
+  },
+  "gallery": [
+    { "image": "https://images.unsplash.com/photo-1615906655593-ad0386982a0f?fm=jpg&fit=crop&w=1200&q=72", "caption": "Bay 2, mid-repair" },
+    { "image": "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?fm=jpg&fit=crop&w=1200&q=72", "caption": "Belt and tensioner service" },
+    { "image": "https://images.unsplash.com/photo-1580273916550-e323be2ae537?fm=jpg&fit=crop&w=1200&q=72", "caption": "BMW M4, in for brakes and an alignment" },
+    { "image": "https://images.unsplash.com/photo-1530046339160-ce3e530c7d2f?fm=jpg&fit=crop&w=1200&q=72", "caption": "The tool wall" }
+  ],
+  "about": {
+    "heading": "Factory-trained. Independent since 1991.",
+    "paragraphs": [
+      "Erik Linde spent nine years as a master technician at a Porsche dealer in Stuttgart and Denver before opening his own four-bay shop on Valmont Road in 1991.",
+      "His son Jonas and three technicians work alongside him now. Between them they've seen just about every way a German car can go wrong, and how to fix it so it stays fixed."
+    ],
+    "images": []
+  },
+  "testimonials": [
+    { "quote": "Erik found an oil leak the dealer had missed twice, fixed it for less than their diagnostic fee, and showed me the old seal.", "author": "Mark T." },
+    { "quote": "I bought my 911 on the strength of their pre-purchase inspection. Thorough, honest, and they talked me out of the first car I looked at.", "author": "Priya S." },
+    { "quote": "Thirty years of owning German cars and this is the best shop I've used.", "author": "Dan W." }
+  ],
+  "domain": "lindemotorwerk.example",
+  "social": [{ "label": "Instagram", "url": "https://instagram.com/" }]
+}

@@ -10,9 +10,9 @@ export const NAV: NavLink[] = [
 
 export type WorkSample = { slug: string; name: string; ariaName: string; kind: string; text: string; height: number };
 export const WORK: WorkSample[] = [
-  { slug: "bakery", name: "Marigold Bakery", ariaName: "Marigold Bakery", kind: "Bakery · Westbrook, CT", text: "Warm and family-run, with ordering for pickup and holiday trays up front.", height: 3766 },
-  { slug: "auto", name: "Delgado Auto Repair", ariaName: "Delgado Auto Repair", kind: "Auto repair · Mesa, AZ", text: "Straightforward and trustworthy, with booking online in under a minute.", height: 3733 },
-  { slug: "plumbing", name: "Whitfield Plumbing & Heating", ariaName: "Whitfield Plumbing and Heating", kind: "Plumbing & HVAC · Dayton, OH", text: "Clean and dependable, with a quote request and the phone number always in reach.", height: 3733 },
+  { slug: "bakery", name: "Marigold Bakery", ariaName: "Marigold Bakery", kind: "Bakery · Westbrook, CT", text: "Set like a printed menu: a serif nameplate, real prices on dotted leaders, and the hours right under the headline.", height: 4718 },
+  { slug: "auto", name: "Linde Motorwerk", ariaName: "Linde Motorwerk", kind: "Porsche & BMW specialist · Boulder, CO", text: "Bold and technical, like a spec sheet: numbered services with prices, and the phone number big enough to tap from across the room.", height: 5163 },
+  { slug: "carpentry", name: "Hartwell Joinery", ariaName: "Hartwell Joinery", kind: "Custom carpentry · Hudson, NY", text: "Quiet and led by the work: big project photos with captions, and how a job runs, told in plain words.", height: 5386 },
 ];
 
 /** How it works, as a timeline: when, what happens, and what it costs at that point. */
@@ -20,7 +20,7 @@ export type Step = { when: string; title: string; text: string; cost: string };
 export const STEPS: Step[] = [
   { when: "Same day", title: "I make your homepage", text: "From your real menu or services, your hours, and the things your reviews keep mentioning. You get a private link to open on your phone.", cost: "Free" },
   { when: "10 minutes", title: "You fill in one form", text: "Hours, services, a few photos, and your logo if you have one. Skip anything you don't have. No call.", cost: "Free" },
-  { when: "About two weeks", title: "I build the whole site", text: "Every page, plus cleaned-up colors and fonts. Your logo stays as it is unless you ask me to tidy it. You get a private preview and two rounds of changes.", cost: "Free" },
+  { when: "About two weeks", title: "I build the whole site", text: "Every page. Your logo and colors stay as they are, or I tidy them up or make new ones if you ask, with a one-page brand guide. You get a private preview and two rounds of changes.", cost: "Free" },
   { when: "When you approve", title: "You pay, and it goes live", text: "On the web address you already have. Your email keeps working. If you don't love it, you owe nothing.", cost: "$1,000" },
 ];
 

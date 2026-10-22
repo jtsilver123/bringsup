@@ -1,0 +1,67 @@
+{
+  "business_name": "Hartwell Joinery",
+  "theme": "home",
+  "tagline": "Custom carpentry & renovation",
+  "city_state": "Hudson, NY",
+  "phone": "(518) 555-0133",
+  "email": "studio@hartwelljoinery.example",
+  "address": "21 Front Street, Hudson, NY 12534",
+  "hours": [
+    { "days": "Monday to Friday", "time": "8am to 5pm" },
+    { "days": "Saturday", "time": "Shop visits by appointment" }
+  ],
+  "year_founded": "1998",
+  "rating": "5.0",
+  "review_count": "64",
+  "reviews_url": "https://www.google.com/maps/search/?api=1&query=Hartwell+Joinery+Hudson+NY",
+  "brand_primary": "#1F1D1A",
+  "brand_accent": "#8A4B2A",
+  "logo": "",
+  "hero_image": "https://images.unsplash.com/photo-1622372738946-62e02505feb3?fm=jpg&fit=crop&w=1800&q=68",
+  "primary_cta": { "label": "Start a project", "href": "contact/" },
+  "specialties": ["Kitchens", "built-ins and libraries", "staircases", "furniture", "careful renovation of old houses"],
+  "home": {
+    "headline": "Built-in work, made to outlast the house.",
+    "subheadline": "A family joinery shop in Hudson, NY. We design, build and install kitchens, libraries and staircases in solid wood, and take on careful renovations of older homes across the Hudson Valley.",
+    "final_heading": "Tell us about the room."
+  },
+  "offer": {
+    "title": "What we do",
+    "intro": "Every piece is drawn for the room it goes in and built in our shop on Front Street.",
+    "groups": [
+      { "name": "", "items": [
+        { "name": "Kitchens", "description": "Inset and slab cabinetry in oak, walnut and painted maple, with hardware and counters coordinated for you.", "price": "", "image": "" },
+        { "name": "Built-ins & libraries", "description": "Bookcases, window seats, mudrooms and media walls that look like they came with the house.", "price": "", "image": "" },
+        { "name": "Staircases", "description": "New stairs, rebuilt treads and railings, and newel posts turned to match the originals.", "price": "", "image": "" },
+        { "name": "Renovation", "description": "Porches, trim, windows and floors on 18th and 19th century houses, repaired before replaced.", "price": "", "image": "" }
+      ]}
+    ]
+  },
+  "approach": {
+    "heading": "How a project runs",
+    "paragraphs": [
+      "It starts with a visit. We measure, look at how you use the room and talk through materials, then send drawings and a fixed price within two weeks.",
+      "Once you sign off, everything is built and finished in our shop, so your house isn't a construction site for months. Installation usually takes days, not weeks, and we leave it cleaner than we found it."
+    ]
+  },
+  "gallery": [
+    { "image": "https://images.unsplash.com/photo-1600585152220-90363fe7e115?fm=jpg&fit=crop&w=1600&q=72", "caption": "White oak kitchen and island, Germantown" },
+    { "image": "https://images.unsplash.com/photo-1626081062126-d3b192c1fcb0?fm=jpg&fit=crop&w=1200&q=72", "caption": "Fitting a cabinet face frame in the shop" },
+    { "image": "https://images.unsplash.com/photo-1560185007-cde436f6a4d0?fm=jpg&fit=crop&w=1200&q=72", "caption": "Dining room and floors, Hudson" },
+    { "image": "https://images.unsplash.com/photo-1560184897-ae75f418493e?fm=jpg&fit=crop&w=1600&q=72", "caption": "Porch rebuild on an 1890s house, Kinderhook" }
+  ],
+  "about": {
+    "heading": "Two generations, one shop.",
+    "paragraphs": [
+      "Tom Hartwell started building cabinets in a barn outside Claverack in 1998. His daughter Nora joined after studying architecture, and now does most of the drawing.",
+      "We're a crew of six. We don't subcontract the woodwork, and the person who measures your room is the person who builds it."
+    ],
+    "images": ["https://images.unsplash.com/photo-1503387762-592deb58ef4e?fm=jpg&fit=crop&w=1200&q=72"]
+  },
+  "testimonials": [
+    { "quote": "Nora's drawings were so clear we knew exactly what we were getting, and the kitchen came out better than the drawings. Four years on, every door still closes like the first day.", "author": "Anne and David K." },
+    { "quote": "They rebuilt our porch so well the neighbors asked if it was original.", "author": "Michael R." }
+  ],
+  "domain": "hartwelljoinery.example",
+  "social": [{ "label": "Instagram", "url": "https://instagram.com/" }]
+}
