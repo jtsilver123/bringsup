@@ -94,9 +94,10 @@ async function complete(id: string): Promise<void> {
 /** The link preview card's picture (iMessage, Gmail, WhatsApp), 1200x630 base64 JPEG: their homepage in a browser frame
  *  beside "This could be your new website. Made for <name>" (tools/worker/og-card.html). */
 async function previewImage(file: string, name: string): Promise<string | undefined> {
+  let browser: any;
   try {
     const { chromium } = await import("/opt/node-tools/node_modules/playwright/index.mjs" as string);
-    const browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" }).catch(() => chromium.launch());
+    browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" }).catch(() => chromium.launch());
     const site = await browser.newPage({ viewport: { width: 1280, height: 860 } });
     await site.goto("file://" + resolve(file), { waitUntil: "networkidle", timeout: 30_000 }).catch(() => {});
     await site.waitForTimeout(800);
@@ -108,11 +109,12 @@ async function previewImage(file: string, name: string): Promise<string | undefi
     await card.setContent(html, { waitUntil: "networkidle", timeout: 30_000 }).catch(() => {});
     await card.evaluate(() => document.fonts.ready);
     const shot: Buffer = await card.screenshot({ type: "jpeg", quality: 82 });
-    await browser.close();
     return shot.toString("base64");
   } catch (e) {
     console.error(`No link preview picture (the link still works): ${String(e).slice(0, 160)}`);
     return undefined;
+  } finally {
+    await browser?.close().catch(() => {});
   }
 }
 

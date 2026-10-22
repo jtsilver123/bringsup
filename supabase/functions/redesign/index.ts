@@ -6,7 +6,7 @@
 // posts it back ({action: "complete"}) and emails the visitor their link. See tools/QUEUE_WORKER.md.
 // Worker calls need the x-worker-token header. {action: "create", url, email, concept, images?, ref?, html?, og_image?} saves a
 // finished homepage for a cold-email prospect who said "send it over" and returns its private short link,
-// bringsup.com/for/<slug>-<4 chars> (tools/email_template.md). og_image is a base64 JPEG for the link preview card.
+// bringsup.com/for/<slug>-<8 random chars> (tools/email_template.md). og_image is a base64 JPEG for the link preview card.
 // GET ?for=<short> loads it like ?id=; add &meta=1 for just the name, headline and preview image (the /for/ Cloudflare worker).
 //
 // Secrets (Supabase dashboard -> Edge Functions -> Secrets): IP_SALT, WORKER_TOKEN.
@@ -23,10 +23,15 @@ const WORKER_TOKEN = Deno.env.get("WORKER_TOKEN") || "";
 const link = (id: string) => `https://bringsup.com/try/?id=${id}`;
 const shortLink = (short: string) => `https://bringsup.com/for/${short}`;
 const slugify = (s: string) => s.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40) || "preview";
-/** Four lowercase letters and digits, skipping look-alikes (0/o, 1/l/i). */
+/** Eight random lowercase letters and digits (no look-alikes like 0/o, 1/l/i): about 40 bits, so a preview can't be guessed
+ *  from the business's name. 256 isn't a multiple of 31, so out-of-range bytes are redrawn to keep every character equally likely. */
 function code(): string {
   const abc = "abcdefghjkmnpqrstuvwxyz23456789";
-  return Array.from(crypto.getRandomValues(new Uint8Array(4)), (b) => abc[b % abc.length]).join("");
+  let out = "";
+  while (out.length < 8) {
+    for (const b of crypto.getRandomValues(new Uint8Array(16))) if (b < 248 && out.length < 8) out += abc[b % abc.length];
+  }
+  return out;
 }
 
 const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
