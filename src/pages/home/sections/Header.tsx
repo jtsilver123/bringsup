@@ -30,10 +30,19 @@ export function Header({ active, start }: { active: string; start?: string }) {
     };
   }, [open]);
 
+  // #top is this sticky header, which is always on screen, so the browser wouldn't move: scroll to the very top instead.
+  const toTop = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setOpen(false);
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+    history.replaceState(null, "", location.pathname + location.search);
+  };
+
   return (
     <header ref={head} className={open ? "site-head open" : "site-head"} id="top">
       <div className="wrap">
-        <a className="brand" href="#top" aria-label="BringsUp home"><BrandMark /><span>BringsUp</span></a>
+        <a className="brand" href="#top" aria-label="BringsUp home" onClick={toTop}><BrandMark /><span>BringsUp</span></a>
         <nav className="site-nav" aria-label="Main">
           {NAV.map((l) => (
             <a key={l.href} className="plain" aria-current={active === l.href.slice(1) ? "true" : undefined} href={l.href}>{l.label}</a>
