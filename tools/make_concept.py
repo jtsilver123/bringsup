@@ -78,10 +78,31 @@ THEMES["education"] = dict(BASE, radius="12px", radius_lg="18px", bg="#F6F7FB", 
         steps=[["Free consultation", "A 30-minute call on your odds, school and timeline."], ["Your roadmap", "A step-by-step plan built on your state's actual rules."], ["Reclassification", "We guide every step. You pay only when it's granted."]],
         final_heading="Stop paying out-of-state tuition.",
         photos=dict(hero=u("1541339907198-e08756dedf3f"), cards=[u("1554224155-6726b3ff858f", 900), u("1450101499163-c8848c66ca85", 900), u("1531545514256-b1400bc00f31", 900)], story=u("1562774053-701939374585", 1200), cta=u("1517486808906-6ca8b3f04846")))
+THEMES["home"] = dict(BASE, radius="6px", radius_lg="10px", bg="#F7F4EF", ink="#1E1B18", muted="#5E5750", hero="#2A2622", hero_ink="#F5F1EA", accent="#C9A46A", accent_ink="#1E1B18", card="#FFFFFF", line="#E6DFD4", star="#B8873A", eyebrow="#8A6A3A",
+        display_font="Cormorant Garamond", display_font_q="Cormorant+Garamond:wght@600;700", body_font="Jost", body_font_q="Jost:wght@400;500;600;700",
+        tagline="Craftsmanship for the home", nav=["Services", "Our work", "About", "Contact"], primary_cta="Request a consultation", list_eyebrow="What we do", list_heading="Made to last, made for your home",
+        list_sub="Every project is handled by the same hands, start to finish.", item_link="View work",
+        blurbs=["Done by hand, in our own workshop.", "Materials chosen with you, piece by piece.", "Built to last for generations."],
+        steps_eyebrow="How it works", steps_heading="From first visit to finished piece",
+        steps=[["Book a consultation", "Tell us about the project; we'll come see it or you bring it in."], ["Choose the details", "Fabrics, finishes and a clear quote up front."], ["We get to work", "Delivered or installed on schedule, finished right."]],
+        final_heading="Let's start on your next project.",
+        photos=dict(hero=u("1617806118233-18e1de247200"), cards=[u("1555041469-a586c61ea9bc", 900), u("1549187774-b4e9b0445b41", 900), u("1513519245088-0e12902e5a38", 900)], story=u("1586023492125-27b2c045efd7", 1200), cta=u("1600585154340-be6161a56a0c")))
+THEMES["boutique"] = dict(BASE, radius="2px", radius_lg="4px", bg="#FAF8F5", ink="#1A1A1A", muted="#5C5A57", hero="#151515", hero_ink="#F6F3EE", accent="#D8B67A", accent_ink="#151515", card="#FFFFFF", line="#E7E2DA", star="#B8924A", eyebrow="#8C6A32",
+        display_font="Cormorant Garamond", display_font_q="Cormorant+Garamond:wght@600;700", body_font="Jost", body_font_q="Jost:wght@400;500;600;700",
+        tagline="Fine craftsmanship", nav=["Collections", "Services", "About", "Visit"], primary_cta="Book an appointment", list_eyebrow="Our craft", list_heading="Pieces made, cared for and kept for a lifetime",
+        list_sub="Personal service from people who know the work.", item_link="Learn more",
+        blurbs=["Done in-house, by hand.", "A personal consultation, never a rush.", "Cared for like it's our own."],
+        steps_eyebrow="Visit us", steps_heading="Personal service, start to finish",
+        steps=[["Book a time", "Pick a slot that works and tell us what you have in mind."], ["Meet with us", "We'll walk you through options, honestly."], ["Pick it up", "Finished with care, ready when we say it will be."]],
+        final_heading="Come see us. We'd love to help.",
+        photos=dict(hero=u("1611652022419-a9419f74343d"), cards=[u("1515562141207-7a88fb7ce338", 900), u("1594938298603-c8148c4dae35", 900), u("1611652022419-a9419f74343d", 900)], story=u("1515562141207-7a88fb7ce338", 1200), cta=u("1611652022419-a9419f74343d")))
 THEMES["default"] = THEMES["trades"]
 
 def theme_for(industry: str) -> dict:
     s = (industry or "").lower()
+    if any(k in s for k in ("jewel", "watch", "tailor", "alteration", "bridal")): return THEMES["boutique"]
+    if any(k in s for k in ("upholst", "furniture", "frame", "framing", "interior", "cabinet", "carpent", "remodel", "builder", "restoration", "woodwork")): return THEMES["home"]
+    if any(k in s for k in ("landscap", "tree", "lawn")): return THEMES["garden"]
     if any(k in s for k in ("tuition", "residency", "education", "consult", "college")): return THEMES["education"]
     if any(k in s for k in ("deli", "sandwich", "sub", "pizza", "diner", "restaurant")): return THEMES["deli"]
     if any(k in s for k in ("bak", "cafe", "donut", "pastry", "dessert")): return THEMES["bakery"]
@@ -102,13 +123,15 @@ def build_copy(p, t):
     yr = yr[:4] if yr[:4].isdigit() else ""
     key = t["tagline"]
     with_year = {"Family bakery": f"Baked fresh in {city} since {yr}.", "Family deli": f"{city}'s favorite subs since {yr}.", "Auto repair": f"Trusted car care since {yr}.",
-                 "Greenhouse & garden": f"Growing in {city} since {yr}.", "Licensed & insured": f"{city}'s neighborhood pros since {yr}.", "Residency consulting": "Pay in-state tuition. Legally, and for good."}
+                 "Greenhouse & garden": f"Growing in {city} since {yr}.", "Licensed & insured": f"{city}'s neighborhood pros since {yr}.", "Residency consulting": "Pay in-state tuition. Legally, and for good.", "Craftsmanship for the home": f"Crafted in {city} since {yr}.", "Fine craftsmanship": f"A {city} tradition since {yr}."}
     no_year = {"Family bakery": "Baked fresh every morning, the way it should be.", "Family deli": "Piled-high subs, made the old-fashioned way.", "Auto repair": "Honest car care from people who know your name.",
-               "Greenhouse & garden": "Healthy plants, grown right here.", "Licensed & insured": "Done right the first time, by your neighbors.", "Residency consulting": "Pay in-state tuition. Legally, and for good."}
+               "Greenhouse & garden": "Healthy plants, grown right here.", "Licensed & insured": "Done right the first time, by your neighbors.", "Residency consulting": "Pay in-state tuition. Legally, and for good.", "Craftsmanship for the home": "Craftsmanship you can see, and feel.", "Fine craftsmanship": "Fine work, personal service."}
     headline = (with_year if yr and city else no_year)[key]
     subs = {"Family bakery": "Order ahead online, browse the full menu, or stop by and say hi.", "Family deli": "Order ahead online and skip the line, or let us cater your next event.",
             "Auto repair": "Book online in a minute, get a clear quote, and get back on the road.", "Greenhouse & garden": "See what's in stock this week and reserve plants for pickup.",
             "Licensed & insured": "Request a free quote online and we'll call you back fast.",
+            "Craftsmanship for the home": "Book a consultation online and see past work, materials and pricing up front.",
+            "Fine craftsmanship": "Book a private appointment online, or stop in and see us.",
             "Residency consulting": "We guide out-of-state students and parents through residency, step by step, and only get paid when it's granted."}
     sub = p.get("sub") or (f"{p['name']} is a family-owned favorite in {p.get('city_state') or 'town'}. " + subs[key])
     owner = (p.get("owner_name_if_known") or "").split("(")[0].strip()
@@ -192,7 +215,7 @@ def main(src, out_dir):
     d, ph = hp.replace("-concept.html", "-desktop.png"), hp.replace("-concept.html", "-phone.png")
     asyncio.run(render(hp, d, ph))
     domain = urlparse(p.get("website") or "").netloc.lower().removeprefix("www.") or slug + ".com"
-    feature = {"Order for pickup": "Online ordering", "Book an appointment": "Online booking", "Shop plants": "Online plant shop", "Get a free quote": "Quote requests"}.get(t["primary_cta"], "Contact form")
+    feature = {"Order for pickup": "Online ordering", "Book an appointment": "Online booking", "Shop plants": "Online plant shop", "Get a free quote": "Quote requests", "Request a consultation": "Consultation booking", "Book a free call": "Free-call booking"}.get(t["primary_cta"], "Contact form")
     board_html = env.get_template("board_template.html").render(name=p["name"], domain=domain, cta=feature, desktop="file://" + d, phone="file://" + ph)
     bh = hp.replace("-concept.html", "-board.html"); open(bh, "w").write(board_html)
     board = hp.replace("-concept.html", "-board.png")
