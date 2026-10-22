@@ -1,0 +1,36 @@
+<!-- BringsUp preview gate. The same on every hand-built preview (tools/email_template.md, "Building their homepage"):
+     wrap everything below the part you show in <div class="bu-gate"><div class="bu-blur" aria-hidden="true" inert> ... </div>,
+     then paste this card right after the bu-blur div, inside bu-gate. Fill {{REST}} (one plain sentence about what the full site
+     adds, from their real business) and {{START_URL}} (https://bringsup.com/start/?ref=<slug>). Keep the wording otherwise. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,700&display=swap">
+<style>
+.bu-gate{position:relative;max-height:760px;overflow:hidden}
+.bu-blur{filter:blur(8px);opacity:.7;pointer-events:none;user-select:none}
+.bu-gate::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(rgba(251,250,247,0),rgba(251,250,247,.6) 22%,rgba(251,250,247,.97) 65%)}
+.bu-card{position:absolute;z-index:3;left:50%;top:40px;transform:translateX(-50%);box-sizing:border-box;width:min(520px,calc(100% - 32px));padding:28px;background:#FBFAF7;color:#16181D;border:1px solid #E4E1D9;border-radius:12px;box-shadow:0 18px 50px rgba(22,24,29,.16);font:400 17px/1.55 'DM Sans',system-ui,sans-serif;text-align:left}
+.bu-card *{box-sizing:border-box}
+.bu-who{display:flex;align-items:center;gap:8px;margin:0 0 14px;font-weight:700;font-size:15px;color:#16181D}
+.bu-who svg{width:26px;height:26px;flex:none}
+.bu-who span{color:#5A5F6B;font-weight:400}
+.bu-card h2{margin:0;font:800 clamp(28px,6vw,38px)/1.05 'Bricolage Grotesque',system-ui,sans-serif;letter-spacing:-.02em;color:#16181D}
+.bu-card p{margin:12px 0 0;color:#3D414B}
+.bu-card p b{color:#16181D}
+.bu-btn{display:inline-flex;align-items:center;gap:10px;margin-top:20px;padding:14px 22px;border-radius:8px;background:#C2410C;color:#fff;font-weight:700;font-size:17px;text-decoration:none;transition:background .18s,transform .12s}
+.bu-btn:hover{background:#9A3412}
+.bu-btn:active{transform:translateY(1px) scale(.985)}
+.bu-btn:focus-visible{outline:3px solid #FFB37A;outline-offset:3px}
+.bu-btn svg{transition:transform .18s}
+.bu-btn:hover svg{transform:translateX(4px)}
+.bu-small{font-size:15px}
+.bu-small a{color:#9A3412}
+@media (max-width:560px){.bu-gate{max-height:820px}.bu-card{top:24px;padding:22px}}
+@media (prefers-reduced-motion:reduce){.bu-btn,.bu-btn svg{transition:none}}
+</style>
+<div class="bu-card" role="region" aria-label="Get the rest of your site">
+  <p class="bu-who"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 4H34A10 10 0 0 1 44 14V30A10 10 0 0 1 34 40H21L10.6 46.6A1 1 0 0 1 9 45.8V39.3A10 10 0 0 1 4 30V14A10 10 0 0 1 14 4Z" fill="#16181D"/><g fill="none" stroke="#FFB37A" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 31V13"/><path d="M16 21l8-8 8 8"/></g></svg>BringsUp <span>· this is a preview</span></p>
+  <h2>Want the rest of your site?</h2>
+  <p>{{REST}}</p>
+  <p><b>One 10-minute form starts it.</b> Nothing to pay until you've seen the finished site and said yes. Then it's a flat $1,000.</p>
+  <a class="bu-btn" href="{{START_URL}}">Start my website <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+  <p class="bu-small">Questions? Just reply to my email, or write to <a href="mailto:jake@bringsup.com">jake@bringsup.com</a>.</p>
+</div>

@@ -8,8 +8,8 @@ import "./managed.css";
 /** What the plan covers. Each line is something the operator does (tools/OPERATOR.md "managed"); keep them in step. */
 const INCLUDED: [string, string][] = [
   ["Your web address, watched", "Every day I check that your address still leads to your site and your email settings are intact. If anything breaks, I fix it, or send you or your web person the exact two-minute fix."],
-  ["Renewals watched", "I keep an eye on your domain's renewal date and remind you well before it runs out, so your site never goes dark by accident."],
-  ["Hosting and security", "Your site stays fast, keeps the little padlock in the address bar that tells visitors it's safe, and I check every day that it's up."],
+  ["Renewals watched", "I keep an eye on when your web address is due for renewal and remind you well before it runs out, so your site never goes dark by accident."],
+  ["Kept online and safe", "Your site stays online and fast, keeps the little padlock in the address bar that tells visitors it's safe, and I check every day that it's up."],
   ["Updates by email", "New hours, prices, menu items, photos, a holiday notice: reply with what changed and it's live, usually within a day."],
   ["A monthly check", "Once a month I compare your site with your Google listing (hours, phone, address) and fix anything that's drifted."],
 ];
@@ -70,8 +70,8 @@ export function Managed() {
           <h2 className="flow-h">Good to know</h2>
           <ul className="ruled m-notes">
             <li><b>Bigger changes</b><span>A new page or a redesign of a section isn't a small update. Those are $150 a round, same as always, and I'll tell you before starting.</span></li>
-            <li><b>If you cancel</b><span>Your site stays up and hosting stays included, as it was. Updates go back to $150 a round. Nothing about your domain or email changes.</span></li>
-            <li><b>Payments</b><span>BringsUp's payments are handled by InstateMe, Jake's other company, so your card statement and receipts say "BRINGSUP MANAGED" and "InstateMe".</span></li>
+            <li><b>If you cancel</b><span>Your site stays up and hosting stays included, as it was. Updates go back to $150 a round. Nothing about your web address or email changes.</span></li>
+            <li><b>Payments</b><span>BringsUp's payments are handled by InstateMe, my other company, so your card statement and receipts say "BRINGSUP MANAGED" and "InstateMe".</span></li>
           </ul>
           <p className="small m-manage">Already on the plan? <a href={STRIPE_PORTAL}>Manage or cancel it</a> with the email you signed up with. Questions? <a href={`mailto:${EMAIL}`}>{EMAIL}</a></p>
         </div>

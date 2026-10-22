@@ -30,7 +30,7 @@ header.top img{height:46px;width:auto}
 header nav{display:flex;align-items:center;gap:26px;font-weight:600;font-size:16px}
 header nav a.link{text-decoration:none;color:var(--muted)}
 header nav a.link:hover{color:var(--ink)}
-.call{display:inline-flex;align-items:center;gap:8px;background:var(--cocoa);color:#fff;text-decoration:none;font-weight:700;font-size:16px;padding:12px 18px;border-radius:6px;min-height:44px}
+.call{display:inline-flex;align-items:center;gap:8px;background:var(--cocoa);color:#fff;text-decoration:none;font-weight:700;font-size:16px;padding:12px 18px;border-radius:999px;min-height:44px}
 .call:hover{background:var(--cocoa-d)}
 .call svg{width:18px;height:18px}
 @media (max-width:760px){header nav a.link{display:none}header.top .wrap{height:64px}header.top img{height:38px}.call span.num{display:none}}
@@ -45,7 +45,7 @@ header nav a.link:hover{color:var(--ink)}
 .today.closed i{background:#B9A79A}
 .today span{color:var(--muted);font-weight:500}
 .ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:17px;text-decoration:none;padding:15px 22px;border-radius:6px;min-height:52px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:17px;text-decoration:none;padding:15px 22px;border-radius:999px;min-height:52px}
 .btn.pink{background:var(--pink-d);color:#fff}.btn.pink:hover{background:#A82C5D}
 .btn.line{border:2px solid var(--ink);color:var(--ink)}.btn.line:hover{background:var(--ink);color:#fff}
 .hero figure{margin:0;position:relative}
@@ -132,17 +132,6 @@ footer .logo img{height:34px;width:auto}
 @media (max-width:760px){.mbar{display:grid;grid-template-columns:1fr 1fr;position:sticky;bottom:0;z-index:6;background:var(--paper);border-top:1px solid var(--line);padding:10px 12px;gap:10px}.mbar a{min-height:48px;font-size:16px;padding:12px}}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 html{scroll-behavior:smooth}
-.gate{position:relative;max-height:1100px;overflow:hidden}
-.gate-blur{filter:blur(7px);opacity:.75;pointer-events:none;user-select:none}
-.gate::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(255,248,241,0) 0,rgba(255,248,241,.55) 30%,rgba(255,248,241,.95) 75%)}
-.gate-card{position:absolute;z-index:2;left:50%;top:120px;transform:translateX(-50%);width:min(560px,calc(100% - 32px));background:var(--paper);border:1px solid var(--line);border-top:5px solid var(--pink-d);border-radius:6px;padding:32px;box-shadow:0 24px 60px rgba(58,34,22,.18)}
-.gate-card .k{margin:0 0 8px;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--pink-d)}
-.gate-card h2{font-size:clamp(30px,4vw,42px)}
-.gate-card p{color:var(--muted);margin:14px 0 0}
-.gate-card p b{color:var(--ink)}
-.gate-card .btn{margin-top:22px}
-.gate-card .small{font-size:15px}
-@media (max-width:560px){.gate{max-height:1200px}.gate-card{top:60px;padding:24px}}
 
 /* ---- feel: hover, press and focus states (CSS first; everything works without JavaScript) ---- */
 a{text-underline-offset:.2em;transition:color .15s,text-decoration-color .15s,text-decoration-thickness .15s}
@@ -180,12 +169,6 @@ img.fading{opacity:0}
 /* the map link and the hours row for today */
 .map a{text-decoration:underline 2px transparent;text-underline-offset:.3em}
 .map a:hover{text-decoration-color:currentColor}
-/* the preview gate: the card rides along while you scroll past the blurred rest of the page, so the next step stays in view */
-.gate{display:grid;overflow:clip}
-.gate > .gate-blur{grid-area:1/1}
-.gate-card{grid-area:1/1;position:sticky;top:96px;left:auto;align-self:start;justify-self:center;transform:none;margin:120px 0 48px}
-.gate-card .btn{gap:10px}
-@media (max-width:560px){.gate-card{top:80px;margin-top:60px}}
 /* the phone bar: clear of the home indicator, and each half presses in */
 .mbar{padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))}
 </style>
@@ -199,7 +182,6 @@ img.fading{opacity:0}
     <a class="link" href="#flavors">Flavors</a>
     <a class="link" href="#find">Find the door</a>
     <a class="link" href="#flavors">Hours</a>
-    <a class="link" href="brand.html">Brand guide</a>
     <a class="call" href="tel:+12242842973"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>Call<span class="num">&nbsp;224-284-2973</span></a>
   </nav>
 </div></header>
@@ -247,8 +229,8 @@ img.fading{opacity:0}
   </div>
 </div></section>
 
-<div class="gate">
-  <div class="gate-blur" aria-hidden="true" inert>
+<div class="bu-gate">
+  <div class="bu-blur" aria-hidden="true" inert>
 <section class="flavors" id="flavors" aria-labelledby="fl-h"><div class="wrap">
   <div class="head"><h2 class="display" id="fl-h">The flavor board<small>Everything on our list, all 59 of them. Find your favorite.</small></h2></div>
   <div class="tools">
@@ -307,14 +289,38 @@ img.fading{opacity:0}
 <p style="margin:0;font-size:15px;color:#CDB8A9">Questions? <a href="mailto:jake@bringsup.com" style="color:#fff">jake@bringsup.com</a></p>
 </div></section>
   </div>
-  <div class="gate-card" role="region" aria-label="See the rest">
-    <p class="k">This is a preview</p>
-    <h2 class="display">Want the rest of your site?</h2>
-    <p>The full flavor board, hours, the cookies page and every other page get built from your real menu and photos, plus the refreshed logo and brand guide if you want them.</p>
-    <p><b>One 10-minute form starts it. Still nothing to pay</b> until you've seen the finished site and approved it. Then it's a flat $1,000.</p>
-    <a class="btn pink" href="https://bringsup.com/start/?ref=scoops-and-cookies">Start my website</a>
-    <p class="small">Questions? <a href="mailto:jake@bringsup.com">jake@bringsup.com</a></p>
-  </div>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,700&display=swap">
+<style>
+.bu-gate{position:relative;max-height:760px;overflow:hidden}
+.bu-blur{filter:blur(8px);opacity:.7;pointer-events:none;user-select:none}
+.bu-gate::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(rgba(251,250,247,0),rgba(251,250,247,.6) 22%,rgba(251,250,247,.97) 65%)}
+.bu-card{position:absolute;z-index:3;left:50%;top:40px;transform:translateX(-50%);box-sizing:border-box;width:min(520px,calc(100% - 32px));padding:28px;background:#FBFAF7;color:#16181D;border:1px solid #E4E1D9;border-radius:12px;box-shadow:0 18px 50px rgba(22,24,29,.16);font:400 17px/1.55 'DM Sans',system-ui,sans-serif;text-align:left}
+.bu-card *{box-sizing:border-box}
+.bu-who{display:flex;align-items:center;gap:8px;margin:0 0 14px;font-weight:700;font-size:15px;color:#16181D}
+.bu-who svg{width:26px;height:26px;flex:none}
+.bu-who span{color:#5A5F6B;font-weight:400}
+.bu-card h2{margin:0;font:800 clamp(28px,6vw,38px)/1.05 'Bricolage Grotesque',system-ui,sans-serif;letter-spacing:-.02em;color:#16181D}
+.bu-card p{margin:12px 0 0;color:#3D414B}
+.bu-card p b{color:#16181D}
+.bu-btn{display:inline-flex;align-items:center;gap:10px;margin-top:20px;padding:14px 22px;border-radius:8px;background:#C2410C;color:#fff;font-weight:700;font-size:17px;text-decoration:none;transition:background .18s,transform .12s}
+.bu-btn:hover{background:#9A3412}
+.bu-btn:active{transform:translateY(1px) scale(.985)}
+.bu-btn:focus-visible{outline:3px solid #FFB37A;outline-offset:3px}
+.bu-btn svg{transition:transform .18s}
+.bu-btn:hover svg{transform:translateX(4px)}
+.bu-small{font-size:15px}
+.bu-small a{color:#9A3412}
+@media (max-width:560px){.bu-gate{max-height:820px}.bu-card{top:24px;padding:22px}}
+@media (prefers-reduced-motion:reduce){.bu-btn,.bu-btn svg{transition:none}}
+</style>
+<div class="bu-card" role="region" aria-label="Get the rest of your site">
+  <p class="bu-who"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 4H34A10 10 0 0 1 44 14V30A10 10 0 0 1 34 40H21L10.6 46.6A1 1 0 0 1 9 45.8V39.3A10 10 0 0 1 4 30V14A10 10 0 0 1 14 4Z" fill="#16181D"/><g fill="none" stroke="#FFB37A" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 31V13"/><path d="M16 21l8-8 8 8"/></g></svg>BringsUp <span>· this is a preview</span></p>
+  <h2>Want the rest of your site?</h2>
+  <p>The full flavor board, your hours, the cookies page and every other page get built from your real menu and photos, plus your refreshed logo and brand guide.</p>
+  <p><b>One 10-minute form starts it.</b> Nothing to pay until you've seen the finished site and said yes. Then it's a flat $1,000.</p>
+  <a class="bu-btn" href="https://bringsup.com/start/?ref=scoops-and-cookies">Start my website <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+  <p class="bu-small">Questions? Just reply to my email, or write to <a href="mailto:jake@bringsup.com">jake@bringsup.com</a>.</p>
+</div>
 </div>
 </main>
 

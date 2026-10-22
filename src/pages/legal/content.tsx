@@ -37,7 +37,7 @@ export const TERMS: LegalDoc = {
     },
     {
       title: "Who owns what",
-      body: <><p>Once you've paid, you own the finished website, its design and its files, and we'll hand over everything if you ask. Your domain always stays in your name. We may show your site in our portfolio unless you ask us not to.</p><p>You keep ownership of everything you send us, like your logo, photos and text. You give us permission to use it to build and run your site, and you confirm you have the right to share it. Stock photos we add are licensed for use on your website.</p></>,
+      body: <><p>Once you've paid, you own the finished website, its design and its files, and we'll hand over everything if you ask. Your domain (your web address) always stays in your name. We may show your site in our portfolio unless you ask us not to.</p><p>You keep ownership of everything you send us, like your logo, photos and text. You give us permission to use it to build and run your site, and you confirm you have the right to share it. Stock photos we add are licensed for use on your website.</p></>,
     },
     {
       title: "The managed plan (optional)",
@@ -45,11 +45,11 @@ export const TERMS: LegalDoc = {
     },
     {
       title: "Hosting and changes after launch",
-      body: <><p>Hosting is included with your website at no monthly cost. If we ever stop hosting sites, we'll give you at least 60 days' notice and move your site to a host of your choice, or hand you the files.</p><p>After launch, we fix anything we got wrong (something that doesn't match your approved preview, or details that were right on your start form) for free. Other changes, like new hours, specials, photos or text, are $150 a round, requested by email, and we always tell you before charging. The files are yours, so your own web person can edit them too.</p></>,
+      body: <><p>Hosting (keeping your site online) is included with your website at no monthly cost. If we ever stop hosting sites, we'll give you at least 60 days' notice and move your site to a host of your choice, or hand you the files.</p><p>After launch, we fix anything we got wrong (something that doesn't match your approved preview, or details that were right on your start form) for free. Other changes, like new hours, specials, photos or text, are $150 a round, requested by email, and we always tell you before charging. The files are yours, so your own web person can edit them too.</p></>,
     },
     {
       title: "Your domain and email",
-      body: <><p>Connecting your domain to your new site means changing two settings at your domain provider, which we explain step by step for your provider (or send straight to your web person). We never ask you to change the settings that run your email (MX records), and we check that your email still works before and after. You stay in charge of your domain account, and we aren't liable for issues caused by your provider or by changes we didn't make.</p></>,
+      body: <><p>Connecting your domain to your new site means changing two settings at your domain provider (the company where you got your web address), which we explain step by step for your provider (or send straight to your web person). We never ask you to change the settings that run your email (MX records), and we check that your email still works before and after. You stay in charge of your domain account, and we aren't liable for issues caused by your provider or by changes we didn't make.</p></>,
     },
     {
       title: "Electronic signatures",
@@ -85,7 +85,7 @@ export const PRIVACY: LegalDoc = {
   sections: [
     {
       title: "What we collect",
-      body: <><ul><li><b>What you send us.</b> Your name, business name, email, phone, website, hours, services, photos, logo, signature and anything else you enter in our forms.</li><li><b>Public business information.</b> To design free concepts, we look at public information about local businesses, like their website, address, hours and reviews.</li><li><b>The website redesign tool.</b> When you use it, we save the web address and email you enter, the redesign we create, and a scrambled (one-way hashed) version of your IP address that we use only to prevent abuse. We never store your IP address itself.</li><li><b>Payments.</b> Stripe collects and processes your card details. We only see that a payment happened, the amount and your receipt email.</li></ul></>,
+      body: <><ul><li><b>What you send us.</b> Your name, business name, email, phone, website, hours, services, photos, logo, signature and anything else you enter in our forms.</li><li><b>Public business information.</b> To design free concepts, we look at public information about local businesses, like their website, address, hours and reviews.</li><li><b>The website redesign tool.</b> When you use it, we save the web address and email you enter, the redesign we create, and a scrambled (one-way hashed) version of your IP address (the number that identifies your internet connection) that we use only to prevent abuse. We never store your IP address itself.</li><li><b>Payments.</b> Stripe collects and processes your card details. We only see that a payment happened, the amount and your receipt email.</li></ul></>,
     },
     {
       title: "How we use it",
