@@ -129,7 +129,7 @@ Hi {first name},
 
 Thank you. Your site is approved and paid. One last step: connect your web address, {domain}, to the new site. It takes about 10 minutes on the {provider} website, where your web address is registered. {If someone else has the login: "We've sent the steps to {helper email}, so there's nothing for you to do."}
 
-{Provider-specific steps, written like the GoDaddy example in tools/OPERATOR.md, "Domain steps".}
+{Provider-specific steps, written like the GoDaddy example in tools/operator/jobs.md, "Domain steps".}
 
 Your email won't be affected. The steps only touch the two settings that point your web address at the new site. Nothing about your email is changed, and we check it still works before we say it's live.
 
@@ -215,7 +215,7 @@ Thanks, happy to do this. Just so there are no surprises: changes after launch a
 Jake
 
 ## 12. Managed plan: welcome
-Sent when a managed-plan subscription is first recorded (OPERATOR.md "Managed plan").
+Sent when a managed-plan subscription is first recorded (tools/operator/payments.md, "Managed plan").
 
 **Subject:** You're on the managed plan
 

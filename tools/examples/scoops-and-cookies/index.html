@@ -17,7 +17,8 @@
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--cream);color:var(--ink);font:400 18px/1.6 Figtree,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-img{display:block;max-width:100%}
+img{display:block;max-width:100%;height:auto}
+.wrap>*{min-width:0}
 a{color:inherit}
 :focus-visible{outline:3px solid var(--pink-d);outline-offset:3px;border-radius:2px}
 .wrap{max-width:1160px;margin:0 auto;padding:0 20px}
@@ -68,68 +69,19 @@ header nav a.link:hover{color:var(--ink)}
 .map a{display:inline-block;margin-top:12px;font-weight:700;color:var(--cocoa-d);padding:8px 0}
 @media (max-width:860px){.findus .wrap{grid-template-columns:1fr;gap:32px;padding-top:48px;padding-bottom:48px}}
 
-.flavors{padding:80px 0}
-.flavors .head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:24px}
-.flavors h2{font-size:clamp(40px,6vw,72px)}
-.flavors h2 small{display:block;font-family:Figtree,sans-serif;font-size:18px;font-weight:500;letter-spacing:0;color:var(--muted);margin-top:12px;line-height:1.5}
-.tools{display:flex;flex-wrap:wrap;gap:12px;margin:32px 0 8px;align-items:center}
-.tabs{display:flex;border:2px solid var(--ink);border-radius:6px;overflow:hidden}
-@media (max-width:560px){.tabs{display:grid;grid-template-columns:1fr 1fr;width:100%}.tabs button{border-right:0;border-bottom:2px solid var(--ink)}.tabs button:nth-child(odd){border-right:2px solid var(--ink)}.tabs button:nth-child(n+3){border-bottom:0}.search{max-width:none}}
-.tabs button{font:600 16px Figtree,sans-serif;border:0;background:transparent;color:var(--ink);padding:11px 16px;min-height:46px;cursor:pointer;border-right:2px solid var(--ink)}
-.tabs button:last-child{border-right:0}
-.tabs button[aria-pressed=true]{background:var(--ink);color:#fff}
-.search{flex:1;min-width:220px;max-width:340px}
-.search input{width:100%;font:500 17px Figtree,sans-serif;padding:12px 14px;min-height:50px;border:2px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink)}
-.search input:focus{border-color:var(--ink);outline:none}
-.count{color:var(--muted);font-size:15px;margin:10px 0 0}
-.board{columns:3 300px;column-gap:48px;margin-top:28px}
-.f{break-inside:avoid;padding:16px 0 18px;border-top:1px solid var(--line)}
-.f h3{margin:0;font-family:Fraunces,Georgia,serif;font-variation-settings:"SOFT" 100;font-weight:650;font-size:22px;line-height:1.2;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
-.f p{margin:6px 0 0;font-size:16px;line-height:1.5;color:var(--muted)}
-.f .aw{display:block;margin-top:8px;font-size:14px;font-weight:600;color:var(--cocoa-d)}
-.f .aw::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--butter);border:2px solid var(--cocoa);margin-right:8px;transform:translateY(0)}
-.tag{font:700 12px Figtree,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--pink-d);padding:3px 7px;border-radius:3px}
-.tag.soft{background:var(--pink-l);color:var(--pink-d)}
-.none{display:none;margin-top:24px;color:var(--muted)}
-.more{margin-top:28px;background:transparent;font-family:inherit;cursor:pointer}
+.rough{padding:80px 0}
+.rough h2{font-size:clamp(40px,6vw,72px)}
+.rough .ph{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:32px;max-width:760px}
+@media (max-width:860px){.rough{padding:56px 0}}
+.rough img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px}
 
-.cookies{background:var(--cocoa);color:#FCEFE6}
-.cookies .wrap{display:grid;grid-template-columns:.9fr 1.1fr;gap:56px;align-items:center;padding-top:0;padding-bottom:0}
-.cookies img{width:100%;height:100%;min-height:420px;object-fit:cover}
-.cookies .txt{padding:64px 0}
-.cookies h2{font-size:clamp(38px,5vw,60px);color:#fff}
-.cookies p{max-width:38ch;margin:18px 0 0;color:#F3DCCD}
-@media (max-width:860px){.cookies .wrap{grid-template-columns:1fr;gap:0;padding:0}.cookies img{min-height:0;aspect-ratio:16/10}.cookies .txt{padding:40px 20px 48px}}
-
-.visit{padding:80px 0}
-.visit .wrap{display:grid;grid-template-columns:1fr 1fr;gap:56px}
-.visit h2{font-size:clamp(36px,4.8vw,56px)}
-.hours{width:100%;border-collapse:collapse;margin-top:24px;font-size:18px}
-.hours td{padding:13px 0;border-top:1px solid var(--line)}
-.hours tr:last-child td{border-bottom:1px solid var(--line)}
-.hours td+td{text-align:right;font-variant-numeric:tabular-nums}
-.hours tr.now td{font-weight:700;color:var(--pink-d)}
-.note{font-size:15px;color:var(--muted);margin-top:14px}
-.addr{font-family:Fraunces,Georgia,serif;font-size:28px;line-height:1.25;margin:24px 0 0}
-.addr small{display:block;font-family:Figtree,sans-serif;font-size:17px;color:var(--muted);margin-top:10px;line-height:1.5}
-.visit .ctas{margin-top:28px}
-@media (max-width:860px){.visit{padding:56px 0}.visit .wrap{grid-template-columns:1fr;gap:48px}.flavors{padding:56px 0}}
-
-footer{background:var(--ink);color:#E9D8CC;font-size:15px}
-footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:20px;padding-top:36px;padding-bottom:36px}
-footer a{color:#fff}
 .brand{text-decoration:none;display:inline-flex}
 .lockup{display:inline-flex;align-items:center;gap:10px}
 .lockup .mk{width:44px;height:44px;flex:none}
 .wm{font-family:Fraunces,Georgia,serif;font-variation-settings:"SOFT" 100,"WONK" 1,"opsz" 72;font-weight:800;font-size:31px;letter-spacing:-.025em;line-height:1;white-space:nowrap}
 .wm .s1{color:#E0628F}.wm .s2{color:var(--cocoa)}
 .wm .amp{font-style:italic;font-weight:500;color:var(--ink);font-size:.8em;margin:0 .12em}
-.foot .wm .s1{color:var(--pink)}.foot .wm .s2{color:#E9C9A8}.foot .wm .amp{color:#fff}
 @media (max-width:760px){.wm{font-size:23px}.lockup .mk{width:34px;height:34px}}
-footer .logo{background:#FFF8F1;padding:10px 14px;border-radius:4px;display:inline-block}
-footer .logo img{height:34px;width:auto}
-.mbar{display:none}
-@media (max-width:760px){.mbar{display:grid;grid-template-columns:1fr 1fr;position:sticky;bottom:0;z-index:6;background:var(--paper);border-top:1px solid var(--line);padding:10px 12px;gap:10px}.mbar a{min-height:48px;font-size:16px;padding:12px}}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 html{scroll-behavior:smooth}
 
@@ -154,23 +106,9 @@ img.fade{transition:opacity .35s cubic-bezier(.16,1,.3,1)}
 img.fading{opacity:0}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
 
-/* the flavor board's filters and search */
-.tabs button{-webkit-tap-highlight-color:transparent;transition:background-color .15s,color .15s}
-.tabs button:hover:not([aria-pressed=true]){background:var(--pink-l)}
-.tabs button:active:not([aria-pressed=true]){background:#F9CFDD}
-.tabs button:focus-visible{outline:3px solid var(--pink-d);outline-offset:-5px;border-radius:4px}
-.tabs button[aria-pressed=true]{cursor:default}
-.search input{transition:border-color .15s,box-shadow .15s}
-.search input:hover{border-color:#D9C3B1}
-.search input:focus{box-shadow:0 0 0 3px var(--pink-l)}
-.search input::placeholder{color:#A08878}
-.board.swap{animation:swap .2s cubic-bezier(.16,1,.3,1)}
-@keyframes swap{from{opacity:.35}}
-/* the map link and the hours row for today */
+/* the map link */
 .map a{text-decoration:underline 2px transparent;text-underline-offset:.3em}
 .map a:hover{text-decoration-color:currentColor}
-/* the phone bar: clear of the home indicator, and each half presses in */
-.mbar{padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))}
 </style>
 </head>
 <body>
@@ -179,9 +117,9 @@ img.fading{opacity:0}
   <a href="#" class="brand" aria-label="Scoops and Cookies home"><span class="lockup"><svg class="mk" viewBox="0 0 64 64" aria-hidden="true"><path d="M20 30 L32 60 L44 30 Z" fill="#915B3D"/><path d="M24 34 L37 47 M30 31 L40 41 M22 39 L35 52 M40 34 L27 47 M34 31 L24 41 M42 39 L29 52" stroke="#E9C9A8" stroke-width="2" stroke-linecap="round"/><path d="M15 31 C 13 17, 22 7, 32 7 C 42 7, 51 17, 49 31 C 47 34, 44 31, 42 34 C 40 37, 37 33, 35 35 C 33 37, 30 33, 28 36 C 26 38, 23 33, 21 35 C 19 37, 16 34, 15 31 Z" fill="#F389AF"/><path d="M23 15 C 26 12, 30 11, 33 11" stroke="#fff" stroke-width="2.6" stroke-linecap="round" fill="none" opacity=".8"/></svg>
 <span class="wm"><span class="s1">scoops</span> <span class="amp">&amp;</span> <span class="s2">cookies</span></span></span></a>
   <nav aria-label="Main">
-    <a class="link" href="#flavors">Flavors</a>
+    <a class="link" href="#bu-start">Flavors</a>
     <a class="link" href="#find">Find the door</a>
-    <a class="link" href="#flavors">Hours</a>
+    <a class="link" href="#bu-start">Hours</a>
     <a class="call" href="tel:+12242842973"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>Call<span class="num">&nbsp;224-284-2973</span></a>
   </nav>
 </div></header>
@@ -229,139 +167,29 @@ img.fading{opacity:0}
   </div>
 </div></section>
 
-<div class="bu-gate">
-  <div class="bu-blur" aria-hidden="true" inert>
-<section class="flavors" id="flavors" aria-labelledby="fl-h"><div class="wrap">
-  <div class="head"><h2 class="display" id="fl-h">The flavor board<small>Everything on our list, all 59 of them. Find your favorite.</small></h2></div>
-  <div class="tools">
-    <div class="tabs" role="group" aria-label="Show">
-      <button type="button" data-t="all" aria-pressed="true">All</button>
-      <button type="button" data-t="award" aria-pressed="false">Award winners</button>
-      <button type="button" data-t="free" aria-pressed="false">Dairy-free</button>
-      <button type="button" data-t="nsa" aria-pressed="false">No sugar added</button>
-    </div>
-    <label class="search"><span class="sr" style="position:absolute;left:-9999px">Find a flavor</span><input id="q" type="search" placeholder="Find a flavor, like “peanut butter”" autocomplete="off"></label>
-  </div>
-  <p class="count" id="count" aria-live="polite"></p>
-  <div class="board" id="board"></div>
-  <button type="button" class="btn line more" id="more" hidden>Show all flavors</button>
-  <p class="none" id="none">No flavor matches that. Ask at the counter, it may be on the way.</p>
-  <noscript><p>Our full flavor list is at the counter, or call 224-284-2973.</p></noscript>
-</div></section>
-
-<section class="cookies" aria-labelledby="ck-h"><div class="wrap">
-  <img src="https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=1000&q=72" alt="Chocolate chunk cookies, broken open" width="900" height="900">
-  <div class="txt">
-    <h2 class="display" id="ck-h">And yes, the cookies.</h2>
-    <p>It's half the name. Grab one with your scoop, or a few for later. Ask what's out today.</p>
-    <p>Sherbets too: classic orange, and a rainbow of orange, raspberry and lime.</p>
+<div class="bu-gate"><div class="bu-blur" aria-hidden="true" inert>
+<section class="rough"><div class="wrap">
+  <h2 class="display">The flavor board</h2>
+  <div class="ph">
+    <img src="https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?auto=format&fit=crop&w=400&q=50" alt="" width="400" height="400" loading="lazy">
+    <img src="https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=400&q=50" alt="" width="400" height="400" loading="lazy">
   </div>
 </div></section>
-
-<section class="visit" id="visit" aria-labelledby="v-h"><div class="wrap">
-  <div>
-    <h2 class="display" id="v-h">Hours</h2>
-    <table class="hours" id="hours"><tbody>
-      <tr data-d="1"><td>Monday</td><td>12 – 9 PM</td></tr>
-      <tr data-d="2"><td>Tuesday</td><td>12 – 9 PM</td></tr>
-      <tr data-d="3"><td>Wednesday</td><td>12 – 9 PM</td></tr>
-      <tr data-d="4"><td>Thursday</td><td>12 – 9 PM</td></tr>
-      <tr data-d="5"><td>Friday</td><td>12 – 10 PM</td></tr>
-      <tr data-d="6"><td>Saturday</td><td>12 – 10 PM</td></tr>
-      <tr data-d="0"><td>Sunday</td><td>12 – 9 PM</td></tr>
-    </tbody></table>
-    <p class="note">These are our 2026 summer hours. Hours can change with the seasons, so give us a call if you're coming late.</p>
-  </div>
-  <div>
-    <h2 class="display">Visit</h2>
-    <p class="addr">740 Waukegan Rd, Suite 108<br>Deerfield, IL 60015<small>Entrance on the back of the building, facing Ilfornos Pizza.</small></p>
-    <div class="ctas">
-      <a class="btn pink" href="https://www.google.com/maps/search/?api=1&amp;query=Scoops+%26+Cookies+740+Waukegan+Rd+Suite+108+Deerfield+IL">Get directions</a>
-      <a class="btn line" href="tel:+12242842973">Call 224-284-2973</a>
-    </div>
-  </div>
-</div></section>
-<section style="background:var(--ink);color:#F6E9DF"><div class="wrap" style="padding-top:64px;padding-bottom:64px;display:grid;gap:18px;max-width:760px;text-align:center">
-<p style="margin:0;font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:var(--butter);font-weight:700">From BringsUp</p>
-<h2 class="display" style="font-size:clamp(34px,5vw,54px);color:#fff">Like it? This can be your real website.</h2>
-<p style="margin:0 auto;max-width:52ch;color:#E9D8CC">We'd build every page from your own flavors, photos and hours, with the refreshed logo and brand guide if you want them. One flat $1,000, paid only after you've seen the finished site and approved it. Hosting included, no monthly fee, no calls.</p>
-<p style="margin:8px 0 0"><a class="btn pink" href="https://bringsup.com/start/?ref=scoops-and-cookies">Start my website</a></p>
-<p style="margin:0;font-size:15px;color:#CDB8A9">Questions? <a href="mailto:jake@bringsup.com" style="color:#fff">jake@bringsup.com</a></p>
-</div></section>
-  </div>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,700&display=swap">
-<style>
-.bu-gate{position:relative;max-height:760px;overflow:hidden}
-.bu-blur{filter:blur(8px);opacity:.7;pointer-events:none;user-select:none}
-.bu-gate::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(rgba(251,250,247,0),rgba(251,250,247,.6) 22%,rgba(251,250,247,.97) 65%)}
-.bu-card{position:absolute;z-index:3;left:50%;top:40px;transform:translateX(-50%);box-sizing:border-box;width:min(520px,calc(100% - 32px));padding:28px;background:#FBFAF7;color:#16181D;border:1px solid #E4E1D9;border-radius:12px;box-shadow:0 18px 50px rgba(22,24,29,.16);font:400 17px/1.55 'DM Sans',system-ui,sans-serif;text-align:left}
-.bu-card *{box-sizing:border-box}
-.bu-who{display:flex;align-items:center;gap:8px;margin:0 0 14px;font-weight:700;font-size:15px;color:#16181D}
-.bu-who svg{width:26px;height:26px;flex:none}
-.bu-who span{color:#5A5F6B;font-weight:400}
-.bu-card h2{margin:0;font:800 clamp(28px,6vw,38px)/1.05 'Bricolage Grotesque',system-ui,sans-serif;letter-spacing:-.02em;color:#16181D}
-.bu-card p{margin:12px 0 0;color:#3D414B}
-.bu-card p b{color:#16181D}
-.bu-btn{display:inline-flex;align-items:center;gap:10px;margin-top:20px;padding:14px 22px;border-radius:8px;background:#C2410C;color:#fff;font-weight:700;font-size:17px;text-decoration:none;transition:background .18s,transform .12s}
-.bu-btn:hover{background:#9A3412}
-.bu-btn:active{transform:translateY(1px) scale(.985)}
-.bu-btn:focus-visible{outline:3px solid #FFB37A;outline-offset:3px}
-.bu-btn svg{transition:transform .18s}
-.bu-btn:hover svg{transform:translateX(4px)}
-.bu-small{font-size:15px}
-.bu-small a{color:#9A3412}
-@media (max-width:560px){.bu-gate{max-height:820px}.bu-card{top:24px;padding:22px}}
-@media (prefers-reduced-motion:reduce){.bu-btn,.bu-btn svg{transition:none}}
-</style>
-<div class="bu-card" role="region" aria-label="Get the rest of your site">
-  <p class="bu-who"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 4H34A10 10 0 0 1 44 14V30A10 10 0 0 1 34 40H21L10.6 46.6A1 1 0 0 1 9 45.8V39.3A10 10 0 0 1 4 30V14A10 10 0 0 1 14 4Z" fill="#16181D"/><g fill="none" stroke="#FFB37A" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 31V13"/><path d="M16 21l8-8 8 8"/></g></svg>BringsUp <span>· this is a preview</span></p>
-  <h2>Want the rest of your site?</h2>
-  <p>The full flavor board, your hours, the cookies page and every other page get built from your real menu and photos, plus your refreshed logo and brand guide.</p>
-  <p><b>One 10-minute form starts it.</b> Nothing to pay until you've seen the finished site and said yes. Then it's a flat $1,000.</p>
-  <a class="bu-btn" href="https://bringsup.com/start/?ref=scoops-and-cookies">Start my website <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-  <p class="bu-small">Questions? Just reply to my email, or write to <a href="mailto:jake@bringsup.com">jake@bringsup.com</a>.</p>
-</div>
-</div>
+</div><!--BU-GATE--></div>
 </main>
-
-<footer><div class="wrap">
-  <span class="brand foot" aria-label="Scoops and Cookies"><span class="lockup"><svg class="mk" viewBox="0 0 64 64" aria-hidden="true"><path d="M20 30 L32 60 L44 30 Z" fill="#915B3D"/><path d="M24 34 L37 47 M30 31 L40 41 M22 39 L35 52 M40 34 L27 47 M34 31 L24 41 M42 39 L29 52" stroke="#E9C9A8" stroke-width="2" stroke-linecap="round"/><path d="M15 31 C 13 17, 22 7, 32 7 C 42 7, 51 17, 49 31 C 47 34, 44 31, 42 34 C 40 37, 37 33, 35 35 C 33 37, 30 33, 28 36 C 26 38, 23 33, 21 35 C 19 37, 16 34, 15 31 Z" fill="#F389AF"/><path d="M23 15 C 26 12, 30 11, 33 11" stroke="#fff" stroke-width="2.6" stroke-linecap="round" fill="none" opacity=".8"/></svg>
-<span class="wm"><span class="s1">scoops</span> <span class="amp">&amp;</span> <span class="s2">cookies</span></span></span></span>
-  <span>740 Waukegan Rd, Suite 108, Deerfield, IL 60015 · <a href="tel:+12242842973">224-284-2973</a></span>
-  <span>© 2026 Scoops &amp; Cookies</span>
-</div></footer>
-<nav class="mbar" aria-label="Quick actions"><a class="btn pink" href="tel:+12242842973">Call</a><a class="btn line" href="https://www.google.com/maps/search/?api=1&amp;query=Scoops+%26+Cookies+740+Waukegan+Rd+Suite+108+Deerfield+IL">Directions</a></nav>
 
 <script>
 // Images fade in once loaded instead of popping in (only images not yet loaded are hidden, and only by this script).
 document.querySelectorAll("main img").forEach(i=>{if(i.complete)return;i.classList.add("fade","fading");const d=()=>i.classList.remove("fading");i.addEventListener("load",d,{once:true});i.addEventListener("error",d,{once:true});});
-const F=[{"n": "Amaretto Cherry", "d": "Amaretto ice cream loaded with cherries and chocolate flakes", "a": "NICRA Best Fruit Flavor, 2000. LA County Fair gold ribbon.", "new": false, "t": ["all", "award"]}, {"n": "Anniversary Cake", "d": "Grandma’s yellow cake batter ice cream full of cake bites and spoonfuls of colorful frosting", "a": "", "new": false, "t": ["all"]}, {"n": "Apple Crisp", "d": "Cinnamon-apple ice cream layered with oatmeal crisp, and topped with brown Betty swirl", "a": "", "new": false, "t": ["all"]}, {"n": "Bake Shoppe", "d": "Creamy, cookie dough ice cream with chocolate chip cookie dough and fresh-baked brownie bites, swirling with soft, chocolate fudge topping", "a": "", "new": false, "t": ["all"]}, {"n": "Bear Claw®", "d": "Sweet, dark chocolate ice cream swirled with Denali® caramel, and loaded with chocolate coated cashews", "a": "", "new": false, "t": ["all"]}, {"n": "Black Cherry", "d": "Black cherry ice cream with large, black sweet cherries", "a": "", "new": false, "t": ["all"]}, {"n": "Black Cherry Yogurt", "d": "A Black Cherry flavored yogurt with a rich maroon color, loaded with sweet black cherry halves. Definitely one to enjoyed by itself – a calorie watcher’s delight!", "a": "", "new": false, "t": ["all", "nsa"]}, {"n": "Black Raspberry Pomegranate Sorbet", "d": "A refreshing, non-dairy, non-fat black raspberry pomegranate dessert", "a": "", "new": false, "t": ["all", "free"]}, {"n": "Blue Moon", "d": "Traditional nutty and fruity flavored, bright blue ice cream", "a": "", "new": false, "t": ["all"]}, {"n": "Blueberry Burst", "d": "Creamy, mascarpone cheese ice cream with blueberry topping", "a": "", "new": false, "t": ["all"]}, {"n": "Butter Pecan", "d": "Sweet, buttery ice cream, and lots of pecan halves", "a": "LA County Fair gold ribbon, 2005.", "new": false, "t": ["all", "award"]}, {"n": "Carolina Peach", "d": "Bushels of sweet peach chunks dropped into creamy peach ice cream", "a": "", "new": false, "t": ["all"]}, {"n": "Carrot Cake", "d": "Cinnamon spice ice cream, laced with cream cheese frosting and carrot cake slices", "a": "", "new": false, "t": ["all"]}, {"n": "Chocolate", "d": "A creamy smooth, pure chocolate ice cream", "a": "First place at NICRA and the World Dairy Expo, many times over.", "new": false, "t": ["all", "award"]}, {"n": "Chocolate Moose Tracks®", "d": "NSA/Low Fat chocolate ice cream with peanut butter cups and Moose Tracks® Fudge", "a": "", "new": false, "t": ["all", "nsa"]}, {"n": "Chocolate Peanut Butter Cup", "d": "Chocolate ice cream with a rich peanut butter ripple, and peanut butter cups", "a": "", "new": false, "t": ["all"]}, {"n": "Cookie Dough", "d": "Chocolate chip cookie dough flavored ice cream, home style cookie dough and chocolate chip morsels", "a": "", "new": false, "t": ["all"]}, {"n": "Cool Mint Cookie", "d": "Our mint ice cream with chocolate covered mint cookie balls, Andes mints, and a chocolate cookie fudge swirl", "a": "NICRA Best New Flavor, honorable mention, 2010.", "new": false, "t": ["all", "award"]}, {"n": "Cotton Candy Twist", "d": "Bright blue cotton candy swirled with pink cotton candy nougat", "a": "", "new": false, "t": ["all"]}, {"n": "Cow Tippin’", "d": "Fields of caramel-filled chocolate cups in sweet, vanilla ice cream, near a river of caramel", "a": "", "new": false, "t": ["all"]}, {"n": "Dubai Chocolate", "d": "Creamy, chocolate ice cream with swirls of rich, pistachio butter and crispy, chocolate crunchies", "a": "", "new": true, "t": ["all"]}, {"n": "Eskimo Kisses", "d": "Cool, coconut ice cream kissed with chocolate truffles and warmed by a thick blanket of fudge", "a": "", "new": false, "t": ["all"]}, {"n": "HoF Cherry Vanilla", "d": "Tart red cherries in Vanilla no-sugar-added, low-fat ice cream", "a": "", "new": false, "t": ["all", "nsa"]}, {"n": "HoF Coffee Fudge", "d": "Coffee flavored no-sugar-added, low-fat ice cream with a smooth, chocolate fudge ribbon", "a": "", "new": false, "t": ["all", "nsa"]}, {"n": "HoF Vanilla", "d": "Vanilla flavored no-sugar-added, low-fat ice cream", "a": "", "new": false, "t": ["all", "nsa"]}, {"n": "Jacked Up Tennessee Toffee", "d": "Toffee ice cream laced with smooth, whiskey sweet sauce and garnished with broken Heath bars. Uncle Jack will love this flavor!", "a": "", "new": false, "t": ["all"]}, {"n": "Lemon Cheesecake Bar", "d": "Lemon bar ice cream filled with cheesecake chunks and graham cracker crust swirl", "a": "", "new": false, "t": ["all"]}, {"n": "Mackinac Island Fudge", "d": "Vanilla ice cream, butter fudge swirl, with our large chewy fudge pieces. It’s like being on vacation!", "a": "", "new": false, "t": ["all"]}, {"n": "Majestic Milky Way", "d": "Chocolate malt flakes blended with a caramel fudge ribbon in milk chocolate ice cream.", "a": "", "new": false, "t": ["all"]}, {"n": "Marion Blackberry", "d": "Fruity, blackberry ice cream layered with blackberry sauce", "a": "", "new": false, "t": ["all"]}, {"n": "Michigan Pot Hole", "d": "Thick, black-tar fudge in chocolate ice cream with chunks of chocolate asphalt", "a": "", "new": false, "t": ["all"]}, {"n": "Mint Chocolate Chip", "d": "Mint ice cream loaded with rich dark semi-sweet chocolate chips", "a": "", "new": false, "t": ["all"]}, {"n": "Mocha Almond Fudge", "d": "Coffee ice cream, butter fudge swirl, and chocolate-covered almonds", "a": "", "new": false, "t": ["all"]}, {"n": "Moose Tracks®", "d": "Vanilla ice cream with peanut butter cups swirled with Moose Tracks® Fudge", "a": "", "new": false, "t": ["all"]}, {"n": "Nana’s Banana Puddin’", "d": "Banana pudding ice cream swirled with marshmallow creme and vanilla cookies", "a": "NICRA Best New Fruit Flavor, 2000.", "new": false, "t": ["all", "award"]}, {"n": "O-O-Cheesecake", "d": "Creamy, cheesecake ice cream with crushed, Oreo® cookies swirled in", "a": "", "new": false, "t": ["all"]}, {"n": "O-O-Oreo", "d": "Vanilla ice cream blended with real Oreo® cookies, pieces and crumbs", "a": "", "new": false, "t": ["all"]}, {"n": "Orange Sherbert", "d": "This bright orange sherbet is sure to add a little sunshine to your day – a cool crisp orange taste, a refreshing treat for any time of the year", "a": "", "new": false, "t": ["all", "sherbet"]}, {"n": "Peanut Butter Bull’s Eye", "d": "Creamy, peanut butter and chocolate ice creams merged with peanut butter buckeye candies", "a": "", "new": false, "t": ["all"]}, {"n": "Philly Vanilly", "d": "100% pure vanilla with fresh ground vanilla bean", "a": "First place at the World Dairy Expo, 2011.", "new": false, "t": ["all", "award"]}, {"n": "Pistachio Almond", "d": "Pistachio nut flavored ice cream, with crisp, toasted almonds", "a": "", "new": false, "t": ["all"]}, {"n": "Play Dough", "d": "The kids’ new favorite! A bright yellow vanilla ice cream with hunks of red and blue play dough (cookie dough)", "a": "", "new": false, "t": ["all"]}, {"n": "Praline-N-Pecan", "d": "Vanilla ice cream swirled with a rich caramel fudge and loaded with candied pecans", "a": "", "new": false, "t": ["all"]}, {"n": "Puppy Chow", "d": "Peanut butter ice cream with a smooth, chocolate ribbon with crunchy, “Puppy Chow” treats tossed in", "a": "", "new": false, "t": ["all"]}, {"n": "Rainbow Sherbet", "d": "Orange, raspberry red and lime green all blended together for a truly refreshing taste", "a": "", "new": false, "t": ["all", "sherbet"]}, {"n": "Raspberry Chip Cheesecake", "d": "Our creamy cheesecake ice cream with a raspberry swirl and loaded with chocolate chip flakes", "a": "Best New Flavor 1994 and Best Fruit Flavor 2000, National Ice Cream Retailers Association.", "new": false, "t": ["all", "award"]}, {"n": "Raspberry Sorbet", "d": "A refreshing, non-dairy, non-fat raspberry dessert", "a": "", "new": false, "t": ["all", "free"]}, {"n": "Razberry Rendezvous", "d": "Black raspberry ice cream with thick fudge and dark chocolate raspberry-filled candies", "a": "", "new": false, "t": ["all"]}, {"n": "Rush Hour!", "d": "Coffee ice cream with creamy, caramel swirl, and chocolate-coffee candy chips", "a": "", "new": false, "t": ["all"]}, {"n": "Salty Jack", "d": "Salted caramel ice cream with swells of salted caramel and butter-toasted peanuts", "a": "", "new": false, "t": ["all"]}, {"n": "Sea Turtle", "d": "Sea-salt caramel ice cream and salty caramel swirl, with chocolate-caramel turtles swimming about", "a": "", "new": false, "t": ["all"]}, {"n": "Sicilian Orange Sorbet", "d": "A refreshing, non-dairy, non-fat blood-orange flavored dessert", "a": "", "new": false, "t": ["all", "free"]}, {"n": "Spumoni", "d": "Four of our best flavors: Amaretto Cherry, Pistachio Almond, Dark Chocolate and Golden Rum, plus whipped cream swirl, combine to make this a special treat!", "a": "World Dairy Expo, third place, 2012. LA County Fair gold ribbon.", "new": false, "t": ["all", "award"]}, {"n": "Strawberry", "d": "Strawberry ice cream, with diced strawberries", "a": "First place at NICRA, 1993 and 2009.", "new": false, "t": ["all", "award"]}, {"n": "Strawberry Cheesecake", "d": "Cheesecake ice cream with a strawberry ripple and chunks of traditional cheesecake", "a": "", "new": false, "t": ["all"]}, {"n": "Superman", "d": "Fluorescent lemon yellow, strawberry red and bubble gum blue ice cream. Definitely, the number one selling kids ice cream!", "a": "", "new": false, "t": ["all"]}, {"n": "Ultimate Peanut Butter Brownie", "d": "Creamy peanut butter ice cream packed with fudgy brownies and drizzled with caramel", "a": "NICRA Best New Flavor of the Year, 2002.", "new": false, "t": ["all", "award"]}, {"n": "Vanilla", "d": "100% pure vanilla", "a": "First place at NICRA eleven times, and at the World Dairy Expo in 2011.", "new": false, "t": ["all", "award"]}, {"n": "Yellow Cake Batter", "d": "Cake batter ice cream with yellow cake chunks and thick, chocolate-fudge icing", "a": "", "new": false, "t": ["all"]}];
 const HOURS={0:[12,21],1:[12,21],2:[12,21],3:[12,21],4:[12,21],5:[12,22],6:[12,22]};
 const fmt=h=>h===12?"12 PM":(h>12?h-12:h)+(h>=12?" PM":" AM");
 (function today(){
   const now=new Date(new Date().toLocaleString("en-US",{timeZone:"America/Chicago"}));
   const d=now.getDay(),h=now.getHours()+now.getMinutes()/60,[o,c]=HOURS[d];
   const el=document.getElementById("today");
-  document.querySelector('#hours tr[data-d="'+d+'"]')?.classList.add("now");
   el.innerHTML='<i aria-hidden="true"></i><b>Today '+fmt(o).replace(" PM","")+' to '+fmt(c)+'</b><span>summer hours, call to confirm</span>';
   if(!(h>=o&&h<c)) el.classList.add("closed");
 })();
-const board=document.getElementById("board"),q=document.getElementById("q"),count=document.getElementById("count"),none=document.getElementById("none");
-let tab="all",open=false;const more=document.getElementById("more");more.addEventListener("click",()=>{open=true;draw();});
-const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-function draw(){
-  const t=q.value.trim().toLowerCase();
-  if(draw.done){board.classList.remove("swap");void board.offsetWidth;board.classList.add("swap");}draw.done=true;
-  const list=F.filter(f=>f.t.includes(tab)&&(!t||(f.n+" "+f.d).toLowerCase().includes(t)));
-  const small=matchMedia("(max-width:760px)").matches,cut=small&&!open&&!t&&list.length>12;
-  more.hidden=!cut; if(cut) more.textContent="Show all "+list.length+" flavors";
-  board.innerHTML=(cut?list.slice(0,12):list).map(f=>'<article class="f"><h3>'+esc(f.n)+(f.new?' <span class="tag">New</span>':'')+(f.t.includes("free")?' <span class="tag soft">Dairy-free</span>':'')+(f.t.includes("nsa")?' <span class="tag soft">No sugar added</span>':'')+'</h3><p>'+esc(f.d)+'</p>'+(f.a?'<span class="aw">'+esc(f.a)+'</span>':'')+'</article>').join("");
-  count.textContent=list.length+(list.length===1?" flavor":" flavors");
-  none.style.display=list.length?"none":"block";
-}
-document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",()=>{tab=b.dataset.t;document.querySelectorAll(".tabs button").forEach(x=>x.setAttribute("aria-pressed",x===b));draw();}));
-q.addEventListener("input",draw);
-draw();
 </script>
 </body>
 </html>

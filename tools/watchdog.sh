@@ -3,7 +3,10 @@
 # .github/workflows/watchdog.yml; a failure fails the workflow, and GitHub emails the repo owner (Jake).
 # Locally: sh tools/watchdog.sh
 FN=https://rgeeynodxvusivfbaxfu.supabase.co/functions/v1
-MAX_QUIET_MINUTES=${MAX_QUIET_MINUTES:-300}   # the operator runs at least every 4 hours (hourly 8 AM-8 PM ET, then midnight and 4 AM)
+# The operator runs hourly 8 AM-8 PM ET, so a quiet stretch of up to 5 hours means it stopped; overnight it rests 12 hours.
+et_hour=$(TZ=America/New_York date +%H)
+if [ "$et_hour" -ge 21 ] || [ "$et_hour" -le 8 ]; then quiet=780; else quiet=300; fi
+MAX_QUIET_MINUTES=${MAX_QUIET_MINUTES:-$quiet}
 fail=0
 
 check() { # <name> <url> <wanted status>
