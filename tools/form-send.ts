@@ -100,7 +100,8 @@ async function main() {
       if (info.tag === "select") {
         if (info.required) {
           const opts: string[] = await el.locator("option").allTextContents();
-          const pick = opts.find((o) => /other|general|question|inquiry|enquiry/i.test(o)) || opts.find((o) => o.trim() && !/select|choose|--/i.test(o));
+          // Only a neutral choice; picking a real service, location or customer type would be making something up.
+          const pick = opts.find((o) => /other|general|question|inquiry|enquiry/i.test(o));
           if (!pick) out({ status: "refused", reason: `can't answer the required choice "${f.label}"`, page: page.url(), fields });
           f.value = pick!.trim();
           if (cmd === "send") await el.selectOption({ label: f.value });
