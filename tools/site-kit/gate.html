@@ -1,9 +1,12 @@
-<!-- BringsUp preview gate. The same on every hand-built preview (tools/email_template.md, "Building their homepage"):
-     wrap everything below the part you show in <div class="bu-gate"><div class="bu-blur" aria-hidden="true" inert> ... </div>,
-     then paste this card right after the bu-blur div, inside bu-gate. Fill {{REST}} (one plain sentence about what the full site
-     adds, from their real business) and {{START_URL}} (https://bringsup.com/start/?ref=<slug>). Keep the wording otherwise.
-     Under the blur goes ONE rough section only (a heading and a few of their photos): about 760px of it shows, blurred, so
-     anything more is never seen. Menu links to sections we didn't build point to #bu-start (this card). -->
+<!-- BringsUp preview gate. The same on every hand-built preview (tools/email_template.md, "Building their homepage").
+     Don't paste this file: publishing adds it. Wrap everything below the part you show in
+       <div class="bu-gate"><div class="bu-blur" aria-hidden="true" inert> ... </div>[marker]</div>
+     where [marker] is the HTML comment BU-GATE (tools/site-kit/preview-base.html has this already), and put one plain
+     sentence about what the full site adds, from their real business, in meta.json as "rest". `queue-worker.ts outreach`
+     swaps the marker for this card, with {{REST}} from "rest" and {{START_URL}} as https://bringsup.com/start/?ref=<slug>.
+     Keep the wording otherwise. Under the blur goes ONE rough section only (a heading and 3-4 of their photos, requested
+     small, no copy): about 760px of it shows, blurred, so anything more is never seen. Menu links to sections we didn't
+     build point to #bu-start (this card). -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,700&display=swap">
 <style>
 .bu-gate{position:relative;min-height:620px;max-height:760px;overflow:hidden}

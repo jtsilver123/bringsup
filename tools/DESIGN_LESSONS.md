@@ -17,7 +17,7 @@ development session folds them into this file.)
 - **Their own photos first.** Wix and Squarespace serve the original size if you drop the resize part of the URL, or ask for an exact size (`/v1/fill/w_1200,h_900,al_c,q_82/<file>`). Make a contact sheet of every photo before choosing.
 - **Images: always `height:auto`.** Give every `<img>` its `width` and `height` attributes and set `img{height:auto}`, or `aspect-ratio` is ignored and photos stretch into tall strips. (NakedQ hero)
 
-- **Don't build what's blurred.** Only about 760px under the gate shows, blurred. Build one rough section there (a heading and a few of their photos) and nothing else; NakedQ had four full sections under the blur and three were never visible. Menu links to unbuilt sections point to `#bu-start` (the card). (Jake, Oct 2026)
+- **Don't build what's blurred.** Only about 760px under the gate shows, blurred. Build one rough section there (a heading and a few of their photos, requested small: Wix `w_400,q_50`) and nothing else; NakedQ had four full sections under the blur and three were never visible. Menu links to unbuilt sections point to `#bu-start` (the card). (Jake, Oct 2026)
 
 ## How the preview behaves (handled by /try, but build with it in mind)
 - **Links that leave the page open in a new tab.** The preview sits in a frame, and Toast, Google Maps and Stripe refuse to load inside one, so a click there would just hang. /try adds `target="_blank"` to every web, phone, email and text link automatically. Don't add your own targets. (NakedQ "Order pickup")
@@ -26,5 +26,5 @@ development session folds them into this file.)
 - **The phone frame can be wider than 390px** (about 420 on big screens). Layouts must be fluid: no fixed 390px widths.
 
 ## Capturing their site today
-- **Busy sites rate-limit repeat visits.** The capture tool loads each page once per size for both pictures. If publishing prints "No whole-page pictures for the slider", wait a few minutes and republish in place (`outreach <slug> <dir> <short>`). (NakedQ, Wix)
-- **Some sites show a bot check ("Verify you are human") to automated browsers**, sometimes with a normal 200 status. After every publish, open the stored "today" pictures and make sure they show their real site, never a challenge page. If one does, republish later. (NakedQ, Wix on phone)
+- **Busy sites rate-limit repeat visits.** The capture tool loads each page once per size for both pictures, visits their site one size at a time, and tries once more after 30 seconds on a 429, a 503 or a bot check. If publishing still prints "No whole-page pictures for the slider", wait a few minutes and republish in place with `--recapture` (`outreach <slug> <dir> <short> --recapture`); without it, republishing reuses the saved "today" pictures and never visits their site. (NakedQ, Wix)
+- **Some sites show a bot check ("Verify you are human") to automated browsers**, sometimes with a normal 200 status. The capture tool spots the usual ones and retries once, but after every publish open the "today" pictures in `<dir>/shots/` and make sure they show their real site, never a challenge page. If one does, republish later with `--recapture`. (NakedQ, Wix on phone)
