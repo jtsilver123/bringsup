@@ -16,6 +16,7 @@ html{-webkit-text-size-adjust:100%}
 body{margin:0}
 /* Give every <img> its width and height attributes; height:auto keeps aspect-ratio and object-fit working. */
 img{display:block;max-width:100%;height:auto}
+.wrap>*,[class*=grid]>*{min-width:0} /* grid and flex children may shrink below their content, or wide images push the page sideways */
 img.fade{transition:opacity .35s ease}
 img.fading{opacity:0}
 @media (prefers-reduced-motion:reduce){img.fade{transition:none}}

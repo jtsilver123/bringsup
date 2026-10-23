@@ -15,6 +15,7 @@ development session folds them into this file.)
 ## Look and feel
 - **Reuse a distinctive brand font.** If their current site uses a font customers know them by (NakedQ's typewriter face), load the same file from their site (check it allows cross-origin use: `access-control-allow-origin: *`) for headlines, nav, labels and buttons. Keep paragraphs in a plain, readable sans so phones stay easy to read. (NakedQ, Jake's call)
 - **Their own photos first.** Wix and Squarespace serve the original size if you drop the resize part of the URL, or ask for an exact size (`/v1/fill/w_1200,h_900,al_c,q_82/<file>`). Make a contact sheet of every photo before choosing.
+- **No sideways scroll: grid children get `min-width:0`.** A grid column holding a big image or a long headline grows past the screen otherwise; the scoops example scrolled sideways on phones until `.wrap>*{min-width:0}` (it's in `tools/site-kit/preview-base.html`). Check 360px width for `scrollWidth` > width before publishing. (Scoops, Oct 2026)
 - **Images: always `height:auto`.** Give every `<img>` its `width` and `height` attributes and set `img{height:auto}`, or `aspect-ratio` is ignored and photos stretch into tall strips. (NakedQ hero)
 
 - **Don't build what's blurred.** Only about 760px under the gate shows, blurred. Build one rough section there (a heading and a few of their photos, requested small: Wix `w_400,q_50`) and nothing else; NakedQ had four full sections under the blur and three were never visible. Menu links to unbuilt sections point to `#bu-start` (the card). (Jake, Oct 2026)
