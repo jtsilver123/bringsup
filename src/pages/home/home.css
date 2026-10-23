@@ -197,8 +197,9 @@ img.fade{transition:opacity .3s var(--out)}
 
 /* full-page concept viewer */
 /* the viewer rises a few pixels as it fades in, over a dimming backdrop; closing is quicker */
-dialog.viewer{border:0;padding:0;border-radius:var(--r);width:min(1100px,calc(100vw - 24px));max-height:calc(100vh - 24px);background:var(--paper);color:var(--ink);box-shadow:0 40px 120px rgba(0,0,0,.45);overflow:hidden;opacity:0;transform:translateY(10px) scale(.99);transition:opacity .16s ease-in,transform .16s ease-in,overlay .16s allow-discrete,display .16s allow-discrete}
-dialog.viewer[open]{opacity:1;transform:none;transition:opacity .22s var(--out),transform .25s var(--out),overlay .25s allow-discrete,display .25s allow-discrete}
+/* a fixed size from the first frame, so it never opens as a strip and then jumps once the picture loads */
+dialog.viewer{border:0;padding:0;border-radius:var(--r);width:min(1100px,calc(100vw - 24px));height:calc(100vh - 24px);height:calc(100dvh - 24px);max-height:none;background:var(--paper);color:var(--ink);box-shadow:0 40px 120px rgba(0,0,0,.45);overflow:hidden;opacity:0;transform:translateY(10px) scale(.99);transition:opacity .16s ease-in,transform .16s ease-in,overlay .16s allow-discrete,display .16s allow-discrete}
+dialog.viewer[open]{display:flex;flex-direction:column;opacity:1;transform:none;transition:opacity .22s var(--out),transform .25s var(--out),overlay .25s allow-discrete,display .25s allow-discrete}
 @starting-style{dialog.viewer[open]{opacity:0;transform:translateY(10px) scale(.99)}}
 dialog.viewer::backdrop{background:rgba(22,24,29,0);transition:background-color .2s,overlay .2s allow-discrete,display .2s allow-discrete}
 dialog.viewer[open]::backdrop{background:rgba(22,24,29,.75)}
@@ -211,8 +212,8 @@ dialog.viewer[open]::backdrop{background:rgba(22,24,29,.75)}
 .v-close svg{transition:transform .22s var(--out)}
 .v-close:hover svg{transform:rotate(90deg)}
 .v-close:active{transform:scale(.95);background:var(--sand)}
-.v-body{overflow:auto;max-height:calc(100vh - 24px - 70px);background:var(--sand);padding:16px}
-.v-body img{width:100%;height:auto;border-radius:4px}
+.v-body{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;background:var(--sand);padding:16px}
+.v-body img{display:block;width:100%;height:auto;border-radius:4px;background:#fff}
 
 @media (prefers-reduced-motion:reduce){
   .shot-view:hover .full,.shot-view:focus-visible .full{transform:none}
