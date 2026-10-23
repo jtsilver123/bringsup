@@ -106,51 +106,46 @@ async function previewImages(file: string, name: string, currentUrl?: string): P
   try {
     const { chromium } = await import("/opt/node-tools/node_modules/playwright/index.mjs" as string);
     browser = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" }).catch(() => chromium.launch());
-    const open = async (url: string, phone: boolean, tall: boolean) => {
-      // Tall pictures use a lower pixel density so a whole page stays a reasonable download.
+    // One visit per page and size gives both pictures: the screen-sized one for the reveal, then the whole page for the
+    // slider. Fewer visits also keeps busy sites (some rate-limit) from refusing the later ones.
+    const capture = async (url: string, phone: boolean): Promise<{ shot?: Buffer; tall?: Tall }> => {
+      const dsf = phone ? 2 : 1.5, vw = phone ? 390 : 1280;
       const page = await browser.newPage(phone
-        ? { viewport: { width: 390, height: 844 }, deviceScaleFactor: tall ? 1.5 : 2, isMobile: true, hasTouch: true }
-        : { viewport: { width: 1280, height: 800 }, deviceScaleFactor: tall ? 1.5 : 1.3 });
-      // A page that didn't load (bad address, site down, error status) must never be shown as "Your site today".
-      const res = await page.goto(url, { waitUntil: "networkidle", timeout: 30_000 }).catch(() => null);
-      if (!url.startsWith("file:") && (!res || !res.ok())) { await page.close().catch(() => {}); return null; }
-      await page.waitForTimeout(1200);
-      return page;
-    };
-    const shoot = async (url: string, phone: boolean): Promise<Buffer | undefined> => {
-      const page = await open(url, phone, false).catch(() => null);
-      if (!page) return undefined;
-      try { return await page.screenshot({ type: "jpeg", quality: 76 }); } catch { return undefined; } finally { await page.close().catch(() => {}); }
-    };
-    const shootTall = async (url: string, phone: boolean): Promise<Tall | undefined> => {
-      const page = await open(url, phone, true).catch(() => null);
-      if (!page) return undefined;
+        ? { viewport: { width: vw, height: 844 }, deviceScaleFactor: dsf, isMobile: true, hasTouch: true }
+        : { viewport: { width: vw, height: 800 }, deviceScaleFactor: dsf });
       try {
-        // Scroll down once so lazy images and scroll effects load, then back to the top for the picture.
-        const h: number = await page.evaluate(async (max: number) => {
-          for (let y = 0; y < Math.min(document.documentElement.scrollHeight, max); y += 600) {
-            scrollTo(0, y);
-            await new Promise((r) => setTimeout(r, 120));
-          }
-          scrollTo(0, 0);
-          await new Promise((r) => setTimeout(r, 600));
-          return Math.min(document.documentElement.scrollHeight, max);
-        }, TALL_MAX[phone ? "phone" : "desktop"]);
-        const vw = phone ? 390 : 1280, dsf = 1.5;
-        const buf: Buffer = await page.screenshot({ type: "jpeg", quality: 70, fullPage: true, clip: { x: 0, y: 0, width: vw, height: h } });
-        return { data: buf.toString("base64"), width: Math.round(vw * dsf), height: Math.round(h * dsf) };
-      } catch { return undefined; } finally { await page.close().catch(() => {}); }
+        // A page that didn't load (bad address, site down, error status) must never be shown as "Your site today".
+        const res = await page.goto(url, { waitUntil: "networkidle", timeout: 30_000 }).catch(() => null);
+        if (!url.startsWith("file:") && (!res || !res.ok())) return {};
+        await page.waitForTimeout(1200);
+        const shot: Buffer = await page.screenshot({ type: "jpeg", quality: 76 });
+        let tall: Tall | undefined;
+        try {
+          // Scroll down once so lazy images and scroll effects load, then back to the top for the picture.
+          const h: number = await page.evaluate(async (max: number) => {
+            for (let y = 0; y < Math.min(document.documentElement.scrollHeight, max); y += 600) {
+              scrollTo(0, y);
+              await new Promise((r) => setTimeout(r, 120));
+            }
+            scrollTo(0, 0);
+            await new Promise((r) => setTimeout(r, 600));
+            return Math.min(document.documentElement.scrollHeight, max);
+          }, TALL_MAX[phone ? "phone" : "desktop"]);
+          const buf: Buffer = await page.screenshot({ type: "jpeg", quality: 70, fullPage: true, clip: { x: 0, y: 0, width: vw, height: h } });
+          tall = { data: buf.toString("base64"), width: Math.round(vw * dsf), height: Math.round(h * dsf) };
+        } catch { /* the reveal still works without the whole-page picture */ }
+        return { shot, tall };
+      } catch { return {}; } finally { await page.close().catch(() => {}); }
     };
     const page = "file://" + resolve(file);
-    const afterDesktop = await shoot(page, false);
-    const shots: Shots = { before: {}, after: { desktop: afterDesktop?.toString("base64"), phone: (await shoot(page, true))?.toString("base64") } };
+    const [newD, newP] = [await capture(page, false), await capture(page, true)];
+    const afterDesktop = newD.shot;
+    const shots: Shots = { before: {}, after: { desktop: newD.shot?.toString("base64"), phone: newP.shot?.toString("base64") } };
     if (currentUrl) {
-      shots.before.desktop = (await shoot(currentUrl, false))?.toString("base64");
-      shots.before.phone = (await shoot(currentUrl, true))?.toString("base64");
-      shots.tall = {
-        before: { desktop: await shootTall(currentUrl, false), phone: await shootTall(currentUrl, true) },
-        after: { desktop: await shootTall(page, false), phone: await shootTall(page, true) },
-      };
+      const [oldD, oldP] = [await capture(currentUrl, false), await capture(currentUrl, true)];
+      shots.before = { desktop: oldD.shot?.toString("base64"), phone: oldP.shot?.toString("base64") };
+      shots.tall = { before: { desktop: oldD.tall, phone: oldP.tall }, after: { desktop: newD.tall, phone: newP.tall } };
+      if (!oldD.tall || !newD.tall) console.error("No whole-page pictures for the slider this time; it shows the top of each page instead.");
     }
     if (shots.before.desktop && shots.after.desktop) out.shots = shots;
     if (afterDesktop) {
