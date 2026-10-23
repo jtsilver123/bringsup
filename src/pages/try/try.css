@@ -100,7 +100,7 @@ form{display:flex;flex-direction:column;gap:18px}
 .stage.morphing .frame{transition:transform var(--morph) var(--out),width var(--morph) var(--out),opacity .2s var(--out),visibility 0s}
 .stage.morphing .frame.off{transition:transform var(--morph) var(--out),width var(--morph) var(--out),opacity .18s ease-in,visibility 0s linear var(--morph)}
 .stage.morphing .screen{transition:height var(--morph) var(--out)}
-.stage.morphing .screen iframe{transition:transform var(--morph) var(--out),height var(--morph) var(--out),opacity .25s var(--out)}
+.stage.morphing .screen iframe{transition:transform var(--morph) var(--out),width var(--morph) var(--out),height var(--morph) var(--out),opacity .25s var(--out)}
 .frame.overlap .phone{transition:transform .25s var(--out),box-shadow .25s var(--out)}
 .frame.overlap .phone:hover{transform:translateY(-6px);box-shadow:0 40px 80px rgba(22,24,29,.32)}
 .screen{overflow:hidden;position:relative;background:#fff}
