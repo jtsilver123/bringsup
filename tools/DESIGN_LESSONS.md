@@ -20,6 +20,7 @@ development session folds them into this file.)
 ## How the preview behaves (handled by /try, but build with it in mind)
 - **Links that leave the page open in a new tab.** The preview sits in a frame, and Toast, Google Maps and Stripe refuse to load inside one, so a click there would just hang. /try adds `target="_blank"` to every web, phone, email and text link automatically. Don't add your own targets. (NakedQ "Order pickup")
 - **In-page links (`#find`) must keep working.** /try adds `<base href="about:srcdoc">` so they scroll in place instead of loading BringsUp inside the frame. Use plain `#id` links and never relative page links (the page must be self-contained anyway). (NakedQ "Find the closest one")
+- **A prospect's /for/ link is only for their homepage.** If it ever fails to load, it shows "Your homepage didn't load. Try again", never /try/'s "Try another website" or "Email Jake to make it by hand". The only next step we offer a prospect is starting their site. (Jake, Oct 2026)
 - **The phone frame can be wider than 390px** (about 420 on big screens). Layouts must be fluid: no fixed 390px widths.
 
 ## Capturing their site today

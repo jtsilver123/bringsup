@@ -48,6 +48,8 @@ const setAddress = (path: string) => history.replaceState(null, "", path);
 
 export function Try() {
   const [view, setView] = useState<View>("ask");
+  /** A prospect's private link (/for/<short> or ?for=): its failure screen never offers /try/'s other tools. */
+  const [isProspectLink] = useState(() => typeof location !== "undefined" && (/^\/for\//.test(location.pathname) || new URLSearchParams(location.search).has("for")));
   const [soon, setSoon] = useState(!API);
   const [fields, setFields] = useState<AskFields>({ url: "", email: "", company_site: "" });
   const [formError, setFormError] = useState<FormError | null>(null);
@@ -250,7 +252,7 @@ export function Try() {
         <WorkingView hidden={view !== "working"} host={workingHost} />
         <ResultView hidden={view !== "result"} data={result} onCopy={copyLink} onFullScreen={fullScreen} onAgain={again} />
         <QueuedView hidden={view !== "queued"} data={queued} onCopy={copyLink} />
-        <FailedView hidden={view !== "failed"} failure={failure} onRetry={again} />
+        <FailedView hidden={view !== "failed"} failure={failure} onRetry={again} prospect={isProspectLink} />
       </main>
       <Toast message={toast.message} show={toast.show} ok={toast.ok} />
       <Footer />

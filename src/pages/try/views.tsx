@@ -508,7 +508,18 @@ export interface Failure {
   message: string;
 }
 
-export function FailedView({ hidden, failure, onRetry }: { hidden: boolean; failure: Failure | null; onRetry: () => void }) {
+/** `prospect`: a private /for/ link. Its owner only came to see their own homepage, so a failure offers a reload, never the
+ *  "try another website" tools meant for /try/ visitors. */
+export function FailedView({ hidden, failure, onRetry, prospect }: { hidden: boolean; failure: Failure | null; onRetry: () => void; prospect?: boolean }) {
+  if (prospect) {
+    return (
+      <section className="wrap failed" id="failed" hidden={hidden}>
+        <h1 className="t2" id="f-title">Your homepage didn't load.</h1>
+        <p className="lead" id="f-msg">It's usually a hiccup. Give it a moment and try again.</p>
+        <div className="acts"><button className="btn btn-primary" type="button" onClick={() => location.reload()}>Try again</button></div>
+      </section>
+    );
+  }
   return (
     <section className="wrap failed" id="failed" hidden={hidden}>
       <h1 className="t2" id="f-title">{failure?.title || "We couldn't redesign that one automatically."}</h1>
