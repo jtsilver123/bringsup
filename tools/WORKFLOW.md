@@ -54,7 +54,7 @@ Each is prepared so it takes minutes, and each reaches him as a push (OPERATOR.m
 
 ## Systems and IDs
 - **Repo:** github.com/jtsilver123/bringsup, public. Main is what the hourly task reads; bringsup.com deploys from main via GitHub Actions to GitHub Pages, and its DNS is on Cloudflare.
-- **Hourly operator:** scheduled task "BringsUp operator" (`trig_01Tps7s4xLzURVqhGgu2TkmT`). It runs hourly 8 AM–8 PM ET, plus midnight and 4 AM. Its prompt sets the hard rules, the tokens and the tracker URL, then tells it to follow tools/OPERATOR.md. (The old "redesign queue" task is disabled; the operator does that work in step 4.)
+- **Hourly operator:** scheduled task "BringsUp operator" (`trig_01Tps7s4xLzURVqhGgu2TkmT`). It runs hourly 8 AM–8 PM ET (the watchdog allows the 12-hour overnight gap). Its prompt sets the hard rules, the tokens and the tracker URL, then tells it to follow tools/OPERATOR.md: a short core that starts with `node tools/preflight.ts` (what's due, plus the clock and calendar math) and points to `tools/operator/inbox.md`, `payments.md` and `jobs.md`, read only when a step has work. Keep runs lean: an idle hour should end in a few steps. (The old "redesign queue" task is disabled; the operator does that work in step 4.)
 - **Tracker:** artifact "BringsUp Outreach", https://claude.ai/artifact/M6V7PXQ7mvKP1FfUF6j4Wr (`prospects/*`, `meta/pipeline`, `stats/<date>`, `stats/week-<YYYY-Www>`, `books/<YYYY-MM>`, `disputes/<id>`).
 - **Email:** jake@bringsup.com through Composio Gmail (`gmail_gariba-preach`) only.
 - **Forms (Tally, jake@bringsup.com workspace):** start `Ar7yBl`, changes `EqkMlA`, approve `VpLDP6` and extra round `5XBMpd` post to the projects function webhook. Concept `bZ5vj0` is only the fallback form when `REDESIGN_API` is off.
