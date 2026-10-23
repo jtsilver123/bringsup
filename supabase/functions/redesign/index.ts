@@ -8,7 +8,8 @@
 // finished homepage for a cold-email prospect who said "send it over" and returns its private short link,
 // bringsup.com/for/<slug>-<8 random chars> (tools/email_template.md). og_image is a base64 JPEG for the link preview card;
 // shots = {before: {desktop, phone}, after: {desktop, phone}} (base64 JPEGs of their site today and the new one) power the
-// /try/ reveal and the "Today / New" compare.
+// /try/ reveal and the "Today / New" compare. With replace_short, pictures it doesn't send are kept from the old version.
+// The answer carries warnings: [...] when a picture was too large to store.
 // GET ?for=<short> loads it like ?id=; add &meta=1 for just the name, headline and preview image (the /for/ Cloudflare worker).
 // POST {action: "viewed", short, start?} (public): the /for/ page's beacon. Counts real opens in a browser (link-preview
 // fetchers never run it) and the first "Start my website" click. Worker GET ?views=1 lists them for the tracker.
@@ -143,9 +144,10 @@ async function work(req: Request, body: any): Promise<Response> {
     if (body.ref) concept.ref = String(body.ref);
     const base = slugify(String(body.ref || concept.business_name));
     // replace_short updates an existing preview in place, so a link already sent keeps working and shows the new version.
-    let replacing: { id: string } | null = null;
+    // deno-lint-ignore no-explicit-any
+    let replacing: { id: string; content: any } | null = null;
     if (body.replace_short) {
-      const { data: old } = await db.from("redesigns").select("id").eq("short", String(body.replace_short).toLowerCase()).maybeSingle();
+      const { data: old } = await db.from("redesigns").select("id, content").eq("short", String(body.replace_short).toLowerCase()).maybeSingle();
       if (!old) return json(req, 404, { error: "No preview with that short link." });
       replacing = old;
     }
@@ -155,8 +157,15 @@ async function work(req: Request, body: any): Promise<Response> {
       if (!taken) break;
       short = `${base}-${code()}`;
     }
+    // Pictures too large to store are left out; the response's warnings name them, so the worker can say so.
+    const warnings: string[] = [];
     const store = async (b64: unknown, name: string): Promise<string | undefined> => {
-      if (typeof b64 !== "string" || b64.length > 2_800_000) return undefined;
+      if (typeof b64 !== "string") return undefined;
+      if (b64.length > 2_800_000) {
+        const label = name ? name.slice(1).replace("before", "today").replace("after", "new").replace(/-/g, " ") : "link preview";
+        warnings.push(`The "${label}" picture is too large (${(b64.length / 1e6).toFixed(1)} MB as base64, 2.8 MB max), so it was left out.`);
+        return undefined;
+      }
       const bytes = Uint8Array.from(atob(b64.replace(/^data:image\/\w+;base64,/, "")), (c) => c.charCodeAt(0));
       const path = `previews/${short}${name}.jpg`;
       const up = await db.storage.from("project-files").upload(path, bytes, { contentType: "image/jpeg", upsert: true });
@@ -164,12 +173,16 @@ async function work(req: Request, body: any): Promise<Response> {
       return up.error ? undefined : `${db.storage.from("project-files").getPublicUrl(path).data.publicUrl}?v=${Date.now()}`;
     };
     // The link preview card (iMessage, Gmail, WhatsApp): a picture of their homepage, kept in public storage.
-    const og = await store(body.og_image, "");
+    // Replacing keeps the pictures this publish doesn't bring (a rate-limited capture, or "today" pictures reused),
+    // the same way it keeps the stored url, email and images below.
+    const prev = replacing?.content || {};
+    const og = (await store(body.og_image, "")) || prev.og_image;
     if (og) concept.og_image = og;
     const shots = body.shots || {};
+    const was = prev.compare || {};
     const compare = {
-      before: { desktop: await store(shots.before?.desktop, "-before-desktop"), phone: await store(shots.before?.phone, "-before-phone") },
-      after: { desktop: await store(shots.after?.desktop, "-after-desktop"), phone: await store(shots.after?.phone, "-after-phone") },
+      before: { desktop: await store(shots.before?.desktop, "-before-desktop") || was.before?.desktop, phone: await store(shots.before?.phone, "-before-phone") || was.before?.phone },
+      after: { desktop: await store(shots.after?.desktop, "-after-desktop") || was.after?.desktop, phone: await store(shots.after?.phone, "-after-phone") || was.after?.phone },
     };
     // Whole-page pictures for the scrollable slider: {data, width, height} each, stored with their size.
     const tallOf = async (t: { data?: unknown; width?: unknown; height?: unknown } | undefined, name: string) => {
@@ -177,9 +190,10 @@ async function work(req: Request, body: any): Promise<Response> {
       return src && Number(t?.width) > 0 && Number(t?.height) > 0 ? { src, width: Number(t!.width), height: Number(t!.height) } : undefined;
     };
     const tall = shots.tall || {};
+    const wasTall = was.tall || {};
     const tallSet = {
-      before: { desktop: await tallOf(tall.before?.desktop, "-tall-before-desktop"), phone: await tallOf(tall.before?.phone, "-tall-before-phone") },
-      after: { desktop: await tallOf(tall.after?.desktop, "-tall-after-desktop"), phone: await tallOf(tall.after?.phone, "-tall-after-phone") },
+      before: { desktop: await tallOf(tall.before?.desktop, "-tall-before-desktop") || wasTall.before?.desktop, phone: await tallOf(tall.before?.phone, "-tall-before-phone") || wasTall.before?.phone },
+      after: { desktop: await tallOf(tall.after?.desktop, "-tall-after-desktop") || wasTall.after?.desktop, phone: await tallOf(tall.after?.phone, "-tall-after-phone") || wasTall.after?.phone },
     };
     if (compare.before.desktop && compare.after.desktop) concept.compare = { ...compare, ...(tallSet.before.desktop && tallSet.after.desktop ? { tall: tallSet } : {}) };
     concept.short = short;
@@ -193,7 +207,8 @@ async function work(req: Request, body: any): Promise<Response> {
       ? await db.from("redesigns").update(row).eq("id", replacing.id).select("id").single()
       : await db.from("redesigns").insert(row).select("id").single();
     if (error || !made) return json(req, 500, { error: String(error?.message || "insert failed") });
-    return json(req, 200, { ok: true, id: made.id, link: shortLink(short), long_link: link(made.id) + (body.ref ? `&ref=${encodeURIComponent(String(body.ref))}` : "") });
+    return json(req, 200, { ok: true, id: made.id, link: shortLink(short), long_link: link(made.id) + (body.ref ? `&ref=${encodeURIComponent(String(body.ref))}` : ""),
+      ...(warnings.length ? { warnings } : {}) });
   }
   if (body.action === "delete") {
     const short = String(body.short || "").toLowerCase();
