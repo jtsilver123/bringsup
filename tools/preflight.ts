@@ -71,6 +71,8 @@ if ((health.quiet_customers || []).length) due.push("3 reminders");
 due.push("4 redesign queue"); // `pull` is cheap and claims, so the run checks it itself
 if (sendHours && (slice > 0 || formsToday < 10)) due.push(`5a send slice (up to ${slice} emails, ${Math.min(3, 10 - formsToday)} forms)`);
 if (refill === true) due.push("5b refill");
+// Calls: weekdays 10-11:30 AM and 2-4:30 PM in the business's zone, which across US zones is about 10 AM-7:30 PM ET.
+if (businessDay && et.hour >= 10 && et.hour < 20) due.push("5c calls (if any row qualifies)");
 if ((health.alerts || []).length || (health.failing_jobs || []).length || (health.stuck_on_us || []).length) due.push("6 health");
 
 console.log(JSON.stringify({
