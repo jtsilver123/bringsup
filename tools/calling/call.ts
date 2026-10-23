@@ -7,7 +7,6 @@
 //   node tools/calling/call.ts place <+1number> <vars.json> [--test]   place one call (vars: business_name, town, tz,
 //                                                           compliment, compliment_short, owner_name)
 //   node tools/calling/call.ts results [hours]              outcomes of calls in the last <hours> (default 26)
-//   node tools/calling/call.ts simulate <vars.json> "<who answers and how>"   a text-only practice call, no phone
 //
 // Needs ELEVENLABS_API_KEY. `check` and `place` also need TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN (Twilio Lookup
 // tells a landline from a mobile, and a business from a consumer). `place --test` only calls BRINGSUP_TEST_PHONE.
@@ -168,31 +167,12 @@ async function results(hours: number) {
   console.log(JSON.stringify({ ok: true, calls: out }));
 }
 
-async function simulate(varsFile: string, persona: string) {
-  const c = config();
-  if (!c.agent_id) die("Run `sync` first.");
-  const vars = { owner_name: "unknown", ...JSON.parse(readFileSync(varsFile, "utf8")) };
-  const r = await xi("POST", `/agents/${c.agent_id}/simulate-conversation`, {
-    simulation_specification: {
-      simulated_user_config: { prompt: { prompt: `You answer the phone at ${vars.business_name}. ${persona} Keep replies short, like a real phone call.`, llm: "claude-haiku-5-5" } },
-      dynamic_variables: vars,
-    },
-    new_turns_limit: 16,
-  });
-  console.log(JSON.stringify({
-    transcript: (r.simulated_conversation || []).map((t: { role: string; message: string | null }) => `${t.role}: ${t.message ?? "(tool)"}`),
-    outcome: Object.fromEntries(Object.entries(r.analysis?.data_collection_results || {}).map(([k, v]: [string, any]) => [k, v.value])),
-    checks: Object.fromEntries(Object.entries(r.analysis?.evaluation_criteria_results || {}).map(([k, v]: [string, any]) => [k, v.result])),
-  }, null, 1));
-}
-
 const [cmd, a, b, flag] = process.argv.slice(2);
 if (cmd === "sync") await sync();
 else if (cmd === "check" && a) console.log(JSON.stringify(await check(a)));
 else if (cmd === "place" && a && b) await place(a, b, flag === "--test" || process.argv.includes("--test"));
 else if (cmd === "results") await results(Number(a) || 26);
-else if (cmd === "simulate" && a && b) await simulate(a, b);
 else {
-  console.error("Usage: node tools/calling/call.ts sync | check <+1number> | place <+1number> <vars.json> [--test] | results [hours] | simulate <vars.json> \"<persona>\"");
+  console.error("Usage: node tools/calling/call.ts sync | check <+1number> | place <+1number> <vars.json> [--test] | results [hours]");
   process.exit(1);
 }
