@@ -20,6 +20,17 @@ let startClicks: (e: MouseEvent) => void = () => {};
 const POLL_RETRY_MS = 60000;
 const DEFAULT_FAIL = "We couldn't redesign that one automatically.";
 
+/** The preview sits in a frame, and sites like Toast, Google Maps and Stripe refuse to load inside one, so a click on
+ *  "Order pickup" would just hang. Every link that leaves the page (web, phone, email, text) opens in a new tab, as it
+ *  would for a real visitor; links within the page (#find) still scroll in place. Links that already set a target keep it. */
+function linksLeaveFrame(html: string): string {
+  // A page shown from text resolves "#find" against this page's own address, so an in-page link would load BringsUp
+  // inside the frame. Pointing the base at the frame's own document keeps those links scrolling in place.
+  const based = /<base\b/i.test(html) ? html : html.replace(/<head([^>]*)>/i, '<head$1><base href="about:srcdoc">');
+  return based.replace(/<a\b([^>]*?)\bhref\s*=\s*(["'])((?:https?:|tel:|mailto:|sms:)[^"']*)\2([^>]*)>/gi, (tag, before: string, q: string, href: string, after: string) =>
+    /\btarget\s*=/i.test(before + after) ? tag : `<a${before}href=${q}${href}${q}${after} target="_blank" rel="noopener">`);
+}
+
 /** Tells the tracker a prospect opened their preview, or clicked "Start my website". Only a real browser runs this, so
  *  link-preview fetchers (iMessage, Gmail) never count; automated checks (navigator.webdriver) are skipped too. */
 function beacon(short: string, start = false) {
@@ -103,7 +114,7 @@ export function Try() {
       id: data.id,
       name: concept.business_name || "your business",
       address: addressOf(data.url || ""),
-      html: custom || renderConcept(concept, images),
+      html: linksLeaveFrame(custom || renderConcept(concept, images)),
       improvements: concept.improvements || [],
       ref: (concept as { ref?: string }).ref,
       handmade: Boolean(custom),

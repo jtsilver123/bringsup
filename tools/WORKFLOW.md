@@ -70,7 +70,8 @@ Whenever the process changes, in the same piece of work:
 1. Update the doc that owns the step (OPERATOR.md, RUNBOOK.md, email_template.md, customer_emails.md), and this file if a step, system, price or ID changed.
 2. If the hourly task's hard rules, schedule, tokens or setup changed, update its prompt (scheduled task above). The prompt must never contradict the docs.
 3. Keep the site, terms, privacy policy and Tally forms saying the same thing as the docs: prices, rounds, timings, what's included.
-4. Run `npx tsc --noEmit -p .`, `npm run build` and, if the backend changed, `node tools/simulate-flow.ts`. Then merge to main so the next hourly run picks it up.
+4. Fold any new lines from the tracker doc `meta/lessons` into tools/DESIGN_LESSONS.md (then clear them there), so every build starts from what the last ones taught us.
+5. Run `npx tsc --noEmit -p .`, `npm run build` and, if the backend changed, `node tools/simulate-flow.ts`. Then merge to main so the next hourly run picks it up.
 
 ## Examples
 - `tools/examples/scoops-and-cookies/`: a hand-built homepage idea and one-page brand guide for a real Deerfield ice cream shop (live at https://scoops-and-cookies-idea.pages.dev). It's the quality bar for content accuracy, the logo refresh and the brand guide.

@@ -208,7 +208,7 @@ function Screen({ html, scripts, layoutWidth, width, height, title, hint, reveal
   const scale = width > 0 ? width / lw : 1;
   return (
     <div className={ready ? "screen ready" : "screen"} style={{ height }} onPointerEnter={enter} onPointerLeave={leave} onPointerDown={() => setExplored(true)}>
-      <iframe title={title} sandbox={scripts ? "allow-scripts allow-popups allow-popups-to-escape-sandbox" : "allow-popups"} srcDoc={html}
+      <iframe title={title} sandbox={scripts ? "allow-scripts allow-popups allow-popups-to-escape-sandbox" : "allow-popups allow-popups-to-escape-sandbox"} srcDoc={html}
         onLoad={() => setReady(true)}
         style={{ width: lw, height: height / scale, transform: `scale(${scale})` }}></iframe>
       {reveal && (phase === "wait" || phase === "today" || phase === "wipe") && (
