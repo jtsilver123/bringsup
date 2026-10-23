@@ -202,12 +202,15 @@ function Screen({ html, scripts, layoutWidth, width, height, title, hint, reveal
   useEffect(() => { setTouch(matchMedia("(pointer: coarse)").matches); return () => clearTimeout(timer.current); }, []);
   const enter = () => { clearTimeout(timer.current); timer.current = setTimeout(() => setExplored(true), 1200); };
   const leave = () => clearTimeout(timer.current);
-  const scale = width > 0 ? Math.min(1, width / layoutWidth) : 1;
+  // Never leave a gap: a frame wider than the layout width lays the page out at the frame's width instead (no upscaling,
+  // which would blur it); a narrower one shrinks the page to fit.
+  const lw = Math.max(layoutWidth, width);
+  const scale = width > 0 ? width / lw : 1;
   return (
     <div className={ready ? "screen ready" : "screen"} style={{ height }} onPointerEnter={enter} onPointerLeave={leave} onPointerDown={() => setExplored(true)}>
       <iframe title={title} sandbox={scripts ? "allow-scripts allow-popups allow-popups-to-escape-sandbox" : "allow-popups"} srcDoc={html}
         onLoad={() => setReady(true)}
-        style={{ width: layoutWidth, height: height / scale, transform: `scale(${scale})` }}></iframe>
+        style={{ width: lw, height: height / scale, transform: `scale(${scale})` }}></iframe>
       {reveal && (phase === "wait" || phase === "today" || phase === "wipe") && (
         <div className={`rv rv-${phase}`} aria-hidden="true">
           <img src={reveal.src} alt="" onLoad={() => setTodayLoaded(true)} onError={() => onRevealFail?.()} />
