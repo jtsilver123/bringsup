@@ -1,0 +1,12 @@
+# NakedQ sources (fetched 2026-10-23)
+- Name, logo, photos: nakedq.com (static.wixstatic.com media from their own pages)
+- Locations, addresses, phones: nakedq.com/locations
+- Hours: nakedq.com/scottsdale, /phoenix, /glendale
+- Ordering link (Toast, one link for all three): nakedq.com/locations and each location page
+- "Rub, smoke and serve our meats naked", Pitboss Oren, the regional sauces (NC vinegar, SC mustard, sweet, spicy), "Eat Naked!", "as American as apple pie (even though we prefer peach)": nakedq.com/about-us
+- Menu prices (sandwiches $11–13): nakedq.com/menu
+- Catering from $13 per person, catering@nakedq.com: nakedq.com/catering
+- Curbside: "For curbside pick up, please call us on arrival." (each location page)
+- Thanksgiving 2026 ordering: nakedq.com/thanksgiving
+- Email: info@nakedq.com (nakedq.com/contact)
+- Reviews: not quoted (Google/Yelp not verified this run), so the page makes no review claims.

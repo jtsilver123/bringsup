@@ -55,7 +55,7 @@ export function Home() {
       <main id="main" ref={main}>
         <Hero live={LIVE} start={fromEmail ? startHref : undefined} />
         <Letter />
-        <Work onOpen={(src, name) => viewer.current?.open(src, name)} />
+        <Work onOpen={(src, name, height) => viewer.current?.open(src, name, height)} />
         <Fixes />
         <Offer />
         <Faq />

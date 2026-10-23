@@ -3,7 +3,7 @@ import { FadeImg } from "../../../components/FadeImg.tsx";
 import { WORK, type WorkSample } from "../data.ts";
 import { ExpandIcon } from "../icons.tsx";
 
-type Open = (src: string, name: string) => void;
+type Open = (src: string, name: string, height: number) => void;
 
 /** One sample: the full-page shot scrolls by exactly its overflow on hover, and opens in the viewer. */
 function Shot({ work, onOpen }: { work: WorkSample; onOpen: Open }) {
@@ -12,7 +12,14 @@ function Shot({ work, onOpen }: { work: WorkSample; onOpen: Open }) {
   const full = `/assets/work/${work.slug}-full.jpg`;
   // The viewer opens it big, so it gets the double-resolution file (sharp on phones and Retina screens).
   const sharp = `/assets/work/${work.slug}-full@2x.webp`;
-  const open = () => onOpen(sharp, work.name);
+  const open = () => onOpen(sharp, work.name, work.height);
+  // Start fetching the big picture as soon as they show interest, so the viewer usually opens with it ready.
+  const warm = useRef(false);
+  const preload = () => {
+    if (warm.current) return;
+    warm.current = true;
+    new Image().src = sharp;
+  };
 
   useEffect(() => {
     const el = view.current;
@@ -45,6 +52,8 @@ function Shot({ work, onOpen }: { work: WorkSample; onOpen: Open }) {
         style={h === null ? undefined : ({ "--h": `${h}px` } as CSSProperties)}
         onClick={open}
         onKeyDown={onKeyDown}
+        onPointerEnter={preload}
+        onFocus={preload}
       >
         <FadeImg className="full" src={full} width={1200} height={work.height} loading="lazy" alt="" />
         <FadeImg className="phone" src={`/assets/work/${work.slug}-phone.jpg`} width={390} height={844} loading="lazy" alt="" />
@@ -52,7 +61,7 @@ function Shot({ work, onOpen }: { work: WorkSample; onOpen: Open }) {
       <h3>{work.name}</h3>
       <p className="k">{work.kind}</p>
       <p>{work.text}</p>
-      <button className="tlink view" type="button" onClick={open}>View the full homepage <ExpandIcon /></button>
+      <button className="tlink view" type="button" onClick={open} onPointerEnter={preload} onFocus={preload}>View the full homepage <ExpandIcon /></button>
     </article>
   );
 }
