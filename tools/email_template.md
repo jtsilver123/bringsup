@@ -35,7 +35,7 @@ Every cold email exists to get one word back: **yes**. Not a click (there are no
 ## How they're sent (deliverability)
 - **Plain text only.** No HTML, no bold or bullets, no images, no tracking pixels and no link shorteners. Use Composio `GMAIL_SEND_EMAIL` with `is_html: false` and `include_signature: false`. The sign-off below is the whole signature.
 - **No links and no attachments in any cold email.** A link or a file from a stranger is the strongest spam and phishing signal there is. The one exception is the bare domain `bringsup.com` on its own line in the sign-off, written as plain text and never as `https://...`, because it's how an owner checks we're real.
-- **Rotate, don't repeat.** Number today's first emails 0, 1, 2… and take subject option (n mod 3) and ask option (floor(n / 3) mod 3), so every pairing gets used. Record them as `variant: s<subject>-c<ask>`, and the opening angle you used as `opener` (e.g. `reviews`, `years`, `count`). Then write every sentence fresh for this business: the examples below show the shape, never the wording. Before sending, compare with the last three Email 1s in Sent: if any sentence other than the short fixed lines ("I'm Jake, I make websites for family businesses.", "Just let me know.", the sign-off, opt-out and address) matches one of them word for word, rewrite it. Mail filters fingerprint repeated sentences, and owners who compare notes would spot it.
+- **Rotate, don't repeat.** Number today's first emails 0, 1, 2… and take subject option (n mod 3) and ask option (floor(n / 3) mod 3), so every pairing gets used. Record them as `variant: s<subject>-c<ask>`, and the opening angle you used as `opener` (e.g. `reviews`, `years`, `count`). Then write every sentence fresh for this business: the examples below show the shape, never the wording. Before sending, compare with the last three Email 1s (`meta/pipeline.recentEmail1s`, kept by RUNBOOK step 5; no need to search Sent): if any sentence other than the short fixed lines ("I'm Jake, I make websites for family businesses.", "Just let me know.", the sign-off, opt-out and address) matches one of them word for word, rewrite it. Mail filters fingerprint repeated sentences, and owners who compare notes would spot it.
 - Send one at a time, paced as the RUNBOOK says, and never above the daily cap.
 
 ## Email 1 (step 1, day 0)
@@ -76,7 +76,7 @@ Example (Marigold Bakery, Westbrook CT):
 > BringsUp, 109 Saint Marks Place, New York, NY 10009
 
 ## Email 2 (step 2, 3 business days later)
-One or two sentences, like a quick second thought: one new, true detail, then the same offer. Never "just following up", "bumping this" or "did you see my email". Pick the first angle that's true, and only one:
+One or two sentences, like a quick second thought: one new, true detail, then the same offer. Never "just following up", "bumping this" or "did you see my email". Pick the first angle that's true, and only one. Research saves it on the row as `email2Angle` (RUNBOOK step 6), so write from that; RUNBOOK step 3 says when to re-check it.
 1. A factual mismatch between their site and Google or Yelp (hours, phone, a menu item), said as "still says", never as a flaw.
 2. What the new site would lead with ("I'd lead with the cannoli everyone mentions.").
 3. Only if neither applies, just the offer again in fresh words.

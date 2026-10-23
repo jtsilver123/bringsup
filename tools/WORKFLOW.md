@@ -15,7 +15,7 @@ The one map of the business: every step, who or what does it, which system it to
 ## The flow
 | # | Step | Done by | Systems | Details |
 |---|---|---|---|---|
-| 1 | Find prospects (high-ticket trades and shops in affluent towns, 4.7+ stars, 40+ reviews, outdated site, published email) | Operator, step 5b | Web research, tracker | RUNBOOK.md §4, §6, §8 |
+| 1 | Find prospects (high-ticket trades and shops in affluent towns, 4.7+ stars, 40+ reviews, outdated site, published email) | Operator, step 5b | `tools/prospect-check.ts` first (cheapest checks), then web research, tracker | RUNBOOK.md §4, §6, §8 |
 | 2 | Cold drip, with one goal: a reply that says "yes". Email 1 offer, Email 2 (+3 business days), Email 3 (+7 business days after Email 2). No links or attachments. Gated ramp of 5 to 30 a day, spread through the day in the prospect's time zone | Operator, step 5a | Gmail jake@bringsup.com (Composio), tracker | email_template.md, RUNBOOK.md §1, §3, §5, §7 |
 | 3 | Replies: yes, questions, objections, later, no, auto-replies, bounces | Operator, step 1 | Gmail, tracker | OPERATOR.md step 1, email_template.md "Replies and objections" |
 | 4 | Yes: build the top of their homepage (the rest blurred behind the standard BringsUp "Want the rest of your site?" card, nothing to pay), plus a logo refresh card when their logo needs it, check it, reply with the private link | Operator, step 1 | `queue-worker outreach` and `views`, redesign function, bringsup.com/for/<slug>-<code> | email_template.md "Building their homepage" |
