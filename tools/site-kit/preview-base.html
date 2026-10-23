@@ -1,0 +1,53 @@
+<!doctype html>
+<!-- BringsUp preview base (tools/email_template.md, "Building their homepage"). Copy it to work/outreach/<slug>/index.html
+     and build their page in it. It's invisible scaffolding only: a reset, photos that keep their shape and fade in once
+     loaded, the gate wrapper, and an open-now helper. Fonts, colors and layout are yours to design from their business,
+     so no two previews look alike. Keep the page self-contained (absolute https links and images, or data: URIs). -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Business name · what they do in their town</title>
+<meta name="description" content="One true sentence about them.">
+<meta name="robots" content="noindex">
+<style>
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0}
+/* Give every <img> its width and height attributes; height:auto keeps aspect-ratio and object-fit working. */
+img{display:block;max-width:100%;height:auto}
+img.fade{transition:opacity .35s ease}
+img.fading{opacity:0}
+@media (prefers-reduced-motion:reduce){img.fade{transition:none}}
+</style>
+</head>
+<body>
+<main>
+
+<!-- The part they see: the hero and one or two sections that solve something real for them (hours, directions). -->
+
+<div class="bu-gate"><div class="bu-blur" aria-hidden="true" inert>
+<!-- ONE rough section: a heading and 3-4 of their own photos, requested small (Wix /v1/fill/w_400,h_300,al_c,q_50/),
+     no copy. Publishing puts the BringsUp card where the marker is; its sentence comes from meta.json "rest". -->
+</div><!--BU-GATE--></div>
+</main>
+
+<script>
+// Images fade in once loaded instead of popping in (only images not yet loaded are hidden, and only by this script).
+document.querySelectorAll("main img").forEach(i=>{if(i.complete)return;i.classList.add("fade","fading");const d=()=>i.classList.remove("fading");i.addEventListener("load",d,{once:true});i.addEventListener("error",d,{once:true});});
+// Open now, from their real hours in their own time zone (Arizona: America/Phoenix, no daylight saving).
+// week[0..6] = Sunday..Saturday, each [open, close] in 24h (19.5 = 7:30 PM) or null when closed.
+// openNow(week, tz) -> {open: true, until: "7 PM"} or {open: false, opens: "today at 11 AM" | "tomorrow at 11 AM" | "Monday at 11 AM"},
+// plus today (0-6) to highlight today's row. Show the words however fits the page.
+const DAY_NAMES=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const fmtHour=h=>{const m=Math.round((h%1)*60),hh=Math.floor(h)%24;return (hh%12||12)+(m?":"+String(m).padStart(2,"0"):"")+(hh>=12?" PM":" AM");};
+function openNow(week,tz){
+  const now=new Date(new Date().toLocaleString("en-US",{timeZone:tz})),d=now.getDay(),h=now.getHours()+now.getMinutes()/60,t=week[d];
+  if(t&&h>=t[0]&&h<t[1])return{open:true,until:fmtHour(t[1]),today:d};
+  if(t&&h<t[0])return{open:false,opens:"today at "+fmtHour(t[0]),today:d};
+  for(let k=1;k<=7;k++){const n=week[(d+k)%7];if(n)return{open:false,opens:(k===1?"tomorrow":DAY_NAMES[(d+k)%7])+" at "+fmtHour(n[0]),today:d};}
+  return{open:false,opens:"",today:d};
+}
+</script>
+</body>
+</html>
