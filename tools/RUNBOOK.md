@@ -14,6 +14,7 @@ Prospect fields:
 - Outreach: `status, addedAt, emailedAt, followUpAt, followedUpAt, lastTouchAt, threadId, dripStep, subject, variant` (`s<subject>-c<close>`), `opener` (the opening angle), `bounceKind`, `skipReason`.
 - Reply: `repliedAt, replyType` (yes, question, later, referral, has_vendor, closing, happy, no, auto), `referredTo, lostReason`.
 - After a yes (set by OPERATOR.md): `yesAt, conceptUrl, previewSentAt, previewViewedAt, previewViews, startClickedAt, startedAt, projectRef, fullPreviewAt, paidAt, paidAmount, liveAt, planStartedAt`.
+- Call (see "Calls"): `phone` (above) plus `calledAt, callOutcome, callConversationId, callBackAt`.
 - Other: `warm` (someone Jake knows; never cold emailed), `draftedAt`, `notes`.
 
 `status` is one of `found, ready, emailed, followed_up, replied, started, won, lost, skipped, dnc` (`ready` = researched and ready to email; older rows may say `concept`, which means the same; `started` = the owner submitted the start form; `won` = the site is live). Payment is `paidAt` and `paidAmount`. `lost` (with `lostReason`) is for bounces, a no-thanks that isn't a stop, and closed or cancelled projects; `skipped` (with `skipReason`) is for rows that failed a check, so they're never re-checked. A `dnc` covers the whole business: every address and location. Never overwrite `notes` except where this runbook says to add to an empty one.
@@ -89,6 +90,21 @@ A business that meets every rule in step 6 but publishes no email address can ge
 - **After a send** (`sent`, or `unconfirmed`, which counts as sent; never submit twice): `status: emailed`, `channel: form`, `emailedAt`, `lastTouchAt`, `variant`, `opener`, `dripStep: 3` (nothing more will follow), `followUpAt: null`; then in `meta/pipeline` set `formsToday` + 1 (reset it to 1 first if `formsTodayDate` isn't today) and `formsTodayDate` to today. Check that count before every form send. A `refused` at send time: `skipped` as above.
 - **Their reply** arrives as a new email to jake@bringsup.com from their own address. OPERATOR step 1 matches it to the row (business name, their domain, or the message they quote), saves `email` and `threadId` from it, and from then on everything stays in that thread like any other prospect.
 
+## Calls (one phone follow-up when email and forms got nothing)
+A voice agent on ElevenLabs (BringsUp's Twilio number) makes one short call for Jake: she (Emily, "Jake's AI cofounder") says in her first line that she's an AI, asks if they'd like a free demo homepage, and on a yes confirms an email address. Her playbook is `tools/calling/agent.md` and her settings live in `tools/calling/call.ts`; `node tools/calling/call.ts sync` pushes both to ElevenLabs and overwrites dashboard edits, so change her in those files. `place` refuses to dial if her live opening line doesn't say she's an AI. Phone calls are the most intrusive channel, so the rules are tight.
+- **Who gets a call.** Rows not `warm`, not `dnc`, never called (`calledAt` empty), with a `phone`, where the outreach ended with no reply from a person: email rows with `dripStep: 3` whose Email 3 went out 5+ business days ago, and form rows (`channel: form`) 7+ business days after the form message. Oldest first. One call per business, ever, plus at most one callback they asked for.
+- **How many.** At most 10 calls a day and 3 per run, each placed one at a time.
+- **The check, every time:** `node tools/calling/call.ts check <phone>` must say `allowed: true`: a valid business landline (Twilio Lookup), never a mobile number or one registered to a person. AI voices count as artificial voices under the TCPA, so a mobile or personal number is never called this way. `place` re-checks it and refuses otherwise, and it refuses outside weekdays 10–11:30 AM and 2–4:30 PM in the business's own `tz` (between the lunch and dinner rush).
+- **Place it:** write `vars.json` with `business_name`, `town`, `tz`, `compliment` (two or three true, specific lines from the row: years in business, rating and source, what reviewers praise), `compliment_short` (the one thing, as a short phrase: "people rave about your sourdough") and `owner_name` if known. Then `node tools/calling/call.ts place <phone> vars.json`, and set `calledAt` and `callConversationId`.
+- **Read the outcomes** on every run that placed a call in the last day: `node tools/calling/call.ts results`. For each call with `status: done`, set `callOutcome` and act on it:
+  - `yes`: a yes like any other (OPERATOR step 1): `status: replied`, `replyType: yes`, `repliedAt`, `yesAt`. Save `email` with `emailSource: phone call` (keep the published one if it's the same). Build their homepage and send it within 24 hours, in their email thread if there is one; open with "Thanks for chatting with my assistant today." Never write to an address the call didn't confirm.
+  - `call_back` or `owner_unavailable`: if they named a time, set `callBackAt` and place one more call then (inside the window); otherwise nothing more.
+  - `do_not_call`: `status: dnc`. Never contact them again in any way.
+  - `not_interested`: `status: lost`, `lostReason: call_no`.
+  - `voicemail`, `phone_menu`, `wrong_number`, `unclear`: nothing more.
+  - Check `checks` too: if `disclosed_ai` or `no_pressure` failed on any call, stop calling, read the summary, and report it (OPERATOR step 7, a broken system).
+- **Needs** `ELEVENLABS_API_KEY`, `TWILIO_ACCOUNT_SID` and `TWILIO_AUTH_TOKEN` in the environment. If any is missing, skip calls and note it once a day in the summary.
+
 ## 6. Research to refill the queue
 Only after sending. If fewer than tomorrow's cap of `ready` rows remain (count only rows that will still be within 30 days of `checkedAt` when they go out), find new prospects, enough to reach tomorrow's cap plus a few spare and at most 15 per run. Don't research far past what the cap can send: a row left waiting goes stale and costs a re-check.
 **Research order (cheapest disqualifier first).** For each candidate, stop at the first check it fails and write it as `skipped` with the `skipReason`:
@@ -128,6 +144,6 @@ Then adapt, and say what you changed in the run summary:
 ## 9. Wrap up
 Set `meta.lastRunAt` and `meta.lastRunSummary` (e.g. "Sent 10 · 2 follow-ups · 1 reply · 12 new prospects ready"). The operator's final message (OPERATOR.md step 7) covers the rest; nothing here needs Jake.
 
-## Customer flow (no calls)
+## Customer flow (no calls after a yes)
 Everything after a yes is automated. Tally sends each start, changes, extra-round and approve submission to the `projects` Supabase function, which logs it, counts rounds and sets the next job. The operator task (`tools/OPERATOR.md`) builds the site, sends previews and customer emails (`tools/customer_emails.md`), applies changes, launches on Cloudflare Pages and checks DNS. Each link carries `?ref=<slug>`, so submissions match tracker rows. When a project goes live, set the tracker row to `won`.
 Never charge, or ask for payment, before the owner approves the finished site.
