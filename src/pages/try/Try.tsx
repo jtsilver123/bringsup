@@ -23,10 +23,11 @@ const DEFAULT_FAIL = "We couldn't redesign that one automatically.";
 /** The preview sits in a frame, and sites like Toast, Google Maps and Stripe refuse to load inside one, so a click on
  *  "Order pickup" would just hang. Every link that leaves the page (web, phone, email, text) opens in a new tab, as it
  *  would for a real visitor; links within the page (#find) still scroll in place. Links that already set a target keep it. */
+const FRAME_BASE = '<base href="about:srcdoc">';
 function linksLeaveFrame(html: string): string {
   // A page shown from text resolves "#find" against this page's own address, so an in-page link would load BringsUp
   // inside the frame. Pointing the base at the frame's own document keeps those links scrolling in place.
-  const based = /<base\b/i.test(html) ? html : html.replace(/<head([^>]*)>/i, '<head$1><base href="about:srcdoc">');
+  const based = /<base\b/i.test(html) ? html : html.replace(/<head([^>]*)>/i, '<head$1>' + FRAME_BASE);
   return based.replace(/<a\b([^>]*?)\bhref\s*=\s*(["'])((?:https?:|tel:|mailto:|sms:)[^"']*)\2([^>]*)>/gi, (tag, before: string, q: string, href: string, after: string) =>
     /\btarget\s*=/i.test(before + after) ? tag : `<a${before}href=${q}${href}${q}${after} target="_blank" rel="noopener">`);
 }
@@ -195,7 +196,7 @@ export function Try() {
   };
 
   const fullScreen = () => {
-    const w = window.open(URL.createObjectURL(new Blob([result?.html || ""], { type: "text/html" })), "_blank");
+    const w = window.open(URL.createObjectURL(new Blob([(result?.html || "").replace(FRAME_BASE, "")], { type: "text/html" })), "_blank");
     if (!w) say("Allow pop-ups to open full screen");
   };
 
