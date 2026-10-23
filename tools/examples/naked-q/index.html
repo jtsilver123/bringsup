@@ -7,8 +7,11 @@
 <meta name="description" content="Pork, ribs, brisket, links, turkey and chicken, rubbed and slow smoked and served naked, so you pick the sauce. Three locations in the Valley, pickup and catering.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@600;700&family=Courier+Prime:wght@400;700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+/* NakedQ's own typewriter faces, the ones their current site uses (served from their site). */
+@font-face{font-family:"NakedQ Typewriter";src:url("https://static.wixstatic.com/ufonts/add7d1_32fb4f7559514a7585249f81dd1b8a28/woff2/file.woff2") format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"NakedQ Typewriter";src:url("https://static.wixstatic.com/ufonts/add7d1_57b3faa18f444fffa70c3679651d7da2/woff2/file.woff2") format("woff2");font-weight:400;font-display:swap}
 :root{--ink:#181512;--char:#24201C;--cream:#EDE3D1;--paper:#F8F3EA;--white:#FFFFFF;--sauce:#A8321C;--sauce-d:#842512;--peach:#F2DECC;--line:#DCCFB8;--muted:#5E554A}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -17,9 +20,9 @@ img{display:block;max-width:100%;height:auto}
 a{color:inherit}
 :focus-visible{outline:3px solid var(--sauce);outline-offset:3px;border-radius:2px}
 .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
-.slab{font-family:"Zilla Slab",Georgia,serif;font-weight:700;letter-spacing:-.01em;line-height:1.02;margin:0}
-.type{font-family:"Courier Prime","Courier New",monospace;letter-spacing:.04em;text-transform:uppercase;font-size:14px;font-weight:700}
-.btn{display:inline-flex;align-items:center;gap:10px;padding:15px 24px;border-radius:6px;font-weight:700;font-size:17px;text-decoration:none;border:2px solid transparent;transition:background .18s,color .18s,border-color .18s,transform .12s}
+.slab{font-family:"NakedQ Typewriter","Courier New",monospace;font-weight:700;letter-spacing:-.02em;line-height:1.05;margin:0}
+.type{font-family:"NakedQ Typewriter","Courier New",monospace;letter-spacing:.04em;text-transform:uppercase;font-size:14px;font-weight:700}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:15px 24px;border-radius:6px;font-family:"NakedQ Typewriter","Courier New",monospace;font-weight:700;font-size:18px;text-decoration:none;border:2px solid transparent;transition:background .18s,color .18s,border-color .18s,transform .12s}
 .btn:active{transform:translateY(1px) scale(.985)}
 .btn.main{background:var(--sauce);color:#fff}
 .btn.main:hover{background:var(--sauce-d)}
@@ -40,7 +43,7 @@ header .btn{padding:11px 18px;font-size:16px}
 @media (max-width:820px){header nav a.hide{display:none}header.top img{height:46px}header.top .wrap{height:68px}}
 .hero{background:var(--cream);overflow:hidden}
 .hero .wrap{display:grid;grid-template-columns:1.05fr 1fr;gap:48px;align-items:center;padding-top:64px;padding-bottom:72px}
-.hero h1{font-size:clamp(44px,5.4vw,76px)}
+.hero h1{font-size:clamp(40px,4.8vw,68px)}
 .hero h1 em{font-style:normal;color:var(--sauce)}
 .hero .lead{font-size:20px;color:#3B342C;margin:22px 0 0;max-width:30em}
 .hero .acts{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
@@ -57,7 +60,7 @@ header .btn{padding:11px 18px;font-size:16px}
 .loc{background:var(--white);border:1px solid var(--line);border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
 .loc img{width:100%;aspect-ratio:16/9;object-fit:cover}
 .loc .in{padding:20px 22px 22px;display:flex;flex-direction:column;gap:10px;flex:1}
-.loc h3{font-size:30px}
+.loc h3{font-size:28px}
 .loc .addr{text-decoration:none;color:#3B342C}
 .loc .addr:hover{text-decoration:underline}
 .loc .tel{font-weight:700;text-decoration:none;font-size:19px}
@@ -82,7 +85,7 @@ header .btn{padding:11px 18px;font-size:16px}
 .sauce img{border-radius:10px;width:100%;aspect-ratio:5/4;object-fit:cover}
 .sauces{list-style:none;padding:0;margin:28px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .sauces li{border:1px solid rgba(237,227,209,.25);border-radius:8px;padding:14px 16px}
-.sauces b{display:block;font-family:"Zilla Slab",Georgia,serif;font-size:22px;color:#fff}
+.sauces b{display:block;font-family:"NakedQ Typewriter","Courier New",monospace;font-size:22px;color:#fff}
 .sauces span{font-size:15px;color:#CFC2AA}
 .menu{padding:80px 0;background:var(--paper)}
 .menu h2{font-size:clamp(34px,4.6vw,52px)}
