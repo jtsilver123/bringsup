@@ -98,6 +98,19 @@ One sentence. Warm, no guilt.
 > Last email either way. Reply "no" and you won't hear from BringsUp again.
 > BringsUp, 109 Saint Marks Place, New York, NY 10009
 
+## Contact form message (RUNBOOK "Contact forms", businesses with no published email)
+The same note as Email 1, adjusted for a form: the form already carries Jake's name and email, so no sign-off block, no postal address, and no opt-out line beyond one plain sentence. Subject (if the form has one): `New website for {business}?` Message, 30–55 words:
+
+> Hi {first name, or nothing},
+>
+> {One true line from their reviews or history.} Your website doesn't really show that.
+>
+> I'm Jake, I make websites for family businesses. Want me to make you a new one? Happy to send you a demo link for free. Just reply to jake@bringsup.com and let me know.
+>
+> Jake
+>
+> (Not for you? No need to reply, I won't write again.)
+
 ## Building their homepage (only after a yes)
 This is the first thing of ours they'll really look at, so it has to be clearly better than their current site and feel made for them. Take the time.
 
