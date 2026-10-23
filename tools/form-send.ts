@@ -99,7 +99,7 @@ async function main() {
       };
       if (info.tag === "select") {
         if (info.required) {
-          const opts = await el.locator("option").allTextContents();
+          const opts: string[] = await el.locator("option").allTextContents();
           const pick = opts.find((o) => /other|general|question|inquiry|enquiry/i.test(o)) || opts.find((o) => o.trim() && !/select|choose|--/i.test(o));
           if (!pick) out({ status: "refused", reason: `can't answer the required choice "${f.label}"`, page: page.url(), fields });
           f.value = pick!.trim();
