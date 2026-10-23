@@ -17,6 +17,8 @@ development session folds them into this file.)
 - **Their own photos first.** Wix and Squarespace serve the original size if you drop the resize part of the URL, or ask for an exact size (`/v1/fill/w_1200,h_900,al_c,q_82/<file>`). Make a contact sheet of every photo before choosing.
 - **Images: always `height:auto`.** Give every `<img>` its `width` and `height` attributes and set `img{height:auto}`, or `aspect-ratio` is ignored and photos stretch into tall strips. (NakedQ hero)
 
+- **Don't build what's blurred.** Only about 760px under the gate shows, blurred. Build one rough section there (a heading and a few of their photos) and nothing else; NakedQ had four full sections under the blur and three were never visible. Menu links to unbuilt sections point to `#bu-start` (the card). (Jake, Oct 2026)
+
 ## How the preview behaves (handled by /try, but build with it in mind)
 - **Links that leave the page open in a new tab.** The preview sits in a frame, and Toast, Google Maps and Stripe refuse to load inside one, so a click there would just hang. /try adds `target="_blank"` to every web, phone, email and text link automatically. Don't add your own targets. (NakedQ "Order pickup")
 - **In-page links (`#find`) must keep working.** /try adds `<base href="about:srcdoc">` so they scroll in place instead of loading BringsUp inside the frame. Use plain `#id` links and never relative page links (the page must be self-contained anyway). (NakedQ "Find the closest one")
