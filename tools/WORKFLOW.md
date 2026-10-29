@@ -15,7 +15,7 @@ The one map of the business: every step, who or what does it, which system it to
 ## The flow
 | # | Step | Done by | Systems | Details |
 |---|---|---|---|---|
-| 1 | Find prospects (high-ticket trades and shops in affluent towns, 4.7+ stars, 40+ reviews, outdated site, published email) | Operator, step 5b | `tools/prospect-check.ts` first (cheapest checks), then web research, tracker | RUNBOOK.md §4, §6, §8 |
+| 1 | Find prospects (high-ticket trades and shops in affluent towns, 4.7+ stars, 40+ reviews on Google (Yelp not checked), outdated site, published email) | Operator, step 5b | `tools/prospect-check.ts` first (cheapest checks), then web research, tracker | RUNBOOK.md §4, §6, §8 |
 | 2 | Cold drip, with one goal: a reply that says "yes". Email 1 offer, Email 2 (+3 business days), Email 3 (+7 business days after Email 2). No links or attachments. Gated ramp of 5 to 30 a day, spread through the day in the prospect's time zone | Operator, step 5a | Gmail jake@bringsup.com (Composio), tracker | email_template.md, RUNBOOK.md §1, §3, §5, §7 |
 | 2b | One phone follow-up when the emails or the contact form got no reply: Emily, Jake's AI cofounder (ElevenLabs voice agent on the Twilio number), says she's an AI, offers the free demo homepage and confirms an email on a yes. Business landlines only, weekdays between rushes, 10 a day | Operator, step 5c | ElevenLabs, Twilio Lookup, tracker | RUNBOOK.md "Calls", `tools/calling/` |
 | 3 | Replies: yes, questions, objections, later, no, auto-replies, bounces | Operator, step 1 | Gmail, tracker | OPERATOR.md step 1, email_template.md "Replies and objections" |
